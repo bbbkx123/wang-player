@@ -1,0 +1,21 @@
+export const SET_PLAYING = 'SET_PLAYING'
+
+export const SET_PLAYLIST = 'SET_PLAYLIST'
+
+export const SET_CURRENTINDEX = 'SET_CURRENTINDEX'
+
+export const SET_LYRIC = 'SET_LYRIC'
+
+export const SET_CURRENTTIME = 'SET_CURRENTTIME'
+
+export const SET_SHOWLIST = 'SET_SHOWLIST'
+
+export const SET_LISTINFO = 'SET_LISTINFO'
+
+export const SET_KEYWORDS = 'SET_KEYWORDS'
+
+export const SET_LOOPTYPE = 'SET_LOOPTYPE'
+
+export const SET_LOOPPLAYLIST = 'SET_LOOPPLAYLIST'
+
+export const SET_CURRENTSONG = 'SET_CURRENTSONG'
