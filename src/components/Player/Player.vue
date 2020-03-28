@@ -94,6 +94,7 @@ export default {
             songlist: [], // 待播放的列表
             loop: false,
             loopType: 'shunxubofang',
+            isLoopPlayList: false
         }
     },
     props: {},
@@ -136,11 +137,12 @@ export default {
         },
         loopType (newVal, oldVal) {
             if (!newVal || newVal === oldVal) return 
-            if (newVal === 'suijibofang') {
-                this.playlist = this.random()
-            } else {
-                this.playlist = this.songlist
-            }
+            //  随机播放
+            newVal === 'suijibofang' ? this.playlist = this.random() : this.playlist = this.songlist
+            // 单曲循环
+            newVal === 'danquxunhuan' ? this.loop = true : this.loop = false
+            // 列表循环
+            newVal === 'icon--' ? this.isLoopPlayList = true : this.isLoopPlayList = false
         }
     },
     methods: {
@@ -253,6 +255,10 @@ export default {
             this.currentTime = 0
             if (this.currentIndex < this.playlist.length - 1) {
                 this.songChangeIndex = this.currentIndex + 1
+            } else if (this.currentIndex === this.playlist.length - 1) {
+                if (this.isLoopPlayList) {
+                    this.songChangeIndex = 0
+                }
             }
         },
         play (needPlay) {
