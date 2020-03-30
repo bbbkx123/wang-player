@@ -154,7 +154,7 @@ export default {
 			console.log('stop')
 		},
 		fun1 () {
-			this.$router.replace('/Main/FavouriteList')
+			this.$router.push({name: 'FavouriteList'})
 		},
 		more () {
 			this.$router.push({name: 'OtherList'})

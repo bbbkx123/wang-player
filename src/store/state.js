@@ -1,7 +1,7 @@
 const state = {
   playing: false,
-  playlist: [],
-  showlist: [],
+  songlist: [], // 播放列表原始数据
+  showlist: [], // 歌单列表数据
   currentIndex: null,
   lyric: {},
   currentTime: null,

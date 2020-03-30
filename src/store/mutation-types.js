@@ -1,6 +1,6 @@
 export const SET_PLAYING = 'SET_PLAYING'
 
-export const SET_PLAYLIST = 'SET_PLAYLIST'
+export const SET_SONGLIST = 'SET_SONGLIST'
 
 export const SET_CURRENTINDEX = 'SET_CURRENTINDEX'
 

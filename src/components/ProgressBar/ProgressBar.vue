@@ -39,10 +39,10 @@ export default {
     }
   },
   watch: {
-    precent (newVal) {
+    precent (newValue) {
       // timeupdate事件触发
-      if (newVal > 0 && !this.touch.initiated && this.barWidth) {
-        const offsetWidth = newVal * this.barWidth
+      if (newValue > 0 && !this.touch.initiated && this.barWidth) {
+        const offsetWidth = newValue * this.barWidth
         this.handleOffset(offsetWidth)
       }
     }

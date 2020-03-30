@@ -90,8 +90,8 @@ export default {
             count: 0,
             songChangeIndex: null,
             playListShow: false,
-            playlist: [], // 播放中的列表
-            songlist: [], // 待播放的列表
+            playlist: [], // 播放列表(实际播放顺序的列表)
+            // songlist: [], // 播放列表(原始)
             loop: false,
             loopType: 'shunxubofang',
             isLoopPlayList: false
@@ -111,14 +111,17 @@ export default {
         },
         playing () {
             return this.$store.getters.playing
+        },
+        songlist () {
+            return this.$store.getters.songlist
         }
     },
     watch: {
         // 不直接使用 this.$store.getters.currentIndex , PlayPage页面出现currentIndex变化比lyric快
         // 以前是使用currentIndex监听执行下列方法
-        songChangeIndex (newVal, oldVal) {
-            if (newVal !== oldVal) {
-                let song = this.playlist[newVal]
+        songChangeIndex (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                let song = this.playlist[newValue]
                 this.pic_src = `${song.picture}?param=50y50`
                 this.$axios.all([this.getLyric(song.songid), this.getSongUrl(song.songid)])
                 .then(this.$axios.spread((resLyric, resSongUrl) => {
@@ -135,31 +138,31 @@ export default {
                 }))
             }
         },
-        loopType (newVal, oldVal) {
-            if (!newVal || newVal === oldVal) return 
+        loopType (newValue, oldValue) {
+            if (!newValue || newValue === oldValue) return 
             //  随机播放
-            newVal === 'suijibofang' ? this.playlist = this.random() : this.playlist = this.songlist
+            newValue === 'suijibofang' ? this.playlist = this.random() : this.playlist = this.songlist
             // 单曲循环
-            newVal === 'danquxunhuan' ? this.loop = true : this.loop = false
+            newValue === 'danquxunhuan' ? this.loop = true : this.loop = false
             // 列表循环
-            newVal === 'icon--' ? this.isLoopPlayList = true : this.isLoopPlayList = false
+            newValue === 'icon--' ? this.isLoopPlayList = true : this.isLoopPlayList = false
         }
     },
-    methods: {
+    methods: {       
         random () {
-            let _playlist = JSON.parse(JSON.stringify(this.playlist)), len = _playlist.length
+            let songlist = JSON.parse(JSON.stringify(this.songlist)), len = songlist.length
             while (len) {
                 let random = parseInt(Math.random() * len)
                 // 洗牌算法
                 // 方法1
-                Array.prototype.splice.call(_playlist, len - 1, 1, ...Array.prototype.splice.call(_playlist, random, 1, _playlist[len - 1]))
+                Array.prototype.splice.call(songlist, len - 1, 1, ...Array.prototype.splice.call(songlist, random, 1, songlist[len - 1]))
                 // 方法2  [a, b] = [b ,a]
                 len--
             }
-            return _playlist
+            return songlist
         },
         clickLoopBtn () {
-            if (!this.playlist || this.playlist.length === 0) return 
+            if (!this.songlist || this.songlist.length === 0) return 
             let loopType = this.$store.getters.loopType
             switch (loopType) {
                 case 'shunxubofang':
@@ -274,17 +277,16 @@ export default {
             this.isPlay = 'icon-bofang'
         },
         handleSongListPush (song) {
-            Array.isArray(song) ? this.playlist.push(...song) : this.playlist.push(song)
-            let _playlist = JSON.parse(JSON.stringify(this.playlist))
-            this.$store.commit('SET_PLAYLIST', _playlist)
+            let songlist = JSON.parse(JSON.stringify(this.songlist))
+            Array.isArray(song) ? songlist.push(...song) : songlist.push(song)
+            this.$store.commit('SET_SONGLIST', songlist)
         },
         setSongChangeIndex (index) {
             this.songChangeIndex = index
         },
         handleNeedPush (songid) {
-            let _playlist = this.playlist
-            for (let i = 0; i < _playlist.length; i++) {
-                if (songid === _playlist[i].songid) {
+            for (let i = 0; i < this.songlist.length; i++) {
+                if (songid === this.songlist[i].songid) {
                     return i
                 } 
             }
@@ -310,10 +312,10 @@ export default {
         })
         // 列表播放
         EventBus.$on('song-play-all', ({songlist, index}) => {
-            this.playlist = []
+            this.$store.commit('SET_SONGLIST', [])
             this.handleSongListPush(songlist)
+            this.playlist = JSON.parse(JSON.stringify(this.songlist))
             this.handleToggleSong(index)
-            this.songlist = JSON.parse(JSON.stringify(this.playlist))
         })
         EventBus.$on('play-list-blur', () => this.close())
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="song-page-container">
     <div class="song-page-backgorund"></div>
-    <div class="song-page-main">
+    <div class="player-main">
       <div class="left-container">
         <div class="poster-container">
           <div class="poster" ref="poster">
@@ -37,7 +37,10 @@
           </div>
         </div>
       </div>
-    </div>  
+    </div>
+    <div>
+      <CommentList></CommentList>
+    </div>
   </div>  
 </template>
 <script>
@@ -69,13 +72,13 @@ export default {
         this.currentLineNum = this.getCurrentLineNum(parseFloat(val))
       }
     },
-    currentLineNum (newVal, oldVal) {
-      if (newVal && newVal !== oldVal) {
-        this.scroll(newVal)
+    currentLineNum (newValue, oldValue) {
+      if (newValue && newValue !== oldValue) {
+        this.scroll(newValue)
       }
     },
-    currentIndex (newVal, oldVal) {
-      if (newVal && newVal !== oldVal) {
+    currentIndex (newValue, oldValue) {
+      if (newValue && newValue !== oldValue) {
         this.reset()
         this.setMoveLength()
         this.lyricLoad()
@@ -239,8 +242,10 @@ export default {
 <style lang="less">
   .song-page-container {
     position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
     width: 100%;
-    height: 650px;
+    min-height: 650px;
     background-color: rgba(25, 27, 31);
     color: #ffffff;
     /* 图片透明 */
@@ -249,7 +254,7 @@ export default {
       position: absolute;
       filter: blur(2px);
     }
-    .song-page-main {
+    .player-main {
       display: flex;
       flex-direction: row;
       width: 100%;

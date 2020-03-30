@@ -8,6 +8,7 @@ import SimpleDetailsView from 'components/SimpleDetailsView'
 import LoadingView from 'components/LoadingView'
 import List from 'components/List'
 import Page from 'components/Page'
+import CommentList from 'components/CommentList'
 
 // 路由页面
 import Home from 'view/Home'
@@ -28,6 +29,7 @@ const componentsOfInstall = {
     LoadingView,
     List,
     Page,
+    CommentList,
     // 路由
     Home,
     RecommendOfDaily,

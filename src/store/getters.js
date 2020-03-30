@@ -1,6 +1,6 @@
 export const playing = state => state.playing
 
-export const playlist = state => state.playlist
+export const songlist = state => state.songlist
 
 export const currentIndex = state => state.currentIndex
 

@@ -93,3 +93,13 @@ export const getTopPlayList = (before, limit, cat) => axios.get('/top/playlist/h
  * 
  */
 export const getPlayListCatList = () => axios.get('/playlist/catlist')
+
+/**
+ * 歌曲评论
+ * @param {String} id 音乐id(必填) 
+ * @param {Number} limit 评论数量
+ * @param {Number} offset 偏移数量  用于分页  (评论页数 -1)*20, 其中 20 为 limit 的值
+ * @param {Number} before 分页参数,取上一页最后一项的 time 获取下一页数据(获取超过5000条评论的时候需要用到)
+ * 
+ */
+export const getMusicComment = (id, limit, offset, before) => axios.get('/comment/music', {params: {id, limit, offset, before}})

@@ -9,7 +9,7 @@
         <simple-details-view :data="item"></simple-details-view>
       </div>
       <div class="page"> 
-        <Page :pageTotal="pageTotal" :pageNumber="page.pageNumber"></Page>
+        <Page :total="page.total" :number="page.pageNumber" :size="page.pageSize"></Page>
       </div>
     </div>
   </div>
@@ -48,10 +48,6 @@ export default {
   computed: {
     showList () {
       return this.otherList[this.page.pageNumber - 1]
-    },
-    pageTotal () { 
-      return (this.page.total % this.page.pageSize) === 0 ? 
-        this.page.total / this.page.pageSize : Math.floor(this.page.total / this.page.pageSize) + 1
     },
     currentTag () {
       return this.curentTagIndex || this.curentTagIndex === 0 ? this.tags[this.curentTagIndex].name : '全部'

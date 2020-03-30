@@ -10,7 +10,7 @@
 		</div>
     <List listType="search" :data="searchResult"></List>
     <div class="page"> 
-      <Page :pageTotal="pageTotal" :pageNumber="page.pageNumber"></Page>
+      <Page :total="page.total" :number="page.pageNumber" :size="page.pageSize"></Page>
     </div>
   </div> 
 </template>
@@ -37,10 +37,6 @@ export default {
   watch: {
   },
   computed: {
-    pageTotal () { 
-      return (this.page.total % this.page.pageSize) === 0 ? 
-        this.page.total / this.page.pageSize : Math.floor(this.page.total / this.page.pageSize) + 1
-    },
   },
   methods: {
     getSearchResult (keywords) {
