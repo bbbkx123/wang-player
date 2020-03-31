@@ -240,13 +240,15 @@ export default {
 </script>
 
 <style lang="less">
+@import '../../base/css/common.less';
   .song-page-container {
     position: relative;
     overflow-x: hidden;
     overflow-y: scroll;
     width: 100%;
-    min-height: 650px;
-    background-color: rgba(25, 27, 31);
+    height: 650px;
+    // background-color: rgba(25, 27, 31);
+    background-color: @main-background-color;
     color: #ffffff;
     /* 图片透明 */
     /* filter: opacity(50%); */

@@ -54,13 +54,15 @@ export default {
 </script>
 
 <style lang="less">
+	@import '../../base/css/common.less';
     .cloud-header {
 			display: flex;
 			align-items: center;
 			width: 100%;
 			height: 50px;
 			box-sizing: border-box;
-			background-color: #222225;
+			// background-color: #222225;
+			background-color: @main-background-color;
 			border-bottom: 3px solid #670404;
 			border-image: linear-gradient(to right,#670404, #b72525, #670404) 1 1;
 			.logo-wrapper {

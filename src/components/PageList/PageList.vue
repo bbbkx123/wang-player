@@ -80,7 +80,7 @@ export default {
     .page-list {
         padding-top: 30px;
         height: 100%;
-        background-color: #16181c;
+        // background-color: #16181c;
         .list-top {
             display: flex;
             // justify-content: center

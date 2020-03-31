@@ -323,6 +323,7 @@ export default {
 </script>
 
 <style lang="less">
+@import '../../base/css/common.less';
 @playerHeight: 750px;
 @playlistItemHeight: 30px;
 @miniPlayListWidth: 500px;
@@ -332,7 +333,7 @@ export default {
     .player {
         display: flex;
         align-items: center;
-        background-color: #242427;
+        background-color: @player-background-color;
         .button-group-wrapper, .volume-wrapper, .timeline-wrapper, .other-wrapper {
             height: 100%;
         }

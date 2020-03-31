@@ -4,7 +4,7 @@
         <div class="layout-cloud_main">
             <router-view></router-view>
         </div>
-        <div class="ie-hide"></div>
+        <!-- <div class="ie-hide"></div> -->
     </div>
 </template>
 
@@ -27,11 +27,13 @@ export default {
 </script>
 
 <style lang="less">
+    @import '../../base/css/common.less';
     .main {
         position: relative;
         display: flex;
         flex-direction: row;
         overflow: hidden;
+        background-color: @main-background-color;
         .layout-cloud_menu {
             display: inline-block;
             width: 200px;
@@ -45,7 +47,7 @@ export default {
             overflow-y: scroll;
             overflow-x: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05); 
-            background-color: rgba(25, 27, 31, 1);
+            // background-color: @main-background-color;
             &::-webkit-scrollbar {
                 display: none;
             }
