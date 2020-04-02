@@ -1,7 +1,22 @@
 <template>
-  <div>
-    <div>
-      <div v-for="(hot, index) in comment.hotComments" :key="index">{{hot.content}}</div>
+  <div class="comment-list">
+    <div >
+      <!--  -->
+      <div v-for="(hot, index) in comment.comments" :key="index" class="comment-item-container">
+        <div class="avatar-container">
+          <div class="avatar" :style="{backgroundImage: `url(${hot.user.avatarUrl}?param=35y35)`}"></div>
+        </div>
+        <div class="comment-item-main-container">
+          <div class="comment">
+            <span class="nickname">{{`${hot.user.nickname} : `}}</span>
+            {{ hot.content + hot.content}}
+          </div>
+          <div class="other">
+            <div>{{format(hot.time)}}</div>
+            <div></div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="page"> 
       <Page :total="page.total" :number="page.pageNumber" :size="page.pageSize"></Page>
@@ -12,6 +27,8 @@
 
 <script>
 import * as api from 'api'
+import * as common from 'base/util/common'
+import EventBus from 'base/util/EventBus'
 
 const LIMIT = 20
 export default {
@@ -41,6 +58,9 @@ export default {
         }
       },
       immediate: true
+    },
+    'page.pageNumber' (val) {
+      this.getMusicComment(this.songid)
     }
   },
   methods: {
@@ -51,13 +71,58 @@ export default {
         this.page.total = res.data.total
         this.comment = {hotComments: res.data.hotComments, comments: res.data.comments}
       })
+    },
+    format (timestamp) {
+      return common.formatDate(timestamp)
     }
   },
   created () {
+    EventBus.$on('change-page-number', (pageNumber) => {
+      this.page.pageNumber = pageNumber
+    })
   }
 }
 </script>
 
 <style lang="less">
+  @commentItemWidth: 500px;
+  @commentItemMinHeight: 75px;
+  
+  @commentItemPaddingTop: 25px;
 
+  @avatarSize: 35px;
+  .comment-list {
+    .comment-item-container {
+      display: flex;
+      width: @commentItemWidth;
+      min-height: @commentItemMinHeight;
+      box-sizing: border-box;
+      border-top: 1px solid rgba(255, 255, 255, .1);
+      .avatar-container {
+        padding-top: @commentItemPaddingTop;
+        .avatar {
+          width: @avatarSize;
+          height: @avatarSize;
+          border-radius: 50%;
+        }
+      }
+      .comment-item-main-container {
+        margin-left: 20px;
+        padding-top: @commentItemPaddingTop;
+        width: calc(100% - @avatarSize);
+        .comment {
+          text-align: left;
+          font-size: 12px;
+          .nickname {
+            display: inline-block;
+            // font-size: 12px;
+            color: rgba(65,105,225, 1);
+          }
+        }
+        .other {
+          display: flex;
+        }
+      }
+    }
+  }
 </style>

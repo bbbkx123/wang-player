@@ -26,13 +26,26 @@ export const songDetails = function (data) {
 // } 
 
 // 时间格式化
-export const formatForTime = (time) => {
+export const formatForPlayTime = (time) => {
   if (time === null || typeof time === 'undefined') return
   if (time === 0) return '00:00'
   time = parseFloat(time)
   if (typeof time !== 'number') return 
   let _format = (time) => time >= 10 ? time : `0${time}`
   return _format(Math.floor(time / 60)) + ':' + _format((time % 60).toFixed(0))
+}
+
+// 日期转化
+export const formatDate = (timestamp) => {
+  let date = new Date(timestamp),
+  year = date.getFullYear(),
+  mouth = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1,
+  day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate(),
+  hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours(),
+  minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes(),
+  seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+  
+  return `${year}年${mouth}月${day}日 ${hours}:${minutes}`
 }
 
 /**

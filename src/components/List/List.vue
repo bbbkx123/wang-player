@@ -76,7 +76,7 @@ export default {
         let _data = JSON.parse(JSON.stringify(this.data))
         _data.forEach((item) => {
           // 处理时间格式
-          item.duration = common.formatForTime(item.duration / 1000)
+          item.duration = common.formatForPlayTime(item.duration / 1000)
         })
         return _data
       } else {
@@ -126,7 +126,7 @@ export default {
     cursor: pointer;
   }
   .list-row:hover, .list-row.click {
-    background-color: #232529;
+    background-color: rgba(35, 37, 41, .4);
   }
   .list-row .list-row-item {
     display: inline-block;

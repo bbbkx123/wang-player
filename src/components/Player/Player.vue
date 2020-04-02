@@ -15,14 +15,14 @@
             </div>
             <div class="timeline-wrapper">
                 <div class="time-wrapper" style="margin-right: 5px;">
-                    <span class="time-text">{{formatForTime(currentTime)}}</span>
+                    <span class="time-text">{{formatForPlayTime(currentTime)}}</span>
                 </div>
                 <!-- timeline -->
                 <div class="timeline-progress-wrapper">
                     <progress-bar @progress-changing="progressChanging" @progress-change="progressChange" :precent="precent"></progress-bar>
                 </div>
                 <div class="time-wrapper" style="margin-left: 5px;">
-                    <span class="time-text" >{{audio && audio.src ? formatForTime(duration): '00:00'}}</span>
+                    <span class="time-text" >{{audio && audio.src ? formatForPlayTime(duration): '00:00'}}</span>
                 </div>
             </div>
             <div class="volume-wrapper">
@@ -241,8 +241,8 @@ export default {
         _onTimeUpdate (e) {
             common.throttle(this.onTimeUpdate, 100, 0)(e)
         },
-        formatForTime (time) {
-            return common.formatForTime(time)
+        formatForPlayTime (time) {
+            return common.formatForPlayTime(time)
         },
         onCanPlay () {
             // index改变后, 统一由canplay进行set
@@ -273,7 +273,7 @@ export default {
             this.audio = this.$refs.audio
             if (src) this.audio = src
             this.audio.autoplay = false
-            this.audio.volume = 0.15
+            this.audio.volume = 0
             this.isPlay = 'icon-bofang'
         },
         handleSongListPush (song) {

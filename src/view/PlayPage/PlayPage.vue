@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="comment-container">
       <CommentList></CommentList>
     </div>
   </div>  
@@ -336,6 +336,9 @@ export default {
           }
         }
       }
+    }
+    .comment-container {
+      padding: 0 150px;
     }
   }
 </style>
