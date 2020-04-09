@@ -1,5 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{height}">
+    <div class="background" >
+      <img :src="`${publicPath}background-image/p1.jpg`" style="width:100%;height:100%;">
+    </div>
    <Layout></Layout>
   </div>
 </template>
@@ -11,17 +14,37 @@ export default {
   name: 'App',
   components: {
     Layout
+  },
+  data () {
+    return {
+      publicPath: process.env.BASE_URL,
+      height: 0
+    }
+  },
+  created () {
+    this.height = window.innerHeight + 'px'
   }
 }
 </script>
 
-<style>
+<style lang="less">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* margin-top: 60px; */
+  .background {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

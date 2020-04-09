@@ -1,8 +1,5 @@
 <template>
 	<div class="layout">
-        <div class="background" :style="{height}">
-            <img :src="`${publicPath}background-image/p4.webp`" style="width:100%;height:100%;">
-        </div>
 		<div class="cloud">
 			<Header></Header>
 			<router-view style="width: 100%;"></router-view>
@@ -20,7 +17,6 @@ export default {
     name: 'layout',
     data () {
 		return {
-            publicPath: process.env.BASE_URL,
             height: 0
         }
     },
@@ -30,7 +26,7 @@ export default {
         }
     },
     created () {
-        this.height = window.innerHeight + 'px'
+        // this.height = window.innerHeight + 'px'
         if (this.$route.path.indexOf('/Main/Home') < 0) {
             this.$router.push({name: 'Home'})  
         }
@@ -66,11 +62,6 @@ export default {
             width: @playerWidth;
             height: @playerHeight;
         }
-    }
-    .background {
-        position: absolute;
-        z-index: 0;
-        width: 100%;
     }
 }
 </style>
