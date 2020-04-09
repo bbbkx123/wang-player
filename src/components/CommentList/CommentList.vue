@@ -12,7 +12,7 @@
             {{ hot.content + hot.content}}
           </div>
           <div class="other">
-            <div>{{format(hot.time)}}</div>
+            <div class="time">{{format(hot.time)}}</div>
             <div></div>
           </div>
         </div>
@@ -111,16 +111,20 @@ export default {
         padding-top: @commentItemPaddingTop;
         width: calc(100% - @avatarSize);
         .comment {
+          line-height: 16px;
           text-align: left;
-          font-size: 12px;
+          font-size: 13px;
           .nickname {
             display: inline-block;
-            // font-size: 12px;
+            font-size: 12px;
             color: rgba(65,105,225, 1);
           }
         }
         .other {
           display: flex;
+          .time {
+            font-size: 14px;
+          }
         }
       }
     }

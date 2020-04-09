@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{height}">
+  <div v-if="show" id="app" :style="{height}">
     <div class="background" >
       <img :src="`${publicPath}background-image/p1.jpg`" style="width:100%;height:100%;">
     </div>
@@ -9,6 +9,7 @@
 
 <script>
 import Layout from 'components/Layout'
+import * as common from 'base/util/common'
 
 export default {
   name: 'App',
@@ -18,11 +19,19 @@ export default {
   data () {
     return {
       publicPath: process.env.BASE_URL,
-      height: 0
+      height: 0,
+      show: true
     }
   },
   created () {
     this.height = window.innerHeight + 'px'
+    if (common.getBrowser() !== 'Chrome') {
+      alert('推荐使用谷歌浏览器, 下载地址: https://www.google.cn/chrome/')
+      this.show = false
+    } else {
+      this.show = true
+    }
+    
   }
 }
 </script>
