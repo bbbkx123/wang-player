@@ -273,7 +273,7 @@ export default {
             this.audio = this.$refs.audio
             if (src) this.audio = src
             this.audio.autoplay = false
-            this.audio.volume = 0
+            this.audio.volume = 0.3
             this.isPlay = 'icon-bofang'
         },
         handleSongListPush (song) {

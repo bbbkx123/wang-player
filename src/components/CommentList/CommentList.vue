@@ -1,19 +1,39 @@
 <template>
   <div class="comment-list">
-    <div >
-      <!--  -->
-      <div v-for="(hot, index) in comment.comments" :key="index" class="comment-item-container">
+    <div>
+      <div class="label">热门评论</div>
+      <div v-for="(hot, index) in comment.hotComments" :key="index" class="comment-item-container">
         <div class="avatar-container">
           <div class="avatar" :style="{backgroundImage: `url(${hot.user.avatarUrl}?param=35y35)`}"></div>
         </div>
         <div class="comment-item-main-container">
           <div class="comment">
             <span class="nickname">{{`${hot.user.nickname} : `}}</span>
-            {{ hot.content + hot.content}}
+            {{hot.content}}
           </div>
           <div class="other">
             <div class="time">{{format(hot.time)}}</div>
-            <div></div>
+            <div class="like">
+              <i class="iconfont icon-dianzan"></i>({{hot.likedCount}})
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="label">最新评论</div>
+      <div v-for="(comment, index) in comment.comments" :key="index" class="comment-item-container">
+        <div class="avatar-container">
+          <div class="avatar" :style="{backgroundImage: `url(${comment.user.avatarUrl}?param=35y35)`}"></div>
+        </div>
+        <div class="comment-item-main-container">
+          <div class="comment">
+            <span class="nickname">{{`${comment.user.nickname} : `}}</span>
+            {{comment.content}}
+          </div>
+          <div class="other">
+            <div class="time">{{format(comment.time)}}</div>
+            <div class="like">
+              <i class="iconfont icon-dianzan"></i>({{comment.likedCount}})
+            </div>
           </div>
         </div>
       </div>
@@ -98,6 +118,7 @@ export default {
       min-height: @commentItemMinHeight;
       box-sizing: border-box;
       border-top: 1px solid rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .7);
       .avatar-container {
         padding-top: @commentItemPaddingTop;
         .avatar {
@@ -111,7 +132,7 @@ export default {
         padding-top: @commentItemPaddingTop;
         width: calc(100% - @avatarSize);
         .comment {
-          line-height: 16px;
+          line-height: 20px;
           text-align: left;
           font-size: 13px;
           .nickname {
@@ -121,12 +142,23 @@ export default {
           }
         }
         .other {
+          padding: 5px 0;
           display: flex;
+          font-size: 14px;
           .time {
-            font-size: 14px;
+            width: 50%;
+            text-align: left;
+          }
+          .like {
+
           }
         }
       }
+    }
+    .label {
+      width: 100%;
+      padding: 10px 0;
+      text-align: left;
     }
   }
 </style>
