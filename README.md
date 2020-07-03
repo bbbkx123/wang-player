@@ -1,5 +1,7 @@
 # wang-player
 
+See [线上地址](http://106.13.207.132/)
+
 ## Project setup
 ```
 npm install
