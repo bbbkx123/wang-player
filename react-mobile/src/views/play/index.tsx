@@ -1,8 +1,13 @@
+import './index.less'
 
-const play = () => {
+const Play = () => {
   return (
-    <div>play</div>
+    <div className="play">
+      <div className="play--container">
+      play
+      </div>
+    </div>
   )
 }
 
-export default play
+export default Play

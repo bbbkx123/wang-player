@@ -1,14 +1,10 @@
-import React from "react";
-import { Button, WhiteSpace } from "antd-mobile";
+import Layouts from '@/layouts'
 
-import Play from '@/views/Play'
-
-const App = (props: any) => {
-
+const App = () => {
   return (
     <div>
-      <Button>default</Button><WhiteSpace />
-      <Play></Play>
+      App
+      <Layouts></Layouts>
     </div>
   )
 }

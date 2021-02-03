@@ -1,9 +1,11 @@
-import React from "react";
+import AppRoute from '@/router'
 
-const layouts = () => {
+const Layouts = () => {
   return (
-    <div>layouts</div>
+    <div>Layouts
+      <AppRoute></AppRoute>
+    </div>
   )
 }
 
-export default layouts
+export default Layouts

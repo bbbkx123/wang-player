@@ -1,0 +1,33 @@
+const {
+  override,
+  // antd-mobile按需引入 (配置babel-plugin-import)
+  fixBabelImports,
+  // 使用ES7的装饰器
+  addDecoratorsLegacy,
+  // 安装less和less-loader：npm i less less-loader --save-dev
+  addLessLoader,
+  // 添加别名
+  addWebpackAlias,
+} = require("customize-cra");
+const path = require("path");
+
+module.exports = override(
+  fixBabelImports("import", {
+    libraryName: "antd",
+    libraryDirectory: "es",
+    style: true,
+  }),
+
+  addWebpackAlias({
+    "@": path.resolve(__dirname, "./src")
+  }),
+
+  // addDecoratorsLegacy(),
+
+  addLessLoader({
+    javascriptEnabled: true,
+    modifyVars: {
+      '@primary-color': '#1DA57A'
+    }
+  })
+);
