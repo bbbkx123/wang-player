@@ -1,12 +1,15 @@
-import Layouts from '@/layouts'
+import { BrowserRouter as Router } from "react-router-dom";
+import Layouts from "@/layouts";
+import "./App.less";
 
 const App = () => {
   return (
-    <div>
-      App
-      <Layouts></Layouts>
+    <div className="app">
+      <Router>
+        <Layouts></Layouts>
+      </Router>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
