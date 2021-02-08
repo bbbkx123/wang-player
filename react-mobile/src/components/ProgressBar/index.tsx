@@ -10,6 +10,7 @@ const progressBarWidth = 16;
 const refelctTime = 0.1;
 
 const ProgressBar = (props: any) => {
+  debugger
   const { percent } = props;
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
@@ -20,7 +21,7 @@ const ProgressBar = (props: any) => {
     startX: 0,
   });
   const [progressClientWidth, setProgressClientWidth] = useState<number>(0);
-  const [barWidth, setBarWidth] = useState<number>(0);
+  const [barWidth, setBarWidth] = useState<number | null>(null);
 
   const progressClick = (e: any) => {
     // 解决mouseup和click重发触发的问题
@@ -58,7 +59,7 @@ const ProgressBar = (props: any) => {
     if (!touch.initiated) return;
     const deltaX = e.pageX - touch.startX;
     const offsetWidth = Math.min(
-      barWidth,
+      barWidth === null ? 0 : barWidth,
       Math.max(0, progressClientWidth + deltaX)
     );
     handleOffset(offsetWidth).then(() => {
@@ -91,10 +92,11 @@ const ProgressBar = (props: any) => {
   };
 
   const getPrecent = () => {
-    return progress.current.clientWidth / barWidth;
+    return progress.current.clientWidth / (barWidth === null ? 0 : barWidth);
   };
 
   useEffect(() => {
+    debugger
     setBarWidth(progressBar.current.clientWidth - progressBarWidth);
   }, []);
 
@@ -107,12 +109,15 @@ const ProgressBar = (props: any) => {
   // })
 
   useEffect(() => {
+    debugger
     // timeupdate事件触发
     if (percent > 0 && !touch.initiated && barWidth) {
       const offsetWidth = percent * barWidth;
       handleOffset(offsetWidth);
     }
   }, [percent]);
+
+ 
 
   return (
     <div
