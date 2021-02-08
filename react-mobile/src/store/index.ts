@@ -7,6 +7,7 @@ export const AppContext = createContext({});
 export const defaultState = {
   count: 0,
   startTime: 0,
+  EventEmitter: new EventEmitter()
 }
 
 export const reducer = (state: any, action: any) => {

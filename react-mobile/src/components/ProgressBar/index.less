@@ -1,1 +1,45 @@
 
+ .progress-bar__container {
+  display: block;
+  width: 100%;// 14px是block-current直径
+  height: 50px;
+  background-color: black;
+  .progress-bar {
+    position: relative;
+    width: calc(~"100% - 16px");
+    height: 100%;
+    .progress-bar__background, .progress-bar--progress {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 5px;
+      // background-color: rgba(255, 255, 255, 0.2);
+    }
+    .progress-bar__background {
+      z-index: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .progress-bar--progress {
+      transition: all .17s linear;
+      z-index: 10;
+      background-color: rgb(184, 37, 37);
+    }
+    .progress-bar--btn__wrapper {
+      position: absolute;
+      top: 16px;
+      transition: all .2s linear;
+      z-index: 10;
+      width: 30px;
+      height: 30px;
+      .progress-bar--btn {
+        position: relative;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: #fff;
+      }
+    }
+  }
+} 
