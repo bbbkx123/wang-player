@@ -1,5 +1,6 @@
 <template>
     <div style="position:relative;">
+        
         <div class="player">
             <div class="button-group-wrapper">
                 <div class="prev button-wrapper" @click="prevBtnClick">
@@ -44,6 +45,7 @@
             </div>
             <audio ref="audio" @ended="onEnded" @timeupdate="_onTimeUpdate" @canplay="onCanPlay" :loop="loop"></audio>
         </div>
+        
         <div v-if="playListShow" class="mini-playlist-container">
             <div class="mask"  @click="close"></div>
             <div class="mini-playlist">
@@ -71,9 +73,11 @@
 </template>
 
 <script>
-import * as common from '../../base/util/common'
+import axios from 'axios'
+
+import * as common from 'util/common'
 import * as api from 'api'
-import EventBus from '../../base/util/EventBus'
+import EventBus from '../../util/EventBus'
 
 export default {
     name: 'player',
@@ -123,8 +127,8 @@ export default {
             if (newValue !== oldValue) {
                 let song = this.playlist[newValue]
                 this.pic_src = `${song.picture}?param=50y50`
-                this.$axios.all([this.getLyric(song.songid), this.getSongUrl(song.songid)])
-                .then(this.$axios.spread((resLyric, resSongUrl) => {
+                axios.all([this.getLyric(song.songid), this.getSongUrl(song.songid)])
+                .then(axios.spread((resLyric, resSongUrl) => {
                     if (resLyric.data.code === 200) {
                         this.$store.commit('SET_LYRIC', resLyric.data)
                     } 

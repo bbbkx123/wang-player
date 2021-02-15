@@ -2,7 +2,7 @@
   <div class="comment-list">
     <div>
       <div class="label">热门评论</div>
-      <div v-for="(hot, index) in comment.hotComments" :key="index" class="comment-item-container">
+      <div v-for="(hot, index) in comment.hotComments" :key="'comment-list-' + index" class="comment-item-container">
         <div class="avatar-container">
           <div class="avatar" :style="{backgroundImage: `url(${hot.user.avatarUrl}?param=35y35)`}"></div>
         </div>
@@ -47,8 +47,8 @@
 
 <script>
 import * as api from 'api'
-import * as common from 'base/util/common'
-import EventBus from 'base/util/EventBus'
+import * as common from 'util/common'
+import EventBus from 'util/EventBus'
 
 const LIMIT = 20
 export default {

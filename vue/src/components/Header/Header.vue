@@ -31,9 +31,11 @@ export default {
 	},
 	methods: {
 		toHomePage () {
-			if (this.$route.path.indexOf('/Main/Home') < 0) {
-				this.$router.push({name: 'Home'})
-			}
+			// if (this.$route.path.indexOf('/Main/Home') < 0) {
+				this.$store.commit('SET_OPENPLAYPAGE', false)
+				
+				// this.$router.push({name: 'Home'})
+			// }
 		},
 		search () {
 			if (this.$route.path.indexOf('/Main/Search') < 0) {

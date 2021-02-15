@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import * as common from 'base/util/common'
-import EventBus from 'base/util/EventBus'
+import * as common from 'util/common'
+import EventBus from 'util/EventBus'
 export default {
   props: {
     listType: {

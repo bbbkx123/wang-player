@@ -5,13 +5,18 @@
 			<router-view style="width: 100%;"></router-view>
 			<player ref="player" class="layout-player"></player>
             <LoadingView class="loading-view"></LoadingView>
+            <transition name="normal">
+                <div v-if="openPlayPage" class="play-page">
+                    <PlayPage  ></PlayPage>
+                </div>
+                
+            </transition>
 		</div>
-        
 	</div>
 </template>
 
 <script>
-import EventBus from 'base/util/EventBus'
+import EventBus from 'util/EventBus'
 
 export default {
     name: 'layout',
@@ -25,6 +30,12 @@ export default {
             EventBus.$emit('play-list-blur')
         }
     },
+    computed: {
+        openPlayPage () {
+            console.log(this.$store.getters.openPlayPage);
+            return this.$store.getters.openPlayPage
+        },
+    },
     created () {
         // this.height = window.innerHeight + 'px'
         if (this.$route.path.indexOf('/Main/Home') < 0) {
@@ -37,6 +48,9 @@ export default {
 <style lang="less">
 @playerWidth: 1200px;
 @playerHeight: 100%;
+
+
+
 .layout {
     position: relative;
     display: flex;
@@ -61,6 +75,26 @@ export default {
             z-index: 10;
             width: @playerWidth;
             height: @playerHeight;
+        }
+        .play-page {
+            position: absolute;
+            bottom: 50px;
+            width: 1200px;
+            height: 650px;
+            background-color: white;
+            &.normal-enter-active, &.normal-leave-active {
+                // 防止打开/关闭时y轴滚动条引起的左右抖动
+                overflow: hidden; 
+                // 保证打开/关闭的方向
+                bottom: 50px;
+                left: 0;
+                transition: all .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            }
+
+            &.normal-enter, &.normal-leave-to {
+                width: 0;
+                height: 0;
+            }
         }
     }
 }

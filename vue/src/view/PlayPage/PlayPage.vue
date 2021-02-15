@@ -38,14 +38,13 @@
         </div>
       </div>
     </div>
-    <div class="comment-container">
+    <div v-if="song" class="comment-container">
       <CommentList></CommentList>
     </div>
-  </div>  
+  </div>
 </template>
 <script>
-import EventBus from '../../base/util/EventBus'
-// import * as common from '../../../base/util/common'
+import EventBus from '../../util/EventBus'
 
 const LYRIC_VIEW = 400
 const INITIAL_TOP = 100
@@ -241,20 +240,22 @@ export default {
 
 <style lang="less">
 @import '../../base/css/common.less';
+  
+
   .song-page-container {
-    position: relative;
     overflow-x: hidden;
     overflow-y: scroll;
     width: 100%;
     height: 650px;
-    // background-color: rgba(25, 27, 31);
-    background-color: @main-background-color;
+    background-color: rgba(25, 27, 31);
+    
     color: #ffffff;
     /* 图片透明 */
     /* filter: opacity(50%); */
     .song-page-backgorund {
-      position: absolute;
-      filter: blur(2px);
+      // background-color: red;
+      // position: absolute;
+      // filter: blur(2px);
     }
     .player-main {
       display: flex;

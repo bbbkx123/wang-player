@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import * as common from '../../base/util/common'
+import * as common from 'util/common'
 // 进度条按钮宽度
 const progressBarWidth = 16
 // mousedown到mopuseup间隔时间, 用于区分click和mouseup, 超过150ms为mouse事件, 否则为click事件

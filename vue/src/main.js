@@ -3,19 +3,15 @@ import App from './App.vue'
 import router from './router'
 import components from './components'
 import store from './store'
-import conf from './config.js'
-import axios from 'axios'
+// import axios from 'util/http'
+
 import './assets/fonts/iconfont.css'
 import './base/css/reset.css'
 
-axios.defaults.baseURL = conf.baseURL
-// 跨域请求 需要打开, 否则 可能会因为没带上 cookie 导致 301
-axios.defaults.withCredentials = true
 Vue.config.productionTip = false
-
 Vue.use(components)
 
-Vue.prototype.$axios = axios
+// Vue.prototype.$axios = axios
 
 new Vue({
   render: h => h(App),

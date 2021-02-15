@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../util/http'
 
 /**
  * 获取喜欢音乐列表
@@ -103,3 +103,4 @@ export const getPlayListCatList = () => axios.get('/playlist/catlist')
  * 
  */
 export const getMusicComment = (id, limit, offset, before) => axios.get('/comment/music', {params: {id, limit, offset, before}})
+

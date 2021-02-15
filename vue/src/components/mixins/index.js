@@ -1,5 +1,5 @@
 import * as api from 'api'
-import * as common from '../../base/util/common'
+import * as common from 'util/common'
 
 export default {
 	methods: {

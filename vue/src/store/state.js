@@ -14,7 +14,8 @@ const state = {
   loopType: 'shunxubofang',
   loopPlayList: [],
   // 用于记录当前播放歌曲, 避免列表影响(随机模式)
-  currentSong: null
+  currentSong: null,
+  openPlayPage: false
 }
 
 export default state

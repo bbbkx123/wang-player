@@ -19,3 +19,5 @@ export const loopType = state => state.loopType
 export const loopPlayList = state => state.loopPlayList
 
 export const currentSong = state => state.currentSong
+
+export const openPlayPage = state => state.openPlayPage

@@ -5,7 +5,7 @@ import Main from 'components/Main'
 import Home from 'view/Home'
 import RecommendOfDaily from 'view/RecommendOfDaily'
 import FavouriteList from 'view/FavouriteList'
-import PlayPage from 'view/PlayPage'
+// import PlayPage from 'view/PlayPage'
 import ListDetails from 'view/ListDetails'
 import Search from 'view/Search'
 import OtherList from 'view/OtherList'
@@ -51,10 +51,11 @@ export default new Router({
           component: OtherList
         }
       ]
-    }, {
-      path: '/PlayPage',
-      name: 'PlayPage',
-      component: PlayPage
     }
+    // , {
+    //   path: '/PlayPage',
+    //   name: 'PlayPage',
+    //   component: PlayPage
+    // }
   ]
 })

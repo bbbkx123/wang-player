@@ -36,8 +36,7 @@
 
 <script>
 // import {tabs, listHeader} from './data'
-// import * as common from 'base/util/common'
-import EventBus from 'base/util/EventBus'
+import EventBus from 'util/EventBus'
 
 export default {
     name: 'PageList',

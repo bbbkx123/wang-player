@@ -17,8 +17,8 @@
 
 <script>
 import * as api from 'api'
-import * as common from 'base/util/common'
-import EventBus from 'base/util/EventBus'
+import * as common from 'util/common'
+import EventBus from 'util/EventBus'
 
 const LIMIT = 50
 export default {

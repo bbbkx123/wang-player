@@ -10,5 +10,6 @@ module.exports = {
       .set('api', resolve('src/api'))
       .set('view', resolve('src/view'))
       .set('base', resolve('src/base'))
+      .set('util', resolve('src/util'))
   }
 }

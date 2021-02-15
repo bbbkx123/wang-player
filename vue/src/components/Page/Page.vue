@@ -15,7 +15,7 @@
 
 <script>
 const OFFSET = 2
-import EventBus from 'base/util/EventBus'
+import EventBus from 'util/EventBus'
 export default {
   props: {
     number: {

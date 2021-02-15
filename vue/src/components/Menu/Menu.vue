@@ -39,13 +39,13 @@
                 </li>
             </ul>
         </div>
-        <div class="mini-detail-container" @click="goToSongDetails">
+        <div class="mini-detail-container" @click="goToSongDetails" v-show="showMini">
             <div class="poster" >
                 <img v-if="song" :src="song.picture + '?param=50y50'" alt="">
             </div>
             <div class="info">
                 <div style="height:100%; display:flex; justify-content: center; flex-direction: column; margin-left: 10px;">
-                    <div v-if="song" class="info-title" style="margin-bottom: 10px;">{{song.title}}</div>
+                    <div v-if="song" class="info-title" style="margin-bottom: 10px;">{{showMini + song.title}}</div>
                     <div v-if="song" class="info-singer">{{song.singer}}</div>
                 </div>
             </div>
@@ -85,12 +85,19 @@ export default {
             //     return null
             // }
             return this.$store.getters.currentSong
+        },
+        showMini () {
+            return !this.$store.getters.openPlayPage
         }
     },
     methods: {
         goToSongDetails () {
             if (!this.$store.getters.currentTime) return 
-            this.$router.push({name: 'PlayPage'})
+            this.$store.commit('SET_OPENPLAYPAGE', true)
+            console.log(212121);
+            // this.$router.push({name: 'PlayPage1111'})
+            
+            
         },
         clickMenuItem (itemData, lliIndex, uIndex) {
             if (!itemData) return

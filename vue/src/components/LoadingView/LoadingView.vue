@@ -7,7 +7,7 @@
 
 <script>
 import loading from './loading'
-import EventBus from '../../base/util/EventBus'
+import EventBus from '../../util/EventBus'
 
 export default {
   components: {

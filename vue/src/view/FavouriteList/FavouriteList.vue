@@ -6,7 +6,7 @@
 
 <script>
 import mixins from 'components/mixins'
-import EventBus from 'base/util/EventBus'
+import EventBus from 'util/EventBus'
 
 export default {
     mixins: [mixins],

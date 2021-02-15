@@ -4,16 +4,21 @@
       <img :src="`${publicPath}background-image/p1.jpg`" style="width:100%;height:100%;">
     </div>
    <Layout></Layout>
+    <!-- <test></test> -->
+
   </div>
 </template>
 
 <script>
 import Layout from 'components/Layout'
-import * as common from 'base/util/common'
+import * as common from 'util/common'
+
+// import test from './components/test/test'
 
 export default {
   name: 'App',
   components: {
+    // test
     Layout
   },
   data () {

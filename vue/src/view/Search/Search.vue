@@ -17,10 +17,10 @@
 
 <script>
 const LIMIT = 20
-// import * as common from 'base/util/common'
+
 import * as api from 'api'
 import mixins from 'components/mixins'
-import EventBus from 'base/util/EventBus'
+import EventBus from 'util/EventBus'
 export default {
   mixins: [mixins],
   data () {

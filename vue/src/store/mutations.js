@@ -33,6 +33,9 @@ const mutations = {
   },
   [types.SET_CURRENTSONG] (state, currentSong) {
     state.currentSong = currentSong
+  },
+  [types.SET_OPENPLAYPAGE] (state, openPlayPage) {
+    state.openPlayPage = openPlayPage
   }
 }
 

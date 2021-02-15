@@ -3,23 +3,31 @@
 		<div class="main-container">
 			<div class="banner-container">
 				<!-- @mouseenter="handleBannerStopScroll" @mouseleave="handleBannerAutoScroll" -->
-				<div v-if="bannerArr.length >= 3" @mouseenter="handleBannerStopScroll" @mouseleave="handleBannerAutoScroll" class="banner">
-					<div v-for="(banner, bIndex) in bannerArr" :key="bIndex" class="banner-item" @click="() => clickBanner(banner)"
-						:class="{ prev: bannerActions[bIndex].prev, current: bannerActions[bIndex].current , next: bannerActions[bIndex].next}">
-						<img v-if="banner" :src="`${banner.imageUrl}?param=540y${bannerActions[bIndex].current ? 200 : 190}`" alt="">
-					</div>
+				<!-- <div v-if="bannerArr.length >= 3" @mouseenter="handleBannerStopScroll" @mouseleave="handleBannerAutoScroll" class="banner">
+					<transition-group name="bar" tag="p">
+						<div v-for="(banner, bIndex) in bannerArr" :key="'bar' + bIndex" class="banner-item" @click="() => clickBanner(banner)"
+							:class="{ prev: bannerActions[bIndex].prev, current: bannerActions[bIndex].current , next: bannerActions[bIndex].next}">
+							<img v-if="banner" :src="`${banner.imageUrl}?param=540y${bannerActions[bIndex].current ? 200 : 190}`" alt="">
+						</div>
+					</transition-group>
 					<div class="banner-btn prev" @click="handleBannerScrollForPrevBtn">
 						<span style="font-size:24px;" class="iconfont icon-shangyige"></span>
 					</div>
 					<div class="banner-btn next" @click="handleBannerScrollForNextBtn">
 						<span style="font-size:24px;" class="iconfont icon-xiayige"></span>
 					</div>
-				</div>
-				<div class="tab-container">
-					<!-- @mouseleave="handleBannerAutoScroll" -->
+				</div> -->
+				<Slider>
+					<!-- @click="() => clickBanner(banner)" -->
+					<!-- :class="{ prev: bannerActions[bIndex].prev, current: bannerActions[bIndex].current , next: bannerActions[bIndex].next}" -->
+					<div v-for="(banner, bIndex) in bannerArr" :key="'bar' + bIndex">
+						<img v-if="banner" :src="`${banner.imageUrl}?param=540y${bannerActions[bIndex].current ? 200 : 190}`" alt="">
+					</div>
+				</Slider>
+				<!-- <div class="tab-container">
 					<span v-for="(banner, bIndex) in bannerArr" :key="bIndex" class="tab-item" :class="{'active': bIndex === currentIndexOfBanner}"
 					@mouseenter="() => touchTabItem(bIndex)" @mouseleave="handleBannerAutoScroll"></span>
-				</div>
+				</div> -->
 			</div>
 			<div class="recommend-container">
 				<div class="title">
@@ -38,11 +46,16 @@
 
 <script>
 import * as api from 'api'
-import EventBus from 'base/util/EventBus'
-import * as common from 'base/util/common'
+import EventBus from 'util/EventBus'
+import * as common from 'util/common'
+
+import Slider from 'base/slider'
 
 export default {
-  name: "Home",
+	name: "Home",
+	components: {
+		Slider
+	},
   data() {
     return {
 			data: [],
@@ -171,75 +184,79 @@ export default {
 </script>
 
 <style lang="less">
+
 .main-container {
 	padding-left: 30px;
 	padding-right: 30px; 
 	.banner-container {
+		display: flex;
+		justify-content: center;
 		padding-top: 20px;
 		margin-bottom: 10px;
-		.banner {
-			position: relative;
-			width: 100%;
-			height: 200px;
-			.banner-btn {
-				position: absolute;
-				top: 50%;
-				transform: translateY(-50%);
-				color: rgba(255, 255, 255, 0.5);
-				&.prev {
-					left: 0;
-				}
-				&.next {
-					right: 0;
-				}
-			}
-			.banner-item {
-				position: absolute;
-				display: none;
-				transition: all linear .15s;
-				box-sizing: border-box;
-				&.prev {
-					display: block;
-					left: 0;
-					padding-top: 10px;
-					height: 190px;
-					filter: blur(2px);
-				}
-				&.current {
-					display: block;
-					left: 50%;
-					padding-top: 1px;
-					transform: translateX(-50%);
-					z-index: 10;
-				}
-				&.next {
-					display: block;
-					right: 0;
-					padding-top: 10px;
-					height: 190px;
-					filter: blur(2px);
-				}
-			}
-		}
-		.tab-container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin-top: 10px; 
-			width: 100%;
-			height: 10px;
-			box-sizing: border-box;
-			.tab-item {
-				margin-right: 4px;
-				box-sizing: border-box;
-				width: 20px;
-				height: 2px;
-				background-color: rgba(255, 255, 255, 0.2);
-				&.active {
-					background-color: rgba(255, 255, 255, 0.7)
-				}
-			}
-		}
+		// .banner {
+		// 	position: relative;
+		// 	width: 100%;
+		// 	height: 200px;
+		// 	.banner-btn {
+		// 		position: absolute;
+		// 		top: 50%;
+		// 		transform: translateY(-50%);
+		// 		color: rgba(255, 255, 255, 0.5);
+		// 		&.prev {
+		// 			left: 0;
+		// 		}
+		// 		&.next {
+		// 			right: 0;
+		// 		}
+		// 	}
+			// .banner-item {
+			// 	position: absolute;
+			// 	display: none;
+			// 	transition: all linear .15s;
+			// 	box-sizing: border-box;
+			// 	&.prev {
+			// 		display: block;
+			// 		left: 0;
+			// 		padding-top: 10px;
+			// 		height: 190px;
+			// 		filter: blur(2px);
+			// 	}
+			// 	&.current {
+			// 		display: block;
+			// 		left: 50%;
+			// 		padding-top: 1px;
+			// 		transform: translateX(-50%);
+			// 		z-index: 10;
+			// 	}
+			// 	&.next {
+			// 		display: block;
+			// 		right: 0;
+			// 		padding-top: 10px;
+			// 		height: 190px;
+			// 		filter: blur(2px);
+			// 	}
+				
+			// }
+		// }
+		// .tab-container {
+		// 	display: flex;
+		// 	justify-content: center;
+		// 	align-items: center;
+		// 	margin-top: 10px; 
+		// 	width: 100%;
+		// 	height: 10px;
+		// 	box-sizing: border-box;
+		// 	.tab-item {
+		// 		margin-right: 4px;
+		// 		box-sizing: border-box;
+		// 		width: 20px;
+		// 		height: 2px;
+		// 		background-color: rgba(255, 255, 255, 0.2);
+		// 		&.active {
+		// 			background-color: rgba(255, 255, 255, 0.7)
+		// 		}
+		// 	}
+		// }
 	}
 	.recommend-container {
 		.title {
