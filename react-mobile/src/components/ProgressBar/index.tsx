@@ -9,8 +9,10 @@ const progressBarWidth = 16;
 // mousedown到mopuseup间隔时间, 用于区分click和mouseup, 超过150ms为mouse事件, 否则为click事件
 const refelctTime = 0.1;
 
+// ! 问题: 全面屏手势滑动会进行翻页, 导致touchmove不能正确调用
+// ? 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
+
 const ProgressBar = (props: any) => {
-  debugger
   const { percent } = props;
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
@@ -29,26 +31,31 @@ const ProgressBar = (props: any) => {
     if (diff > refelctTime) return;
     // .getBoundingClientRect()
     const rect = progressBar.current.getBoundingClientRect();
-    const offsetWidth = e.pageX - rect.left;
-    handleOffset(offsetWidth).then(() => {
-      EventEmitter.emit("progress-change", getPrecent());
-    });
+    const offsetWidth = e.touches[0].clientX - rect.left;
+    handleOffset(offsetWidth)
+    EventEmitter.emit("progress-change", getPrecent());
   };
+
+  // const handleOffset = (offsetWidth: any) => {
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       progress.current.style.width = `${offsetWidth}px`;
+  //       progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`;
+  //       resolve(true)
+  //     } catch (err) {
+  //       reject(err);
+  //     }
+  //     // 保证获取更新后的dom
+  //     // this.$nextTick(() => resolve())
+  //   });
+  // };
 
   const handleOffset = (offsetWidth: any) => {
-    return new Promise((resolve, reject) => {
-      try {
-        progress.current.style.width = `${offsetWidth}px`;
-        progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`;
-      } catch (err) {
-        reject(err);
-      }
-      // 保证获取更新后的dom
-      // this.$nextTick(() => resolve())
-    });
+    progress.current.style.width = `${offsetWidth}px`;
+    progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`;
   };
 
-  const progressMouseMove = (e: any) => {
+  const progressTouchMove = (e: any) => {
     // ?   Math.max(0, this.progressClientWidth + deltaX) -->  0  移动超出左边界
     // ?   Math.max(0, this.progressClientWidth + deltaX) -->  delta  正常移动
     // ?
@@ -56,31 +63,32 @@ const ProgressBar = (props: any) => {
     // ?   b = Math.max(0, this.progressClientWidth + deltaX)
     // ?   Math.min(a, b)  -->  a 超出右边界
     // ?   Math.min(a, b)  -->  b 正常移动
+
     if (!touch.initiated) return;
-    const deltaX = e.pageX - touch.startX;
+    const deltaX = e.touches[0].clientX - touch.startX;
     const offsetWidth = Math.min(
       barWidth === null ? 0 : barWidth,
       Math.max(0, progressClientWidth + deltaX)
     );
-    handleOffset(offsetWidth).then(() => {
-      EventEmitter.emit("progress-changing", getPrecent());
-    });
+    handleOffset(offsetWidth)
+    EventEmitter.emit("progress-changing", getPrecent());
   };
 
-  const progressMouseStart = (e: any) => {
+  const progressTouchStart = (e: any) => {
     setTouch({
       initiated: true,
-      startX: e.pageX,
+      startX: e.touches[0].clientX,
     });
     setProgressClientWidth(progress.current.clientWidth);
     dispatch({ type: "startTime", value: new Date().getTime() });
   };
 
-  const _progressMouseMove = (e: any) => {
-    throttle(progressMouseMove, 200, 0)([e]);
+  const _progressTouchMove = (e: any) => {
+    throttle(progressTouchMove, 200, 0)([e]);
+    // progressTouchMove(e)
   };
 
-  const progressMouseEnd = () => {
+  const progressTouchEnd = () => {
     // 出现问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
@@ -96,7 +104,6 @@ const ProgressBar = (props: any) => {
   };
 
   useEffect(() => {
-    debugger
     setBarWidth(progressBar.current.clientWidth - progressBarWidth);
   }, []);
 
@@ -109,15 +116,12 @@ const ProgressBar = (props: any) => {
   // })
 
   useEffect(() => {
-    debugger
     // timeupdate事件触发
     if (percent > 0 && !touch.initiated && barWidth) {
       const offsetWidth = percent * barWidth;
       handleOffset(offsetWidth);
     }
   }, [percent]);
-
- 
 
   return (
     <div
@@ -127,9 +131,9 @@ const ProgressBar = (props: any) => {
     >
       <div
         className="progress-bar"
-        onMouseDown={progressMouseStart}
-        onMouseMove={_progressMouseMove}
-        onMouseUp={progressMouseEnd}
+        onTouchStart={progressTouchStart}
+        onTouchMove={_progressTouchMove}
+        onTouchEnd={progressTouchEnd}
       >
         <div className="progress-bar__background"></div>
         {/* 进度条 */}
