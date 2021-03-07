@@ -2,13 +2,15 @@ import {useState, useEffect, useContext, useRef} from 'react'
 
 import ProgressBar from '@/components/ProgressBar'
 import {AppContext} from '@/store'
-import { throttle } from "@/utils/tools";
+import { throttle } from '@/utils/tools';
+import {fetchPlayListDetail, fetchSongsDetail, fetchSongUrl} from '@/service/index'
+import {useWatch} from '@/utils/hook'
 
 import './index.less'
 
 const Player = () => {
   const audio = useRef<any>()
-  const {count, dispatch, EventEmitter} = useContext<any>(AppContext)
+  const {count, playListDetail, dispatch, EventEmitter} = useContext<any>(AppContext)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [percent, setPercent] = useState<number>(0)
   const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false)
@@ -61,10 +63,51 @@ const Player = () => {
     if (src) setAudioSrc(src)
     setTimeout(() => {
       setAutoPlay(true)
-      audio.current.volume = 0.1
-      audio.current.volume = 0.1
+      audio.current.volume = 0.5
     }, 0)
     // this.isPlay = 'icon-bofang'
+  }
+
+  const getPlayListDetail = () => {
+    return fetchPlayListDetail('129219563').then((res: any) => {
+      const { coverImgUrl, name, trackIds, tracks } = res.data.playlist
+      const { avatarUrl, nickname } = res.data.playlist.creator
+      const listData = trackIds.map((item: any) => item.id)
+      const playListDetail = {
+        avatarUrl,
+        nickname,
+        name,
+        coverImgUrl,
+        listData
+      }
+      return Promise.resolve(playListDetail)
+      
+    }).then((res) => {
+      let ids = res.listData.splice(0, 10).reduce((prev: any, cur: any) => prev + cur + ',', '')
+      ids = ids.substring(0, ids.length - 1)
+      let idArr = ids.split(',')
+      return fetchSongsDetail(ids).then((res1) => {
+        let _listData = res1.data.songs.map((item: any, index: number) => {
+          return {
+            name: item.name,
+            artist: item.ar,
+            album: item.al,
+            sid: idArr[index]
+          }
+        })
+
+        dispatch({type: 'playListDetail', value: {
+          ...res,
+          listData: _listData
+        }})
+      })
+    })
+  }
+
+  const getSongUrl = (sid: string) => {
+    return fetchSongUrl(sid).then((res) => {
+      return Promise.resolve(res.data.data[0].url)
+    })
   }
 
   useEffect(() => {
@@ -92,16 +135,18 @@ const Player = () => {
   }, [])
 
   // 初始audio实例
+  // 1. 通过audio.current.src直接设置无效, 在标签中设置src可以生效 src={xxx}
+  // 2. chrome66以及更高的版本不允许媒体自动播放, 76前可以通过设置  chrome://flags/#autoplay-policy 设置 autoplay-policy 为  “No user gesture is required” 
+  //  77需要通过查看网站信息 设置允许声音
   useEffect(() => {
-    init('./data/Laco-NEXUS.mp3')
-    setTimeout(() => {
-      // 1. 通过audio.current.src直接设置无效, 在标签中设置src可以生效 src={xxx}
-      // 2. chrome66以及更高的版本不允许媒体自动播放, 76前可以通过设置  chrome://flags/#autoplay-policy 设置 autoplay-policy 为  “No user gesture is required” 
-      //  77需要通过查看网站信息 设置允许声音
-      
-      
-    }, 3000)
+    getPlayListDetail()
   }, [])
+
+
+  useWatch(playListDetail, (prev) => {
+    // debugger
+    getSongUrl(playListDetail.listData[0].sid).then((url) => init(url))
+  })
 
   // useEffect(() => {
   //   for (let i = 0 ; i < 10; i++) {
