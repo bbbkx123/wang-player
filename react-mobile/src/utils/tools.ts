@@ -28,36 +28,12 @@ export function throttle (fn: any, wait: any, type: any) {
   }
 }
 
-// https://juejin.cn/post/6844904078653276167#comment
-type Callback<T> = (prev: T | undefined) => void;
-type Config = {
-  immediate: boolean;
-};
-
-export function useWatch<T>(dep: T, callback: Callback<T>, config: Config = { immediate: false }) {
-  const { immediate } = config;
-
-  const prev = useRef<T>();
-  const inited = useRef(false);
-  const stop = useRef(false);
-
-  useEffect(() => {
-    const execute = () => callback(prev.current);
-
-    if (!stop.current) {
-      if (!inited.current) {
-        inited.current = true;
-        if (immediate) {
-          execute();
-        }
-      } else {
-        execute();
-      }
-      prev.current = dep;
-    }
-  }, [dep]);
-
-  return () => {
-    stop.current = true;
-  };
+// 时间格式化
+export const formatForPlayTime = (time: any) => {
+  if (time === null || typeof time === 'undefined') return
+  if (time === 0) return '00:00'
+  time = parseFloat(time)
+  if (typeof time !== 'number') return 
+  let _format = (time: any) => time >= 10 ? time : `0${time}`
+  return _format(Math.floor(time / 60)) + ':' + _format((time % 60).toFixed(0))
 }

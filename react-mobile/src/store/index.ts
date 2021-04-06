@@ -10,6 +10,7 @@ export const defaultState = {
   count: 0,
   startTime: 0,
   playListDetail: null,
+  currentSongIndex: null,
 }
 
 export const reducer = (state: any, action: any) => {
@@ -20,6 +21,8 @@ export const reducer = (state: any, action: any) => {
     return Object.assign({}, state, {startTime: value})
   } else if (type === 'playListDetail') {
     return Object.assign({}, state, {playListDetail: value})
+  }  else if (type === 'currentSongIndex') {
+    return Object.assign({}, state, {currentSongIndex: value})
   }
 
   return state

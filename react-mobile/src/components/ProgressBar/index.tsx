@@ -1,8 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "@/store";
-import { throttle, useWatch } from "@/utils/tools";
-import './index.less'
+import { throttle } from "@/utils/tools";
+// import {useWatch} from '@/utils/hook'
+import "./index.less";
 
 // 进度条按钮宽度
 const progressBarWidth = 16;
@@ -32,7 +33,7 @@ const ProgressBar = (props: any) => {
     // .getBoundingClientRect()
     const rect = progressBar.current.getBoundingClientRect();
     const offsetWidth = e.touches[0].clientX - rect.left;
-    handleOffset(offsetWidth)
+    handleOffset(offsetWidth);
     EventEmitter.emit("progress-change", getPrecent());
   };
 
@@ -70,7 +71,7 @@ const ProgressBar = (props: any) => {
       barWidth === null ? 0 : barWidth,
       Math.max(0, progressClientWidth + deltaX)
     );
-    handleOffset(offsetWidth)
+    handleOffset(offsetWidth);
     EventEmitter.emit("progress-changing", getPrecent());
   };
 
