@@ -5,7 +5,7 @@ import { NavBar, Icon } from "antd-mobile";
 
 import { reducer, AppContext, defaultState } from "@/store";
 
-import Play from "@/views/play";
+import PlayPage from "@/views/PlayPage";
 import Recommend from "@/views/recommend";
 import "./index.less";
 
@@ -33,7 +33,7 @@ const Layouts = (props: any) => {
         >
           {pageTitle}
         </NavBar>
-        <Route path="/play" component={Play}></Route>
+        <Route path="/play" component={PlayPage}></Route>
         <Route path="/recommend" component={Recommend}></Route>
       </div>
     </AppContext.Provider>

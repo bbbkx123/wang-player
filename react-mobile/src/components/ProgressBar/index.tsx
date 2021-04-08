@@ -72,6 +72,8 @@ const ProgressBar = (props: any) => {
       Math.max(0, progressClientWidth + deltaX)
     );
     handleOffset(offsetWidth);
+    console.log(11111111111111111111111111);
+    
     EventEmitter.emit("progress-changing", getPrecent());
   };
 
