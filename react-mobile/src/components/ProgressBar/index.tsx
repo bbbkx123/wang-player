@@ -103,7 +103,8 @@ const ProgressBar = (props: any) => {
   };
 
   const getPrecent = () => {
-    return progress.current.clientWidth / (barWidth === null ? 0 : barWidth);
+    let num = progress.current.clientWidth / (barWidth === null ? 0 : barWidth)
+    return num.toFixed(4);
   };
 
   useEffect(() => {

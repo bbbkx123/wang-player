@@ -12,7 +12,7 @@ export const defaultState = {
   playListDetail: null,
   currentSongIndex: null,
   playState: false,
-  currentTime: null,
+  // currentTime: null,
   duration: null,
   volume: null,
 }
@@ -29,13 +29,16 @@ export const reducer = (state: any, action: any) => {
     return Object.assign({}, state, {currentSongIndex: value})
   } else if (type === 'playState') {
     return Object.assign({}, state, {playState: value})
-  } else if (type === 'currentTime') {
-    return Object.assign({}, state, {currentTime: value})
   } else if (type === 'duration') {
     return Object.assign({}, state, {duration: value})
   } else if (type === 'volume') {
     return Object.assign({}, state, {volume: value})
   }
+
+
+  // else if (type === 'currentTime') {
+  //   return Object.assign({}, state, {currentTime: value})
+  // }
 
   return state
 }

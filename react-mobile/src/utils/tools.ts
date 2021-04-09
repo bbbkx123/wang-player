@@ -37,3 +37,26 @@ export const formatForPlayTime = (time: any) => {
   let _format = (time: any) => time >= 10 ? time : `0${time}`
   return _format(Math.floor(time / 60)) + ':' + _format((time % 60).toFixed(0))
 }
+
+
+export const formatForPlayListDetail = (data: any) => {
+  const { coverImgUrl, name, trackIds, tracks } = data.data.playlist;
+  const { avatarUrl, nickname } = data.data.playlist.creator;
+  const listData = trackIds.map((item: any) => item.id);
+  return {
+    avatarUrl,
+    nickname,
+    name,
+    coverImgUrl,
+    listData,
+  };
+}
+
+export const formatForSong = (song: any, songId: any) => {
+  return {
+    name: song.name,
+    artist: song.ar,
+    album: song.al,
+    sid: songId,
+  };
+}
