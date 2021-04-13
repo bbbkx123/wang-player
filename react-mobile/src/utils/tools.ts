@@ -32,10 +32,10 @@ export function throttle (fn: any, wait: any, type: any) {
 export const formatForPlayTime = (time: any) => {
   if (time === null || typeof time === 'undefined') return
   if (time === 0) return '00:00'
-  time = parseFloat(time)
-  if (typeof time !== 'number') return 
-  let _format = (time: any) => time >= 10 ? time : `0${time}`
-  return _format(Math.floor(time / 60)) + ':' + _format((time % 60).toFixed(0))
+  let _time = parseFloat(time)
+  if (typeof _time !== 'number') return 
+  let _format = (_time: any) => _time >= 10 ? _time : `0${_time}`
+  return _format(Math.floor(_time / 60)) + ':' + _format((_time % 60).toFixed(0))
 }
 
 

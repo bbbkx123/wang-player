@@ -14,7 +14,7 @@ const refelctTime = 0.1;
 // ? 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
 
 const ProgressBar = (props: any) => {
-  const { percent } = props;
+  const { percent, progressWidth } = props;
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null);
@@ -72,8 +72,7 @@ const ProgressBar = (props: any) => {
       Math.max(0, progressClientWidth + deltaX)
     );
     handleOffset(offsetWidth);
-    console.log(11111111111111111111111111);
-    
+    // debugger
     EventEmitter.emit("progress-changing", getPrecent());
   };
 
@@ -108,7 +107,9 @@ const ProgressBar = (props: any) => {
   };
 
   useEffect(() => {
-    setBarWidth(progressBar.current.clientWidth - progressBarWidth);
+    setTimeout(() => {
+      setBarWidth(progressBar.current.clientWidth - progressBarWidth);
+    }, 100)
   }, []);
 
   // useWatch(percent, (old) => {
@@ -121,8 +122,8 @@ const ProgressBar = (props: any) => {
 
   useEffect(() => {
     // timeupdate事件触发
-    if (percent > 0 && !touch.initiated && barWidth) {
-      const offsetWidth = percent * barWidth;
+    if (percent > 0 && !touch.initiated && barWidth !== null) {
+      const offsetWidth = percent * barWidth
       handleOffset(offsetWidth);
     }
   }, [percent]);
@@ -132,6 +133,7 @@ const ProgressBar = (props: any) => {
       className="progress-bar__container"
       ref={progressBar}
       onClick={progressClick}
+      style={{width: `${progressWidth}px`}}
     >
       <div
         className="progress-bar"

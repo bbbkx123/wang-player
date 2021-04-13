@@ -1,10 +1,27 @@
-
+@import '../../style/index.less';
 .play {
   height: calc(100% - 45px);
+  background-color: @style-background-color;
+  color: @style-color;
   .play--poster {
     height: 80%;
   }
-  .play--control { 
-    height: 20%;
+  .play--progress {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    .time {
+      width: 35px;
+      font-size: 12px;
+    }
+    .time.right {
+      width: 35px;
+      text-align: right;
+    }
+  }
+  .play--control {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
   }
 }

@@ -1,0 +1,30 @@
+{
+  "id": "2484621",
+  "name": "wang-player",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "18176515",
+      "name": "后退",
+      "font_class": "prev",
+      "unicode": "ea87",
+      "unicode_decimal": 60039
+    },
+    {
+      "icon_id": "18176536",
+      "name": "前进",
+      "font_class": "next",
+      "unicode": "ea8a",
+      "unicode_decimal": 60042
+    },
+    {
+      "icon_id": "18176560",
+      "name": "播放",
+      "font_class": "start",
+      "unicode": "ea8e",
+      "unicode_decimal": 60046
+    }
+  ]
+}

@@ -36,7 +36,8 @@ const Player = forwardRef((props: PlayerProps, audioRef: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    EventEmitter.emit('timeupdate', {currentTime: e.target.currentTime.toFixed(2)})
+    let currentTime = Number(e.target.currentTime.toFixed(2))
+    EventEmitter.emit('timeupdate', {currentTime})
     // if (!isProgressChanging) setCurrentTime(_currentTime)
   }
 

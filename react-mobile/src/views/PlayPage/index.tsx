@@ -7,7 +7,7 @@ import {
   fetchSongsDetail,
   fetchSongUrl,
 } from "@/service/index";
-import {formatForPlayListDetail, formatForSong} from "@/utils/tools"
+import {formatForPlayListDetail, formatForSong, formatForPlayTime} from "@/utils/tools"
 import { useWatch } from "@/utils/hook";
 
 import Player from "@/components/Player";
@@ -16,6 +16,7 @@ import "./index.less";
 
 const PlayPage = () => {
   const audioRef = useRef<any>(null);
+  const playRef = useRef<any>(null)
   const { dispatch, EventEmitter } = useContext<any>(AppContext);
   const { count, playListDetail, duration, volume } = useContext<any>(
     AppContext
@@ -23,10 +24,12 @@ const PlayPage = () => {
   const [percent, setPercent] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false);
+  const [progressWidth, setProgressWidth] = useState<number>(0)
   // const [volume, setVolume] = useState<number>(0)
   // const [loop, setLoop] = useState<boolean>(false)
   const [audioSrc, setAudioSrc] = useState<string>("");
   const eventsName = EventEmitter.eventNames();
+
 
   const getPlayListDetail = () => {
     return fetchPlayListDetail("129219563")
@@ -73,6 +76,12 @@ const PlayPage = () => {
   }, []);
 
   useEffect(() => {
+    if (playRef.current && playRef.current.clientWidth) {
+      setProgressWidth(playRef.current.clientWidth - 70)
+    }
+  }, [])
+
+  useEffect(() => {
     getPlayListDetail();
   }, []);
 
@@ -101,7 +110,7 @@ const PlayPage = () => {
         const {currentTime} = payload
         setCurrentTime(currentTime)
         setPercent(currentTime / duration);
-        console.log(duration, currentTime);
+        // console.log(duration, currentTime);
       });
 
     return () => {
@@ -122,17 +131,26 @@ const PlayPage = () => {
       : audioRef.current.pause();
   };
 
+  const fun2 = () => {
+    
+  }
+
   useWatch(playListDetail, () => {
     getSongUrl(playListDetail.listData[0].sid).then((url: any) => setAudioSrc(url));
   });
 
   return (
-    <div className="play">
+    <div ref={playRef} className="play">
       <div className="play--poster">play {count}</div>
+      <div className="play--progress">
+        <span className="time">{formatForPlayTime(currentTime)}</span>
+        <ProgressBar percent={percent} progressWidth={progressWidth}></ProgressBar>
+        <span className="time right">{formatForPlayTime(duration)}</span>
+      </div>
       <div className="play--control">
-        <ProgressBar percent={percent}></ProgressBar>
-        <span>{currentTime}</span>
-        <span onClick={() => fun1()}>click</span>
+        <div style={{fontSize: "32px"}} className="iconfont iconprev"></div>
+        <div style={{fontSize: "48px"}} className="iconfont iconstart" onClick={() => fun1()}></div>
+        <div style={{fontSize: "32px"}} className="iconfont iconnext"></div>
       </div>
       <Player ref={audioRef} songUrl={audioSrc}></Player>
     </div>

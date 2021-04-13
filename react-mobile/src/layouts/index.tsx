@@ -23,7 +23,7 @@ const Layouts = (props: any) => {
     <AppContext.Provider value={{ ...state, dispatch }}>
       <div className="layouts">
         <NavBar
-          mode="light"
+          mode="dark"
           icon={<Icon type="left" />}
           onLeftClick={handleClick}
           rightContent={[
