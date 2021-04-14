@@ -1,0 +1,33 @@
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1618391580248'); /* IE9 */
+  src: url('iconfont.eot?t=1618391580248#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAOYAAsAAAAACSAAAANJAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDKgqFRIRyATYCJAMUCwwABCAFhG0HTBv6B8gusG3YkyJhNoKAm4nKB3t4wFBygmqtymqYI3wAkIjhCRWyfJbIzrywhELNG7E/rbV/uNe5y5jbytsTnx1MJBEKCUKhqXxN7r0gAzQsAUP+m0PR8dH/3M/X5fHZw9W12RyjQqMTI3HnAU2jfxb+JikuxA/ufxi7iTiMjIxitxPoNVMgqx3ZhZXgqAD7BeKCRsWBY0yllJBCt7TJObWIZ6rudD+dAk/dz4//wsORpGbg0J2nskRIbSfa82CHoxSD3Z8B0llkLAcKcS7XdIKN71rORq8RaGsN0A0Nib48tnfmcXHWIurm/+GRZEUQDSDq54hbhOWMjRkk2mkGmXZeqMULLOc8RJW+rRcD+AQQx/viuMJMMcUV2Ke4u0529/2cbsxU3d0hZHDv7S0yvf/+Hhk68PDw+zW3ryrvXlc9vK25f6N2ng6be30uD6W7fWb9jfIWXZdteX2eV289+Mr/GDjnPsffrtnUHVt9+6quGmf4L95gPfg64Di45F7H3qzOzlHHr/umBodukJzaUK4sVfT0KEqV5YdoekVpT0+polx5mBNXn/LElhDbJ1AxezbhhSnBH2KL7a9iS+tfsChgdh6sjtI+IvbFIEVzVh9f7FU5LOL0YMtg6oEzNuw6DHbGDrttmlgCJ6dEh39hK7aX/Plftj9sO/ovIA78Kx9KzS0eib+7KeDf7lfctI4C+S4/Ars2+49h16wrJheoa9ELMUs3VxsjARJ6oZY/xceol/1YJoDQELplNgtJlxmQdZuPLcTlUPVZAY1um6HXMjln9xlD2YjSg6XGGAjD9iEZ9BGyYWfYQnwB1USfoTEcNtBrf/hcss/C0DhnUOQYioTvIhrBZJSQljl70eWoatNzNMp1ydVIZY2VhAWHJr05aETaxxFyuyqcMYlI1GQg2czdUK83ETM1aVFgwWrGzPEhIVLeKwULJgM4245CHAaJCF4XQkNgYiTR0Yxz6uPLIZU2ehxaUtRgroYomWZyIkyw0BrYHJGxVtG53EfWTiUcw0gICWViQGQzBqSHLhPCnL9NCwmYYOoWDrN4IVwzqa4oeHyJ4RqjoBd4yRopcpSo0ei/wrXJGCRoqKBHWzPFdlsjdjI7mXGUAQAAAAA=') format('woff2'),
+  url('iconfont.woff?t=1618391580248') format('woff'),
+  url('iconfont.ttf?t=1618391580248') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1618391580248#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iconpause-circle:before {
+  content: "\ea8f";
+}
+
+.iconprev:before {
+  content: "\ea87";
+}
+
+.iconnext:before {
+  content: "\ea8a";
+}
+
+.iconstart:before {
+  content: "\ea8e";
+}
+

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 
-import { AppContext } from "@/store";
+import { StoreContext } from "@/store";
 import { throttle } from "@/utils/tools";
 // import {useWatch} from '@/utils/hook'
 import "./index.less";
@@ -18,7 +18,7 @@ const ProgressBar = (props: any) => {
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null);
-  const { startTime, dispatch, EventEmitter } = useContext<any>(AppContext);
+  const { startTime, dispatch, EventEmitter } = useContext<any>(StoreContext);
   const [touch, setTouch] = useState({
     initiated: false,
     startX: 0,
@@ -36,20 +36,6 @@ const ProgressBar = (props: any) => {
     handleOffset(offsetWidth);
     EventEmitter.emit("progress-change", getPrecent());
   };
-
-  // const handleOffset = (offsetWidth: any) => {
-  //   return new Promise((resolve, reject) => {
-  //     try {
-  //       progress.current.style.width = `${offsetWidth}px`;
-  //       progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`;
-  //       resolve(true)
-  //     } catch (err) {
-  //       reject(err);
-  //     }
-  //     // 保证获取更新后的dom
-  //     // this.$nextTick(() => resolve())
-  //   });
-  // };
 
   const handleOffset = (offsetWidth: any) => {
     progress.current.style.width = `${offsetWidth}px`;
@@ -85,6 +71,7 @@ const ProgressBar = (props: any) => {
     dispatch({ type: "startTime", value: new Date().getTime() });
   };
 
+  // 不进行节流会造成拖动卡顿
   const _progressTouchMove = (e: any) => {
     throttle(progressTouchMove, 200, 0)([e]);
     // progressTouchMove(e)

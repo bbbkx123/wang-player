@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { formatForPlayTime } from "@/utils/tools";
 
-import { AppContext } from "@/store";
+import { StoreContext } from "@/store";
 import { label as _label } from "./define";
 import "./index.less";
 
@@ -9,7 +9,7 @@ const List = (props: any) => {
   const { data, listType } = props;
 
   const { EventEmitter, dispatch, currentSongIndex } = useContext<any>(
-    AppContext
+    StoreContext
   );
 
   const [label, setLabel] = useState(_label);

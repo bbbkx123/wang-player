@@ -1,9 +1,9 @@
-import { useState, useReducer } from "react";
+import { useState } from "react";
 import { withRouter } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { NavBar, Icon } from "antd-mobile";
 
-import { reducer, AppContext, defaultState } from "@/store";
+import { StoreContext, useThunkReducer } from "@/store";
 
 import PlayPage from "@/views/PlayPage";
 import Recommend from "@/views/recommend";
@@ -17,10 +17,10 @@ const Layouts = (props: any) => {
     history.push("/play");
   };
 
-  const [state, dispatch] = useReducer(reducer, defaultState);
+  const [state, dispatch] = useThunkReducer();
 
   return (
-    <AppContext.Provider value={{ ...state, dispatch }}>
+    <StoreContext.Provider value={{ ...state, dispatch }}>
       <div className="layouts">
         <NavBar
           mode="dark"
@@ -36,7 +36,7 @@ const Layouts = (props: any) => {
         <Route path="/play" component={PlayPage}></Route>
         <Route path="/recommend" component={Recommend}></Route>
       </div>
-    </AppContext.Provider>
+    </StoreContext.Provider>
   );
 };
 

@@ -1,12 +1,12 @@
 import {useState, useEffect, useRef, useContext, forwardRef} from 'react'
 import {useWatch} from '@/utils/hook'
 import {PlayerProps} from "./types"
-import {AppContext} from '@/store'
-import { throttle } from '@/utils/tools';
+import {StoreContext} from '@/store'
+// import { throttle } from '@/utils/tools';
 
 
 const Player = forwardRef((props: PlayerProps, audioRef: any) => {
-  const {dispatch, EventEmitter, playState, duration} = useContext<any>(AppContext)
+  const {dispatch, EventEmitter, playStatus} = useContext<any>(StoreContext)
   const {songUrl} = props
 
   // const [currentTime, setCurrentTime] = useState<number>(0)
@@ -15,7 +15,7 @@ const Player = forwardRef((props: PlayerProps, audioRef: any) => {
   const [volume, setVolume] = useState<number>(0)
   const [loop, setLoop] = useState<boolean>(false)
   const [autoPlay, setAutoPlay] = useState<boolean>(false)
-  const [play, setPlay] = useState(playState)
+  const [play, setPlay] = useState(playStatus)
   
 
   // const handlePlay = (needPlay: boolean) => {
