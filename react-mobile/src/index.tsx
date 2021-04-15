@@ -1,6 +1,12 @@
-import ReactDOM from 'react-dom';
-import 'antd-mobile/dist/antd-mobile.css';
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import "antd-mobile/dist/antd-mobile.css";
 
-import App from './App'
+import App from "./App";
 
-ReactDOM.render(<App></App>, document.getElementById('root'))
+ReactDOM.render(
+  <Router>
+    <App></App>
+  </Router>,
+  document.getElementById("root")
+);

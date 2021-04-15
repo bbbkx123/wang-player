@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { withRouter } from "react-router-dom";
-import { Route } from "react-router-dom";
+import { withRouter, Redirect, Route } from "react-router-dom";
+// import {createBrowserHistory} from "history";
 import { NavBar, Icon } from "antd-mobile";
 
 import { StoreContext, useThunkReducer } from "@/store";
@@ -14,7 +14,7 @@ const Layouts = (props: any) => {
   const [pageTitle, setPageTitle] = useState<string>("default title");
 
   const handleClick = () => {
-    history.push("/play");
+    history.go(-1);
   };
 
   const [state, dispatch] = useThunkReducer();
@@ -33,6 +33,8 @@ const Layouts = (props: any) => {
         >
           {pageTitle}
         </NavBar>
+        <button onClick={() => {history.push('/play')}}>click</button>
+        <Redirect from="/" to="/recommend" />
         <Route path="/play" component={PlayPage}></Route>
         <Route path="/recommend" component={Recommend}></Route>
       </div>
