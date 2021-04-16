@@ -27,3 +27,10 @@ export const fetchSongsDetail = (ids: string) => get('/song/detail', {params: {i
  * @param {String} id 歌曲id 
  */
 export const fetchSongUrl = (id: string) => get('/song/url', {params: {id}})
+
+/**
+ * banner
+ * @param {Number} type 资源类型
+ * 
+ */
+ export const getBanner = (type: number) => get('/banner', {params: {type}})

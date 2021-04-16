@@ -64,9 +64,9 @@ const Player = forwardRef((props: PlayerProps, audioRef: any) => {
   useEffect(() => {
     setTimeout(() => {
       
-      setVolume(audioRef.current.volume)
-      setAutoPlay(true)
-      audioRef.current.volume = 0.5
+      // setVolume(audioRef.current.volume)
+      // setAutoPlay(true)
+      // audioRef.current.volume = 0.5
     }, 0)
     // this.isPlay = 'icon-bofang'
   }, [])

@@ -1,28 +1,41 @@
 import {useState} from 'react'
-// import {Route} from 'react-router-dom'
-import {TabBar} from 'antd-mobile'
+import {withRouter} from 'react-router-dom'
+import Slider from "@/components/Slider"
 
-const Route1 = () => {
-  return (
-    <div>Route1</div>
-  )
-}
+import * as api from "@/service"
 
-const Route2 = () => {
-  return (
-    <div>Route2</div>
-  )
-}
+const Recommend = (props: any) => {
+  const {history} = props
+  const [bannerArr, setBannerArr] = useState([])
+  const fun1 = () => {
+    history.push("/playlistdetails")
+  }
 
-const TAB = ['FIRST', 'SECOND']
+  const getBanner = () => {
+    let type = 0
+    api.getBanner(type).then((res) => {
+      if (res.data.code === 200) {
+        setBannerArr(res.data.banners)
+      }
+    })
+  }
 
-const Recommend = () => {
-  const [selectedTab, setSelectedTab] = useState<String>(TAB[0])
   return (
     <div>
-     
+      <button onClick={fun1}>click</button>
+      <div>
+        {/* <Slider>
+           {
+             bannerArr.map((banner, bIndex) => {
+               if (banner) {
+                 return <img :src="`${banner.imageUrl}?param=540y${bannerActions[bIndex].current ? 200 : 190}`" alt=""></Slider>
+               }
+             })
+           }
+        </Slider> */}
+      </div>
     </div>
   )
 }
 
-export default Recommend
+export default withRouter(Recommend)

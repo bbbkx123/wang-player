@@ -2,7 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 import { StoreContext } from "@/store";
 import { throttle } from "@/utils/tools";
-// import {useWatch} from '@/utils/hook'
 import "./index.less";
 
 // 进度条按钮宽度
@@ -58,7 +57,6 @@ const ProgressBar = (props: any) => {
       Math.max(0, progressClientWidth + deltaX)
     );
     handleOffset(offsetWidth);
-    // debugger
     EventEmitter.emit("progress-changing", getPrecent());
   };
 
@@ -74,7 +72,6 @@ const ProgressBar = (props: any) => {
   // 不进行节流会造成拖动卡顿
   const _progressTouchMove = (e: any) => {
     throttle(progressTouchMove, 200, 0)([e]);
-    // progressTouchMove(e)
   };
 
   const progressTouchEnd = () => {
@@ -95,17 +92,11 @@ const ProgressBar = (props: any) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setBarWidth(progressBar.current.clientWidth - progressBarWidth);
-    }, 100)
+      if (progressBar.current) {
+        setBarWidth(progressBar.current.clientWidth - progressBarWidth);
+      }
+    }, 0)
   }, []);
-
-  // useWatch(percent, (old) => {
-  //   // timeupdate事件触发
-  //   if (percent > 0 && !touch.initiated && barWidth) {
-  //     const offsetWidth = percent * barWidth
-  //     handleOffset(offsetWidth)
-  //   }
-  // })
 
   useEffect(() => {
     // timeupdate事件触发

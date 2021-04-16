@@ -6,7 +6,8 @@ import { NavBar, Icon } from "antd-mobile";
 import { StoreContext, useThunkReducer } from "@/store";
 
 import PlayPage from "@/views/PlayPage";
-import Recommend from "@/views/recommend";
+import Recommend from "@/views/Recommend";
+import PlayListDetails from "@/views/PlayListDetails"
 import "./index.less";
 
 const Layouts = (props: any) => {
@@ -33,10 +34,10 @@ const Layouts = (props: any) => {
         >
           {pageTitle}
         </NavBar>
-        <button onClick={() => {history.push('/play')}}>click</button>
         <Redirect from="/" to="/recommend" />
         <Route path="/play" component={PlayPage}></Route>
         <Route path="/recommend" component={Recommend}></Route>
+        <Route path="/playlistdetails" component={PlayListDetails}></Route>
       </div>
     </StoreContext.Provider>
   );
