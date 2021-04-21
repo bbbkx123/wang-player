@@ -1,91 +1,85 @@
-import { useState, useRef, useEffect } from "react";
-
-import BetterScroll from "@better-scroll/core";
-import Slide from "@better-scroll/slide";
-
+import { useState, useEffect, useRef, useContext } from "react"
+// import { getSlot } from "@/utils/tools"
+import { StoreContext } from "@/store"
+import BScroll from "@better-scroll/core"
+import Slide from "@better-scroll/slide"
 import "./index.less"
 
-BetterScroll.use(Slide);
-
 const Slider = (props: any) => {
-  let BSInstance: any = null;
-  const {children} = props
+  const { mode, sliderConf, children } = props
+  const { EventEmitter, dispacth } = useContext<any>(StoreContext)
+  let SliderInstance: any = null
 
-  const sliderRef = useRef<any>(null);
-  const sliderGroupRef = useRef<any>(null);
+  const sliderRef = useRef<any>(null)
+  const sliderGroupRef = useRef<any>(null)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [dots, setDots] = useState<any[]>([])
 
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [dots, setDots] = useState<number[]>([]);
-
-  const initSlider = () => {
-    if (BSInstance !== null) return
-    BSInstance = new BetterScroll(sliderRef.current, {
-      scrollX: true,
-      scrollY: false,
-      momentum: false,
-      slide: {
-        // loop: this.loop,
-        threshold: 0.3,
-      },
-    });
-    BSInstance.on('slideWillChange', (page: any) => {
-      setCurrentPageIndex(page.pageX)
+  const initial = () => {
+    if (mode === "Slide") {
+      BScroll.use(Slide)
+    }
+    if (SliderInstance !== null) return
+    SliderInstance = new BScroll(sliderRef.current, sliderConf)
+    let hooks = SliderInstance.scroller.actionsHandler.hooks
+    if (props.mode === "Slide") {
+      SliderInstance.on("slideWillChange", (page: any) => {
+        setCurrentPageIndex(page.pageX)
+      })
+    }
+    hooks.on("click", (event: any) => {
+      EventEmitter.emit("hook-click", event)
     })
-  };
+  }
 
   const setSliderWidth = () => {
-    let SliderWidth = sliderRef.current.clientWidth;
-    let children = sliderGroupRef.current.children;
-    let width = 0;
-    let _dots = []
+    let elRefSlider = sliderRef.current
+    let elRefSliderGroup = sliderGroupRef.current
+    let width = 0
+    let children = elRefSliderGroup.children
+    let sliderWidth = elRefSlider.clientWidth
+    let _width = typeof props.sliderItemWidth === "number" ? props.sliderItemWidth : sliderWidth
+    let _height = props.sliderItemHeight
+    let needSetHeight = typeof _height === "number" && _height > 0
+    setDots([...elRefSliderGroup.children].map(() => true))
 
     for (let i = 0, len = children.length; i < len; i++) {
-      let child = children[i];
-      child.classList.add("slider-item");
-      child.style.width = `${SliderWidth}px`;
-      width += SliderWidth;
-      _dots.push(0)
+      let child = children[i]
+      child.classList.add("slider-item")
+      child.style.width = `${_width}px`
+      if (needSetHeight) child.style.height = `${_height}px`
+      width += _width
     }
-    setDots(_dots.splice(0, _dots.length - 2))
-
-    sliderGroupRef.current.style.width = `${width}px`;
-  };
+    elRefSliderGroup.style.width = `${width}px`
+  }
 
   useEffect(() => {
     // 存在children 为false的情况， 避免children不存在又创建BScroll实例
-    if (BSInstance === null && Array.isArray(children)) {
-      initSlider()
+    if (SliderInstance === null && Array.isArray(children)) {
+      initial()
       setSliderWidth()
     }
   }, [children])
 
-  useEffect(() => {
-    return () => {
-      
-    }
-  }, [])
-
   return (
-    <div className="slider" ref={sliderRef}>
-      <div className="slider-group" ref={sliderGroupRef}>
-        {children}
-      </div>
-      <div className="dots">
-        <div className="dots-container">
-          {
-            dots.map((dot, index) => {
-              return (
-                <span
-                  className={`${currentPageIndex === index ? "active" : ""} dot`}
-                  key={`dot-${index}`}
-                ></span>
-              );
-            })
-          }
+    <div className="slider">
+      <div className="slider-wrapper" ref={sliderRef}>
+        <div className="slider-group" ref={sliderGroupRef}>
+          {/* {getSlot(slots)} */}
+          {children}
         </div>
       </div>
+      {mode === "Slide" && dots.length > 0 && (
+        <div className="dots">
+          {dots.map((dot, index) => {
+            let className = currentPageIndex === index ? "active" : ""
+            className += " dots-item"
+            return <div key={index} className={className}></div>
+          })}
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default Slider;
+export default Slider

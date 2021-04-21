@@ -67,7 +67,6 @@ const List = (props: any) => {
       )}
 
       {listData.map((item: any, index) => {
-        debugger
         return (
           <div onDoubleClick={() => play(item, index)} className={`${index === currentSongIndex ? "click" : ""} list__row`} key={`list-item-${index}`}>
             <div className="list__row--item">{index + 1}</div>

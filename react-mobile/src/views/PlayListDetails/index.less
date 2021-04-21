@@ -1,0 +1,130 @@
+// @import '../../common/css/common.less';
+@headerHeight: 50px;
+
+@coverImgUrlWidth: 185px;
+@height: 40px;
+
+@indexWidth: 50px;
+@editWidth: 50px;
+
+.list-detail {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  height: 100%;
+  overflow: hidden;
+  .detail-wrapper {
+    position: relative;
+    height: 250px;
+    .detail-background {
+      position: absolute;
+      top: -@headerHeight;
+      z-index: 0;
+      width: 100%;
+      height: calc(100% + @headerHeight);
+      overflow: hidden;
+      
+    }
+    .detail {
+      position: absolute;
+      z-index: 10;
+      // padding-top: 20px;
+      display: flex;
+      background-color: transparent;
+      .coverImg {
+        width: @coverImgUrlWidth;
+        height: @coverImgUrlWidth;
+        & > img {
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+        }
+      }
+      .info {
+        margin-left: 20px;
+        width: calc(100% - 40px - @coverImgUrlWidth);
+        > div {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+  .song-list {
+    position: relative;
+    padding-top: 30px;
+    width: 100%;
+    background-color: rgb(21,21,21);
+    border-radius: 25px;
+    &::after {
+      display: block;
+      content: '';
+      overflow: hidden;
+      width: 100%;
+      // height: 20px;
+    }
+    .song-item {
+      display: flex;
+      margin-bottom: 25px;
+      padding-top: 5px;
+      // box-sizing: border-box;
+      width: 100%;
+      .index {
+        display: table-cell;
+        vertical-align: middle;
+        width: @indexWidth;
+        height: 100%;
+        line-height: @height;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: calc(100% - @editWidth - @indexWidth);
+        height: 100%;
+        font-size: 16px;
+        .song-name {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: bold;
+        }
+        .other-info {
+          .info {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      .edit {
+        width: @editWidth;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.core-container {
+  .scroll-wrapper {
+    height: 400px;
+    overflow: hidden;
+    .scroll-item {
+      height: 50px;
+      line-height: 50px;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+      &:nth-child(2n) {
+        background-color: #f3f5f7;
+      }
+      &:nth-child(2n + 1) {
+        background-color: #42b983;
+      }
+    }
+  }
+}

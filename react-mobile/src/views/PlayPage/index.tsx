@@ -3,11 +3,9 @@ import { useState, useEffect, useContext, useRef } from "react";
 import ProgressBar from "@/components/ProgressBar";
 import { StoreContext } from "@/store";
 import { songPlayAction } from "@/store/actions";
-import { fetchPlayListDetail, fetchSongsDetail } from "@/service/index";
+
 
 import {
-  formatForPlayListDetail,
-  formatForSong,
   formatForPlayTime,
 } from "@/utils/tools";
 import { useWatch } from "@/utils/hook";
@@ -33,31 +31,7 @@ const PlayPage = () => {
   // const [loop, setLoop] = useState<boolean>(false)
   const eventsName = EventEmitter.eventNames();
 
-  const getPlayListDetail = (detailId: string) => {
-    return fetchPlayListDetail(detailId)
-      .then((res: any) => Promise.resolve(formatForPlayListDetail(res)))
-      .then((res: any) => {
-        const ids = res.listData
-          .splice(0, 10)
-          .reduce((prev: any, cur: any) => prev.concat(cur, [","]), [])
-          .slice(0, -1);
-        return fetchSongsDetail(ids.join("")).then((res1: any) => {
-          const _ids = ids.join("").split(",");
-          let _listData = res1.data.songs.map((item: any, index: number) =>
-            formatForSong(item, _ids[index])
-          );
-          const value = {
-            ...res,
-            detailId,
-            listData: _listData,
-          };
-          dispatch({
-            type: "playListDetail",
-            value,
-          });
-        });
-      });
-  };
+  
 
   // progress事件订阅
   useEffect(() => {
@@ -108,8 +82,6 @@ const PlayPage = () => {
   }, [duration]);
 
   useEffect(() => {
-    getPlayListDetail("129219563");
-
     if (playRef.current && playRef.current.clientWidth) {
       setProgressWidth(playRef.current.clientWidth - 70);
     }
