@@ -1130,10 +1130,29 @@
   dependencies:
     "@better-scroll/shared-utils" "^2.2.1"
 
+"@better-scroll/core@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.nlark.com/@better-scroll/core/download/@better-scroll/core-2.3.0.tgz?cache=0&sync_timestamp=1618838267143&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40better-scroll%2Fcore%2Fdownload%2F%40better-scroll%2Fcore-2.3.0.tgz#5f05580db3b3f424909183e14215c514374d7e87"
+  integrity sha1-XwVYDbOz9CSQkYPhQhXFFDdNfoc=
+  dependencies:
+    "@better-scroll/shared-utils" "^2.3.0"
+
+"@better-scroll/pull-down@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.nlark.com/@better-scroll/pull-down/download/@better-scroll/pull-down-2.3.0.tgz#258885d929ab3283b74a7e82bb7fd0b8640f0874"
+  integrity sha1-JYiF2SmrMoO3Sn6Cu3/QuGQPCHQ=
+  dependencies:
+    "@better-scroll/core" "^2.3.0"
+
 "@better-scroll/shared-utils@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npm.taobao.org/@better-scroll/shared-utils/download/@better-scroll/shared-utils-2.2.1.tgz#eb024feee1d37598a9b04fc18ca0d8b31f34f704"
   integrity sha1-6wJP7uHTdZipsE/BjKDYsx809wQ=
+
+"@better-scroll/shared-utils@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.nlark.com/@better-scroll/shared-utils/download/@better-scroll/shared-utils-2.3.0.tgz?cache=0&sync_timestamp=1618837958258&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40better-scroll%2Fshared-utils%2Fdownload%2F%40better-scroll%2Fshared-utils-2.3.0.tgz#7f80b198d73a2844f7b4287d197e18d8bc032d6e"
+  integrity sha1-f4CxmNc6KET3tCh9GX4Y2LwDLW4=
 
 "@better-scroll/slide@^2.2.1":
   version "2.2.1"

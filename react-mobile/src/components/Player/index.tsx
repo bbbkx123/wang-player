@@ -1,20 +1,22 @@
 import {useState, useEffect, useRef, useContext, forwardRef} from 'react'
 import {useWatch} from '@/utils/hook'
-import {PlayerProps} from "./types"
+// import {PlayerProps} from "./types"
 import {StoreContext} from '@/store'
 // import { throttle } from '@/utils/tools';
 
-
-const Player = forwardRef((props: PlayerProps, audioRef: any) => {
-  const {dispatch, EventEmitter, playStatus} = useContext<any>(StoreContext)
-  const {songUrl} = props
+// forwardRef((props: PlayerProps, audioRef: any)
+const Player = (props: any) => {
+  const audioRef = useRef<any>(null);
+  const {dispatch, EventEmitter} = useContext<any>(StoreContext)
+  const {playStatus, audioSrc, duration} = useContext<any>(StoreContext)
+  // const {songUrl} = props
 
   // const [currentTime, setCurrentTime] = useState<number>(0)
   // const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false)
   // const [duration, setDuration] = useState<number>(0)
-  const [volume, setVolume] = useState<number>(0)
+  // const [volume, setVolume] = useState<number>(0)
   const [loop, setLoop] = useState<boolean>(false)
-  const [autoPlay, setAutoPlay] = useState<boolean>(false)
+  // const [autoPlay, setAutoPlay] = useState<boolean>(false)
   const [play, setPlay] = useState(playStatus)
   
 
@@ -60,7 +62,6 @@ const Player = forwardRef((props: PlayerProps, audioRef: any) => {
     play ? audioRef.current.play() : audioRef.current.pause()
   })
 
-
   useEffect(() => {
     setTimeout(() => {
       
@@ -71,14 +72,18 @@ const Player = forwardRef((props: PlayerProps, audioRef: any) => {
     // this.isPlay = 'icon-bofang'
   }, [])
 
+  EventEmitter.addListener("set-current-time", (currentTime: any) =>  {
+    audioRef.current.currentTime = currentTime
+  })
+
   // 初始audio实例
   // 1. 通过audio.current.src直接设置无效, 在标签中设置src可以生效 src={xxx}
   // 2. chrome66以及更高的版本不允许媒体自动播放, 76前可以通过设置  chrome://flags/#autoplay-policy 设置 autoplay-policy 为  “No user gesture is required” 
   //  77需要通过查看网站信息 设置允许声音
 
   return (
-    <audio ref={audioRef} src={songUrl} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
+    <audio ref={audioRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
   )
-})
+}
 
 export default Player

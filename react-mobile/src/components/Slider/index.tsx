@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useContext } from "react"
-// import { getSlot } from "@/utils/tools"
 import { StoreContext } from "@/store"
 import BScroll from "@better-scroll/core"
 import Slide from "@better-scroll/slide"

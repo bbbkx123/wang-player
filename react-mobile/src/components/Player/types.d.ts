@@ -1,3 +1,3 @@
 export interface PlayerProps {
-  songUrl: string;
+  // songUrl: string;
 }

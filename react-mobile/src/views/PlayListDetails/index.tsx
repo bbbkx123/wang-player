@@ -1,16 +1,28 @@
 import { useState, useContext, useEffect, useRef } from "react"
 import { StoreContext } from "@/store"
+import {songPlayAction} from "@/store/actions"
 import { fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
 import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
 // import List from "@/components/List"
 import "./index.less"
 
+import BScroll from "@better-scroll/core"
+import PullDown from "@better-scroll/pull-down"
+interface useFun {
+  (plugin: any): any
+}
+
+const use: useFun = BScroll.use
+use(PullDown)
+
 const PlayListDetails = () => {
   const { dispatch } = useContext<any>(StoreContext)
   const listDetailRef = useRef<any>()
+  const pullDownWrapperRef = useRef<any>()
 
   const [data, setData] = useState<any>()
+  let BSInstance: any = null
 
   const getPlayListDetail = (detailId: string) => {
     return fetchPlayListDetail(detailId)
@@ -39,10 +51,47 @@ const PlayListDetails = () => {
         })
       })
   }
+  const init = () => {
+    BSInstance = new BScroll(pullDownWrapperRef.current, {
+      scrollY: true,
+      scrollX: false,
+      // 锁定方向
+      directionLockThreshold: 0,
+      freeScroll: false,
+      pullDownRefresh: {
+        threshold: 90,
+        stop: 40,
+      },
+    })
+
+    BSInstance.on("pullingDown", () => {
+      console.log("pull-down")
+      BSInstance.finishPullDown()
+    })
+
+    BSInstance.on("scroll", () => {
+      // console.log("scroll")
+    })
+
+    BSInstance.openPullDown({})
+  }
+
+  const handlePlay = (songIndex: number) => {
+    dispatch(songPlayAction(songIndex));
+  }
+
+  // better-scroll 实例
+  useEffect(() => {
+    if (BSInstance === null) {
+      init()
+    }
+    return () => {}
+  }, [])
 
   useEffect(() => {
     console.log("create")
-    getPlayListDetail("129219563").then((data) => {
+    // 纯音乐 453208524    like 129219563   英文 3185023336
+    getPlayListDetail("3185023336").then((data) => {
       setData(data)
     })
     return () => {
@@ -51,8 +100,8 @@ const PlayListDetails = () => {
   }, [])
 
   return (
-    <div>
-      <div>
+    <div style={{height: "100%"}}>
+      <div ref={pullDownWrapperRef} style={{height: "100%"}}>
         <div className="list-detail" ref={listDetailRef}>
           {!!data && data.playlist && (
             <div className="list-detail-content">
@@ -82,8 +131,7 @@ const PlayListDetails = () => {
               <div className="song-list">
                 {data.listData.map((item: any, index: any) => {
                   return (
-                    // onClick={handlePlay(index)}
-                    <div className="song-item" key={`song-item-${index}`}>
+                    <div className="song-item" key={`song-item-${index}`} onClick={() => handlePlay(index)}>
                       <div className="index">{index + 1}</div>
                       <div className="main">
                         <div className="song-name">{item.name}</div>

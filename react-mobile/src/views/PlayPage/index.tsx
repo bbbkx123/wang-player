@@ -4,18 +4,17 @@ import ProgressBar from "@/components/ProgressBar";
 import { StoreContext } from "@/store";
 import { songPlayAction } from "@/store/actions";
 
-
 import {
   formatForPlayTime,
 } from "@/utils/tools";
 import { useWatch } from "@/utils/hook";
 
-import Player from "@/components/Player";
+// import Player from "@/components/Player";
 
 import "./index.less";
 
 const PlayPage = () => {
-  const audioRef = useRef<any>(null);
+  // const audioRef = useRef<any>(null);
   const playRef = useRef<any>(null);
   const { dispatch, EventEmitter } = useContext<any>(StoreContext);
   const {
@@ -23,7 +22,7 @@ const PlayPage = () => {
     playListDetail,
     duration,
     volume,
-    audioSrc,
+    // audioSrc,
   } = useContext<any>(StoreContext);
   const [percent, setPercent] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -54,7 +53,8 @@ const PlayPage = () => {
       "progress-change",
       (percent: number) => {
         setPercent(percent);
-        audioRef.current.currentTime = duration * percent;
+        // audioRef.current.currentTime = duration * percent;
+        EventEmitter.emit("set-current-time", duration * percent)
       },
       { passive: false }
     );
@@ -158,7 +158,7 @@ const PlayPage = () => {
           onClick={handleNextSong}
         ></div>
       </div>
-      <Player ref={audioRef} songUrl={audioSrc}></Player>
+      {/* <Player ref={audioRef} songUrl={audioSrc}></Player> */}
     </div>
   );
 };

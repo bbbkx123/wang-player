@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@better-scroll/core": "^2.2.1",
+    "@better-scroll/pull-down": "^2.3.0",
     "@better-scroll/slide": "^2.2.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
