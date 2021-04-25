@@ -11,6 +11,18 @@ import Recommend from "@/views/Recommend"
 import PlayListDetails from "@/views/PlayListDetails"
 import "./index.less"
 
+const PlayerControl = withRouter((props: any) => {
+  const { history } = props
+
+  const pageToPlayPage = () => {
+    history.push("/play")
+  }
+
+  return (
+    <div className="player-control" onClick={pageToPlayPage}>PlayerControl</div>
+  )
+})
+
 
 const Layouts = (props: any) => {
   const { history } = props
@@ -34,6 +46,7 @@ const Layouts = (props: any) => {
           <Route path="/recommend" component={Recommend}></Route>
           <Route path="/playlistdetails" component={PlayListDetails}></Route>
         </div>
+        <PlayerControl></PlayerControl>
       </div>
       {/* ref={audioRef} songUrl={_state.audioSrc} */}
       <Player></Player>

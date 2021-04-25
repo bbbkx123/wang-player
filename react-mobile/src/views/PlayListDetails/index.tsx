@@ -4,7 +4,6 @@ import { songPlayAction } from "@/store/actions"
 import { fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
 import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
-// import List from "@/components/List"
 import "./index.less"
 
 import BScroll from "@better-scroll/core"
@@ -102,6 +101,7 @@ const PlayListDetails = () => {
   }, [])
 
   return (
+    // <div>123</div>
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
       <div className="list-detail" ref={listDetailRef}>
         {!!data && data.playlist && (
@@ -148,8 +148,14 @@ const PlayListDetails = () => {
             </div>
           </div>
         )}
+        {
+          !data && (
+            <div>暂无数据</div>
+          )
+        }
       </div>
     </div>
+  
   )
 }
 
