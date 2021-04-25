@@ -7,12 +7,19 @@
 @indexWidth: 50px;
 @editWidth: 50px;
 
+.pull-down-wrapper {
+  position: relative;
+  height: 100%;
+  // padding: 0 10px;
+  overflow: hidden;
+}
+
 .list-detail {
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   padding: 0 10px;
   // height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   .detail-wrapper {
     position: relative;
     height: 250px;
@@ -53,6 +60,7 @@
     position: relative;
     padding-top: 30px;
     width: 100%;
+    height: auto;
     background-color: rgb(21,21,21);
     border-radius: 25px;
     &::after {

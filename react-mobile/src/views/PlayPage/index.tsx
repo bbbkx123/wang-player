@@ -99,13 +99,13 @@ const PlayPage = () => {
   //  77需要通过查看网站信息 设置允许声音
 
   const togglePlay = () => {
-    audioRef.current.paused
-      ? audioRef.current.play()
-      : audioRef.current.pause();
+    // audioRef.current.paused
+    //   ? audioRef.current.play()
+    //   : audioRef.current.pause();
   };
 
   const handleNextSong = () => {
-    if (!audioRef.current || !audioRef.current.src) return;
+    // if (!audioRef.current || !audioRef.current.src) return;
     handlePlay(
       playListDetail.listData.lentgh <= currentSongIndex
         ? 0
@@ -114,12 +114,12 @@ const PlayPage = () => {
   };
 
   const handlePrevSong = () => {
-    if (!audioRef.current || !audioRef.current.src) return;
-    handlePlay(
-      currentSongIndex === 0
-        ? playListDetail.listData.length - 1
-        : currentSongIndex - 1
-    );
+    // if (!audioRef.current || !audioRef.current.src) return;
+    // handlePlay(
+    //   currentSongIndex === 0
+    //     ? playListDetail.listData.length - 1
+    //     : currentSongIndex - 1
+    // );
   };
 
   const handlePlay = (songIndex: number) => {
@@ -127,7 +127,7 @@ const PlayPage = () => {
   };
 
   const togglePlayStatusClass = () => {
-    return audioRef.current && audioRef.current.paused ? 'iconstart' : 'iconpause-circle'
+    // return audioRef.current && audioRef.current.paused ? 'iconstart' : 'iconpause-circle'
   }
 
   return (

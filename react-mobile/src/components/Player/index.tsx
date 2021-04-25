@@ -8,7 +8,7 @@ import {StoreContext} from '@/store'
 const Player = (props: any) => {
   const audioRef = useRef<any>(null);
   const {dispatch, EventEmitter} = useContext<any>(StoreContext)
-  const {playStatus, audioSrc, duration} = useContext<any>(StoreContext)
+  const {audioSrc, duration} = useContext<any>(StoreContext)
   // const {songUrl} = props
 
   // const [currentTime, setCurrentTime] = useState<number>(0)
@@ -17,7 +17,7 @@ const Player = (props: any) => {
   // const [volume, setVolume] = useState<number>(0)
   const [loop, setLoop] = useState<boolean>(false)
   // const [autoPlay, setAutoPlay] = useState<boolean>(false)
-  const [play, setPlay] = useState(playStatus)
+  const [playStatus, setPlayStatus] = useState<boolean | null>(null)
   
 
   // const handlePlay = (needPlay: boolean) => {
@@ -58,18 +58,26 @@ const Player = (props: any) => {
     audioRef.current.play()
   }
 
-  useWatch(play, (prev) => {
-    play ? audioRef.current.play() : audioRef.current.pause()
-  })
+  useEffect(() => {
+    if (typeof playStatus === 'boolean') {
+      playStatus ? audioRef.current.play() : audioRef.current.pause()
+    }
+    dispatch({type: 'playStatus', value: playStatus})
+  }, [playStatus])
+
+  useEffect(() => {
+    audioRef.current.volume = 0.5
+    setPlayStatus(!audioRef.current.paused)
+    return () => {
+      setPlayStatus(null)
+    }
+  }, [])
 
   useEffect(() => {
     setTimeout(() => {
-      
-      // setVolume(audioRef.current.volume)
-      // setAutoPlay(true)
-      // audioRef.current.volume = 0.5
-    }, 0)
-    // this.isPlay = 'icon-bofang'
+      // audioRef.current.play()
+      // debugger
+    }, 3000)
   }, [])
 
   EventEmitter.addListener("set-current-time", (currentTime: any) =>  {

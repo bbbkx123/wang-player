@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useRef } from "react"
 import { StoreContext } from "@/store"
-import {songPlayAction} from "@/store/actions"
+import { songPlayAction } from "@/store/actions"
 import { fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
 import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
@@ -72,21 +72,23 @@ const PlayListDetails = () => {
     BSInstance.on("scroll", () => {
       // console.log("scroll")
     })
-
-    BSInstance.openPullDown({})
+    // BSInstance.openPullDown({})
   }
 
   const handlePlay = (songIndex: number) => {
-    dispatch(songPlayAction(songIndex));
+    dispatch(songPlayAction(songIndex))
   }
 
   // better-scroll 实例
+  // 出现问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
+  // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
-    if (BSInstance === null) {
+    // 如果data变化过快, BSInstance 还未完成实例, 会导致init多次执行, 后续可以考虑加入 实例进行中的标志位
+    if (!!data && Array.isArray(data.listData) && BSInstance === null) {
       init()
     }
     return () => {}
-  }, [])
+  }, [data])
 
   useEffect(() => {
     console.log("create")
@@ -100,54 +102,52 @@ const PlayListDetails = () => {
   }, [])
 
   return (
-    <div style={{height: "100%"}}>
-      <div ref={pullDownWrapperRef} style={{height: "100%"}}>
-        <div className="list-detail" ref={listDetailRef}>
-          {!!data && data.playlist && (
-            <div className="list-detail-content">
-              <div className="detail-wrapper">
-                <div className="detail">
-                  <div className="coverImg">
-                    <img src={data.playlist.coverImgUrl} alt="" />
-                  </div>
-                  <div className="info">
-                    <div>{data.playlist.name}</div>
-                    <div>{data.playlist.nickname}</div>
-                    <div>
-                      <img
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                        }}
-                        src={data.playlist.avatarUrl}
-                        alt=""
-                      />
-                    </div>
+    <div ref={pullDownWrapperRef} className="pull-down-wrapper">
+      <div className="list-detail" ref={listDetailRef}>
+        {!!data && data.playlist && (
+          <div>
+            <div className="detail-wrapper">
+              <div className="detail">
+                <div className="coverImg">
+                  <img src={data.playlist.coverImgUrl} alt="" />
+                </div>
+                <div className="info">
+                  <div>{data.playlist.name}</div>
+                  <div>{data.playlist.nickname}</div>
+                  <div>
+                    <img
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                      }}
+                      src={data.playlist.avatarUrl}
+                      alt=""
+                    />
                   </div>
                 </div>
-                <div className="edit"></div>
               </div>
-              <div className="song-list">
-                {data.listData.map((item: any, index: any) => {
-                  return (
-                    <div className="song-item" key={`song-item-${index}`} onClick={() => handlePlay(index)}>
-                      <div className="index">{index + 1}</div>
-                      <div className="main">
-                        <div className="song-name">{item.name}</div>
-                        <div className="other-info">
-                          <span className="info">{`${item.artist.reduce((prev: any, cur: any) => prev + " " + cur.name, "")} - ${item.album.name}`}</span>
-                          <span>{}</span>
-                        </div>
-                      </div>
-                      <div className="edit"></div>
-                    </div>
-                  )
-                })}
-              </div>
+              <div className="edit"></div>
             </div>
-          )}
-        </div>
+            <div className="song-list">
+              {data.listData.map((item: any, index: any) => {
+                return (
+                  <div className="song-item" key={`song-item-${index}`} onClick={() => handlePlay(index)}>
+                    <div className="index">{index + 1}</div>
+                    <div className="main">
+                      <div className="song-name">{item.name}</div>
+                      <div className="other-info">
+                        <span className="info">{`${item.artist.reduce((prev: any, cur: any) => prev + " " + cur.name, "")} - ${item.album.name}`}</span>
+                        <span>{}</span>
+                      </div>
+                    </div>
+                    <div className="edit"></div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

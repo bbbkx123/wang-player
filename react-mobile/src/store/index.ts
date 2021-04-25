@@ -6,7 +6,7 @@ interface storeStateTypes {
   startTime: number;
   playListDetail: any;
   currentSongIndex: number | null;
-  playStatus: boolean;
+  playStatus: boolean | null;
   duration: number;
   volume: number;
   audioSrc: string | undefined;
@@ -26,7 +26,7 @@ const defaultState: storeStateTypes = {
   startTime: 0,
   playListDetail: null,
   currentSongIndex: null,
-  playStatus: false,
+  playStatus: null,
   // currentTime: null,
   duration: 0,
   volume: 0,
