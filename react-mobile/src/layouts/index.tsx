@@ -14,12 +14,17 @@ import "./index.less"
 const PlayerControl = withRouter((props: any) => {
   const { history } = props
 
-  const pageToPlayPage = () => {
-    history.push("/play")
+  const togglePlayPage = () => {
+    const {pathname} = history.location
+    if (pathname === "/play") {
+      history.go(-1)
+    } else {
+      history.push("/play")
+    }
   }
 
   return (
-    <div className="player-control" onClick={pageToPlayPage}>PlayerControl</div>
+    <div className="player-control" onClick={togglePlayPage}>PlayerControl</div>
   )
 })
 
@@ -33,6 +38,11 @@ const Layouts = (props: any) => {
   const handleClick = () => {
     history.go(-1)
   }
+
+  useEffect(() => {
+    history.push("/recommend")
+    return () => {}
+  }, [])
 
   return (
     <StoreContext.Provider value={{ ...state, dispatch }}>
@@ -48,7 +58,6 @@ const Layouts = (props: any) => {
         </div>
         <PlayerControl></PlayerControl>
       </div>
-      {/* ref={audioRef} songUrl={_state.audioSrc} */}
       <Player></Player>
     </StoreContext.Provider>
   )

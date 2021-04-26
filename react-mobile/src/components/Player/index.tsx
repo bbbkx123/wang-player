@@ -1,82 +1,78 @@
 import { useState, useEffect, useRef, useContext, forwardRef } from "react"
-import { useWatch } from "@/utils/hook"
-// import {PlayerProps} from "./types"
+import {Toast} from "antd-mobile"
 import { StoreContext } from "@/store"
-// import { throttle } from '@/utils/tools';
+import { songPlayAction } from "@/store/actions"
 
 // forwardRef((props: PlayerProps, audioRef: any)
 const Player = (props: any) => {
   const audioRef = useRef<any>(null)
-  const { dispatch, EventEmitter } = useContext<any>(StoreContext)
-  const { audioSrc, duration } = useContext<any>(StoreContext)
-  // const {songUrl} = props
+  const { dispatch, EventEmitter, playListDetail, audioSrc, currentSongIndex } = useContext<any>(StoreContext)
 
-  // const [currentTime, setCurrentTime] = useState<number>(0)
   // const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false)
-  // const [duration, setDuration] = useState<number>(0)
   // const [volume, setVolume] = useState<number>(0)
   const [loop, setLoop] = useState<boolean>(false)
   // const [autoPlay, setAutoPlay] = useState<boolean>(false)
-  const [playStatus, setPlayStatus] = useState<boolean | null>(null)
 
-  // const handlePlay = (needPlay: boolean) => {
-  // needPlay ? audio.current.play() : audio.current.pause()
-  // this.$store.commit('SET_PLAYING', needPlay)
-  // }
+  // 问题: buffer加载时, currentTime需要loading效果
 
   const onEnded = () => {
     audioRef.current.pause()
-    // setCurrentTime(0)
-    // if (this.currentIndex < this.playlist.length - 1) {
-    //     this.songChangeIndex = this.currentIndex + 1
-    // } else if (this.currentIndex === this.playlist.length - 1) {
-    //     if (this.isLoopPlayList) {
-    //         this.songChangeIndex = 0
-    //     }
-    // }
+    const len = playListDetail.listData.length
+    if (currentSongIndex < len - 1) {
+      dispatch(songPlayAction(currentSongIndex + 1))
+    } else if (currentSongIndex=== len - 1) {
+        // if (this.isLoopPlayList) {
+        //     this.songChangeIndex = 0
+        // }
+    }
   }
 
   const onTimeUpdate = (e: any) => {
     let currentTime = Number(e.target.currentTime.toFixed(2))
     EventEmitter.emit("timeupdate", { currentTime })
-    // if (!isProgressChanging) setCurrentTime(_currentTime)
   }
-
-  // const _onTimeUpdate = (e: any) => {
-  //   throttle(onTimeUpdate, 100, 0)([e])
-  // }
 
   const onCanPlay = () => {
     dispatch({ type: "duration", value: audioRef.current.duration })
     audioRef.current.play()
+    dispatch({type: "playStatus", value: true})
   }
 
-  const handlePlay = (status: boolean) => {
-    status ? audioRef.current.play() : audioRef.current.paused()
+  const handlePlay = () => {
+    const {paused, src} = audioRef.current
+    if (!src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
+    paused ? audioRef.current.play() : audioRef.current.pause()
+    dispatch({type: "playStatus", value: !audioRef.current.paused})
   }
 
   const setCurrentTime = (currentTime: any) => {
     audioRef.current.currentTime = currentTime
   }
 
-  useEffect(() => {
-    dispatch({ type: "playStatus", value: playStatus })
-  }, [playStatus])
+  const handleToggleSongs = (toggleType: string) => {
+    let index = null
+    if (!audioRef.current || !audioRef.current.src) return;
+    if (toggleType === "PREV") {
+      index = playListDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
+    } else {
+      index = currentSongIndex === 0 ? playListDetail.listData.length - 1 : currentSongIndex - 1
+    }
+    dispatch(songPlayAction(index))
+  }
 
   useEffect(() => {
     audioRef.current.volume = 0.5
-    setPlayStatus(!audioRef.current.paused)
-    return () => {
-      setPlayStatus(null)
-    }
+    return () => {}
   }, [])
 
   useEffect(() => {
-    EventEmitter.on("play-song", handlePlay)
+    EventEmitter.on("player-toggle-status", handlePlay)
     EventEmitter.on("set-current-time", setCurrentTime)
+    EventEmitter.on("player-toggle-song", handleToggleSongs)
     return () => {
-      EventEmitter.off("play-song", handlePlay)
+      EventEmitter.off("player-toggle-status", handlePlay)
       EventEmitter.off("set-current-time", setCurrentTime)
+      EventEmitter.off("player-toggle-song", handleToggleSongs)
     }
   }, [])
 

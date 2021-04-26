@@ -12,67 +12,92 @@ import { useWatch } from "@/utils/hook"
 import "./index.less"
 
 const PlayPage = () => {
-  // const audioRef = useRef<any>(null);
   const playRef = useRef<any>(null)
-  const { dispatch, EventEmitter, currentSongIndex, playListDetail, duration, playStatus } = useContext<any>(StoreContext)
+  const { dispatch, EventEmitter, playListDetail, duration, playStatus } = useContext<any>(StoreContext)
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [progressWidth, setProgressWidth] = useState<number>(0)
   // const [loop, setLoop] = useState<boolean>(false)
-  const eventsName = EventEmitter.eventNames()
+  // const eventsName = EventEmitter.eventNames()
 
   // progress事件订阅
-  useEffect(() => {
-    if (!eventsName.includes("progress-changing")) {
-      EventEmitter.addListener(
-        "progress-changing",
-        (percent: number) => {
-          setPercent(percent)
-        },
-        { passive: false }
-      )
-    }
-    return () => {
-      EventEmitter.removeAllListeners(["progress-changing"])
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (!eventsName.includes("progress-changing")) {
+      // EventEmitter.addListener(
+      //   "progress-changing",
+      //   (percent: number) => {
+      //     setPercent(percent)
+      //   },
+      //   { passive: false }
+      // )
+  //   }
+  //   return () => {
+  //     EventEmitter.removeAllListeners(["progress-changing"])
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    EventEmitter.addListener(
-      "progress-change",
-      (percent: number) => {
-        setPercent(percent)
+  // useEffect(() => {
+    // EventEmitter.addListener(
+    //   "progress-change",
+    //   (percent: number) => {
+    //     setPercent(percent)
         // audioRef.current.currentTime = duration * percent;
-        EventEmitter.emit("set-current-time", duration * percent)
-      },
-      { passive: false }
-    )
+    //     EventEmitter.emit("set-current-time", duration * percent)
+    //   },
+    //   { passive: false }
+    // )
 
-    return () => {
-      EventEmitter.removeAllListeners(["progress-change"])
-    }
-  }, [duration])
+  //   return () => {
+  //     EventEmitter.removeAllListeners(["progress-change"])
+  //   }
+  // }, [duration])
 
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
    * 解决: 独立使用useEffect, useEffect(()=>{}, [currentTime, duration])可以获取到
+   * 后续发现不存在问题, 待观察
    */
-  useEffect(() => {
-    EventEmitter.addListener("timeupdate", (payload: any) => {
-      const { currentTime } = payload
-      setCurrentTime(currentTime)
-      setPercent(currentTime / duration)
-      // console.log(duration, currentTime);
-    })
+  // useEffect(() => {
+    // EventEmitter.addListener("timeupdate", (payload: any) => {
+    //   const { currentTime } = payload
+    //   setCurrentTime(currentTime)
+    //   setPercent(currentTime / duration)
+    //   // console.log(duration, currentTime);
+    // })
 
-    return () => {
-      EventEmitter.removeAllListeners(["timeupdate"])
-    }
-  }, [duration])
+  //   return () => {
+  //     EventEmitter.removeAllListeners(["timeupdate"])
+  //   }
+  // }, [duration])
+
+  const handleProgressChanging = (percent: number) => {
+    setPercent(percent)
+  }
+
+  const handleProgressChange = (percent: number) => {
+    setPercent(percent)
+    EventEmitter.emit("set-current-time", duration * percent)
+  }
+
+  const onTimeupdate = (payload: any) => {
+    const { currentTime } = payload
+    setCurrentTime(currentTime)
+    setPercent(currentTime / duration)
+    // console.log(duration, currentTime);
+  }
 
   useEffect(() => {
     if (playRef.current && playRef.current.clientWidth) {
       setProgressWidth(playRef.current.clientWidth - 70)
+    }
+
+    EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
+    EventEmitter.on("progress-change", handleProgressChange, handleProgressChange, { passive: false })
+    EventEmitter.on("timeupdate", onTimeupdate)
+    return () => {
+      EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
+      EventEmitter.off("progress-change", handleProgressChange, handleProgressChange, { passive: false })
+      EventEmitter.off("timeupdate", onTimeupdate)
     }
   }, [])
 
@@ -88,24 +113,15 @@ const PlayPage = () => {
   //  77需要通过查看网站信息 设置允许声音
 
   const togglePlay = () => {
-    dispatch({type: "playStatus", value: !playStatus})
-    // audioRef.current.paused
-    //   ? audioRef.current.play()
-    //   : audioRef.current.pause();
+    EventEmitter.emit("player-toggle-status")
   }
 
   const handleNextSong = () => {
-    // if (!audioRef.current || !audioRef.current.src) return;
-    handlePlay(playListDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1)
+    EventEmitter.emit("player-toggle-song", "PREV")
   }
 
   const handlePrevSong = () => {
-    // if (!audioRef.current || !audioRef.current.src) return;
-    // handlePlay(
-    //   currentSongIndex === 0
-    //     ? playListDetail.listData.length - 1
-    //     : currentSongIndex - 1
-    // );
+    EventEmitter.emit("player-toggle-song", "NEXT")
   }
 
   const handlePlay = (songIndex: number) => {
@@ -113,7 +129,7 @@ const PlayPage = () => {
   }
 
   const togglePlayStatusClass = () => {
-    return !playStatus ? 'iconstart' : 'iconpause-circle'
+    return !playStatus ? "iconstart" : "iconpause-circle"
   }
 
   return (
@@ -129,7 +145,6 @@ const PlayPage = () => {
         <div style={{ fontSize: "48px" }} className={`iconfont ${togglePlayStatusClass()}`} onClick={togglePlay}></div>
         <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
       </div>
-      {/* <Player ref={audioRef} songUrl={audioSrc}></Player> */}
     </div>
   )
 }

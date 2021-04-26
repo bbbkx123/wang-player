@@ -15,16 +15,19 @@ interface useFun {
 const use: useFun = BScroll.use
 use(PullDown)
 
+// 待添加: pullup
+
 const PlayListDetails = () => {
   const { dispatch } = useContext<any>(StoreContext)
   const listDetailRef = useRef<any>()
   const pullDownWrapperRef = useRef<any>()
 
   const [data, setData] = useState<any>()
+  const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   let BSInstance: any = null
 
   const getPlayListDetail = (detailId: string) => {
-    return fetchPlayListDetail(detailId)
+    fetchPlayListDetail(detailId)
       .then((res: any) => {
         const _res = formatForPlayListDetail(res)
         const ids = _res.listData
@@ -48,7 +51,7 @@ const PlayListDetails = () => {
           })
           return Promise.resolve(value)
         })
-      })
+      }).then((data) => setData(data))
   }
   const init = () => {
     BSInstance = new BScroll(pullDownWrapperRef.current, {
@@ -64,14 +67,15 @@ const PlayListDetails = () => {
     })
 
     BSInstance.on("pullingDown", () => {
-      console.log("pull-down")
-      BSInstance.finishPullDown()
+      // console.log("pull-down")
+      setBeforePullDown(false)
+        setBeforePullDown(true)
+        BSInstance.finishPullDown()
     })
 
     BSInstance.on("scroll", () => {
       // console.log("scroll")
     })
-    // BSInstance.openPullDown({})
   }
 
   const handlePlay = (songIndex: number) => {
@@ -79,7 +83,7 @@ const PlayListDetails = () => {
   }
 
   // better-scroll 实例
-  // 出现问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
+  // 问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
     // 如果data变化过快, BSInstance 还未完成实例, 会导致init多次执行, 后续可以考虑加入 实例进行中的标志位
@@ -90,20 +94,18 @@ const PlayListDetails = () => {
   }, [data])
 
   useEffect(() => {
-    console.log("create")
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    getPlayListDetail("3185023336").then((data) => {
-      setData(data)
-    })
-    return () => {
-      console.log("destory")
-    }
+    getPlayListDetail("3185023336")
+    return () => {}
   }, [])
 
   return (
     // <div>123</div>
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
       <div className="list-detail" ref={listDetailRef}>
+        {
+          !beforePullDown && <div style={{color:"red"}}>pulldown!</div>
+        }
         {!!data && data.playlist && (
           <div>
             <div className="detail-wrapper">
@@ -132,7 +134,7 @@ const PlayListDetails = () => {
             <div className="song-list">
               {data.listData.map((item: any, index: any) => {
                 return (
-                  <div className="song-item" key={`song-item-${index}`} onClick={() => handlePlay(index)}>
+                  <div className="song-item" key={`song-item-${index}`} onTouchStart={() => handlePlay(index)}>
                     <div className="index">{index + 1}</div>
                     <div className="main">
                       <div className="song-name">{item.name}</div>
@@ -148,14 +150,10 @@ const PlayListDetails = () => {
             </div>
           </div>
         )}
-        {
-          !data && (
-            <div>暂无数据</div>
-          )
-        }
+        {!data && <div>暂无数据</div>}
+        
       </div>
     </div>
-  
   )
 }
 
