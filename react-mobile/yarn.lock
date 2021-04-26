@@ -1144,6 +1144,13 @@
   dependencies:
     "@better-scroll/core" "^2.3.0"
 
+"@better-scroll/pull-up@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.nlark.com/@better-scroll/pull-up/download/@better-scroll/pull-up-2.3.0.tgz?cache=0&sync_timestamp=1618838267333&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40better-scroll%2Fpull-up%2Fdownload%2F%40better-scroll%2Fpull-up-2.3.0.tgz#471e984b3edfb70ee71a7df82671518830a12b11"
+  integrity sha1-Rx6YSz7ftw7nGn34JnFRiDChKxE=
+  dependencies:
+    "@better-scroll/core" "^2.3.0"
+
 "@better-scroll/shared-utils@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npm.taobao.org/@better-scroll/shared-utils/download/@better-scroll/shared-utils-2.2.1.tgz#eb024feee1d37598a9b04fc18ca0d8b31f34f704"

@@ -8,6 +8,7 @@ import "./index.less"
 
 import BScroll from "@better-scroll/core"
 import PullDown from "@better-scroll/pull-down"
+import PullUp from "@better-scroll/pull-up"
 interface useFun {
   (plugin: any): any
 }
@@ -24,12 +25,48 @@ const PlayListDetails = () => {
 
   const [data, setData] = useState<any>()
   const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
+  const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
+  
   let BSInstance: any = null
+
+  const init = () => {
+    BSInstance = new BScroll(pullDownWrapperRef.current, {
+      scrollY: true,
+      scrollX: false,
+      // 锁定方向
+      directionLockThreshold: 0,
+      freeScroll: false,
+      pullDownRefresh: {
+        threshold: 90,
+        stop: 40,
+      },
+      pullUpLoad: true,
+    })
+
+    BSInstance.on("pullingDown", () => {
+      // console.log("pull-down")
+      setBeforePullDown(false)
+        setBeforePullDown(true)
+        BSInstance.finishPullDown()
+    })
+
+    // BSInstance.on("pullingUp", () => {
+    //   console.log("pull-up")
+
+    //     BSInstance.finishPullDown()
+    // })
+
+    BSInstance.on("scroll", () => {
+      // console.log("scroll")
+    })
+    
+  }
 
   const getPlayListDetail = (detailId: string) => {
     fetchPlayListDetail(detailId)
       .then((res: any) => {
         const _res = formatForPlayListDetail(res)
+        
         const ids = _res.listData
           .splice(0, 10)
           .reduce((prev: any, cur: any) => prev.concat(cur, [","]), [])
@@ -53,30 +90,6 @@ const PlayListDetails = () => {
         })
       }).then((data) => setData(data))
   }
-  const init = () => {
-    BSInstance = new BScroll(pullDownWrapperRef.current, {
-      scrollY: true,
-      scrollX: false,
-      // 锁定方向
-      directionLockThreshold: 0,
-      freeScroll: false,
-      pullDownRefresh: {
-        threshold: 90,
-        stop: 40,
-      },
-    })
-
-    BSInstance.on("pullingDown", () => {
-      // console.log("pull-down")
-      setBeforePullDown(false)
-        setBeforePullDown(true)
-        BSInstance.finishPullDown()
-    })
-
-    BSInstance.on("scroll", () => {
-      // console.log("scroll")
-    })
-  }
 
   const handlePlay = (songIndex: number) => {
     dispatch(songPlayAction(songIndex))
@@ -87,9 +100,7 @@ const PlayListDetails = () => {
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
     // 如果data变化过快, BSInstance 还未完成实例, 会导致init多次执行, 后续可以考虑加入 实例进行中的标志位
-    if (!!data && Array.isArray(data.listData) && BSInstance === null) {
-      init()
-    }
+    if (!!data && Array.isArray(data.listData) && BSInstance === null) init()
     return () => {}
   }, [data])
 
@@ -150,7 +161,6 @@ const PlayListDetails = () => {
             </div>
           </div>
         )}
-        {!data && <div>暂无数据</div>}
         
       </div>
     </div>

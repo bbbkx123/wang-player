@@ -4,7 +4,10 @@ import { createContext, useReducer, useRef, useEffect } from "react";
 interface storeStateTypes {
   EventEmitter: any;
   startTime: number;
+  // 描述歌单的信息(包含歌单名称, 创建者和 歌曲ids等)
   playListDetail: any;
+  // 歌单歌曲详细信息
+  playList: any[];
   currentSongIndex: number | null;
   playStatus: boolean | null;
   duration: number;
@@ -25,6 +28,7 @@ const defaultState: storeStateTypes = {
 
   startTime: 0,
   playListDetail: null,
+  playList: [],
   currentSongIndex: null,
   playStatus: null,
   // currentTime: null,
@@ -39,6 +43,8 @@ const reducer = (state: storeStateTypes, action: actionType) => {
     return Object.assign({}, state, { startTime: value });
   } else if (type === "playListDetail") {
     return Object.assign({}, state, { playListDetail: value });
+  } else if (type === "playList") {
+    return Object.assign({}, state, { playList: value });
   } else if (type === "currentSongIndex") {
     return Object.assign({}, state, { currentSongIndex: value });
   } else if (type === "playStatus") {
@@ -54,6 +60,7 @@ const reducer = (state: storeStateTypes, action: actionType) => {
   return state;
 };
 
+// 问题
 export function useThunkReducer() {
   const [state, dispatch] = useReducer(reducer, defaultState);
   const _dispatch: any = dispatch;

@@ -6,7 +6,7 @@ import { songPlayAction } from "@/store/actions"
 // forwardRef((props: PlayerProps, audioRef: any)
 const Player = (props: any) => {
   const audioRef = useRef<any>(null)
-  const { dispatch, EventEmitter, playListDetail, audioSrc, currentSongIndex } = useContext<any>(StoreContext)
+  const { dispatch, EventEmitter, playListDetail, playList, audioSrc, currentSongIndex } = useContext<any>(StoreContext)
 
   // const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false)
   // const [volume, setVolume] = useState<number>(0)
