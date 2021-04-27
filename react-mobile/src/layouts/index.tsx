@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react"
 import { withRouter, Redirect, Route } from "react-router-dom"
-// import {createBrowserHistory} from "history";
-import { NavBar, Icon } from "antd-mobile"
-import Player from "@/components/Player";
+import {connect} from "react-redux"
+import {testAction} from "@/store/actionCreator"
 
-import { StoreContext, useThunkReducer } from "@/store"
+import { NavBar, Icon } from "antd-mobile"
+import Player from "@/components/Player"
 
 import PlayPage from "@/views/PlayPage"
 import Recommend from "@/views/Recommend"
@@ -15,7 +15,7 @@ const PlayerControl = withRouter((props: any) => {
   const { history } = props
 
   const togglePlayPage = () => {
-    const {pathname} = history.location
+    const { pathname } = history.location
     if (pathname === "/play") {
       history.go(-1)
     } else {
@@ -24,15 +24,16 @@ const PlayerControl = withRouter((props: any) => {
   }
 
   return (
-    <div className="player-control" onClick={togglePlayPage}>PlayerControl</div>
+    <div className="player-control" onClick={togglePlayPage}>
+      PlayerControl
+    </div>
   )
 })
-
 
 const Layouts = (props: any) => {
   const { history } = props
 
-  const [state, dispatch] = useThunkReducer()
+  // const [state, dispatch] = useThunkReducer()
   const [pageTitle, setPageTitle] = useState<string>("default title")
 
   const handleClick = () => {
@@ -41,26 +42,44 @@ const Layouts = (props: any) => {
 
   useEffect(() => {
     history.push("/recommend")
+
+    setTimeout(() => {
+      props.testfun()
+    }, 3000)
     return () => {}
   }, [])
 
   return (
-    <StoreContext.Provider value={{ ...state, dispatch }}>
+    <>
       <div className="layouts">
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={handleClick} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}>
           {pageTitle}
         </NavBar>
         {/* <Redirect from="/" to="/recommend" /> */}
         <div className="router-view">
-          <Route path="/play" component={PlayPage}></Route>
+          {/* <Route path="/play" component={PlayPage}></Route> */}
           <Route path="/recommend" component={Recommend}></Route>
           <Route path="/playlistdetails" component={PlayListDetails}></Route>
         </div>
-        <PlayerControl></PlayerControl>
+        {/* <PlayerControl></PlayerControl> */}
       </div>
       <Player></Player>
-    </StoreContext.Provider>
+    </>
   )
 }
 
-export default withRouter(Layouts)
+const stateToProps = (state: any) => {
+  return {
+    test: state.test
+  }
+}
+
+const dispatchToProps = (dispatch: any) => {
+  return {
+    testfun () {
+      dispatch(testAction())
+    }
+  }
+}
+
+export default connect(stateToProps, dispatchToProps)(withRouter(Layouts))

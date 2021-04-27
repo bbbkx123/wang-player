@@ -40,8 +40,8 @@ export const formatForPlayTime = (time: any) => {
 
 
 export const formatForPlayListDetail = (data: any) => {
-  const { coverImgUrl, name, trackIds, tracks } = data.data.playlist;
-  const { avatarUrl, nickname } = data.data.playlist.creator;
+  const { coverImgUrl, name, trackIds, tracks } = data.playlist;
+  const { avatarUrl, nickname } = data.playlist.creator;
   const listData = trackIds.map((item: any) => item.id);
   return {
     avatarUrl,
@@ -60,6 +60,17 @@ export const formatForSong = (song: any, songId: any) => {
     sid: songId,
   };
 }
+
+export const page = (idArr: any[], pageSize: number, pageNo :number) => {
+    const pageNumber = Math.ceil(idArr.length / pageSize)
+    const page = new Array(pageNumber)
+    for (let i = 0; i < pageNumber; i++) {
+      page[i] = idArr.slice(i * pageSize, (i +1) * pageSize)
+    }
+    console.log(page);
+    
+    return page[pageNo - 1]
+  }
 
 // export const getSlot = (slots: any, slot?: any, data?: any) => {
 //   if (slot === undefined) slot = 'default'

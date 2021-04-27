@@ -1,8 +1,8 @@
-import { useState, useContext, useEffect, useRef } from "react"
-import { StoreContext } from "@/store"
-import { songPlayAction } from "@/store/actions"
-import { fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
-import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
+import { useState, useEffect, useRef } from "react"
+import { connect } from "react-redux"
+import {  page } from "@/utils/tools"
+
+import { fetchPlayListDetailAction, fetchPlayListAction } from "@/store/actionCreator"
 
 import "./index.less"
 
@@ -18,15 +18,15 @@ use(PullDown)
 
 // 待添加: pullup
 
-const PlayListDetails = () => {
-  const { dispatch } = useContext<any>(StoreContext)
+const PlayListDetails = (props: any) => {
+  const { playList, playListDetail, getPlayListDetail } = props
   const listDetailRef = useRef<any>()
   const pullDownWrapperRef = useRef<any>()
 
   const [data, setData] = useState<any>()
   const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
-  
+
   let BSInstance: any = null
 
   const init = () => {
@@ -46,53 +46,22 @@ const PlayListDetails = () => {
     BSInstance.on("pullingDown", () => {
       // console.log("pull-down")
       setBeforePullDown(false)
-        setBeforePullDown(true)
-        BSInstance.finishPullDown()
+      setBeforePullDown(true)
+      BSInstance.finishPullDown()
     })
 
     // BSInstance.on("pullingUp", () => {
     //   console.log("pull-up")
-
     //     BSInstance.finishPullDown()
     // })
 
     BSInstance.on("scroll", () => {
       // console.log("scroll")
     })
-    
-  }
-
-  const getPlayListDetail = (detailId: string) => {
-    fetchPlayListDetail(detailId)
-      .then((res: any) => {
-        const _res = formatForPlayListDetail(res)
-        
-        const ids = _res.listData
-          .splice(0, 10)
-          .reduce((prev: any, cur: any) => prev.concat(cur, [","]), [])
-          .slice(0, -1)
-        return Promise.resolve({ ids, playlist: res.data.playlist })
-      })
-      .then((payload) => {
-        const { ids, playlist } = payload
-        return fetchSongsDetail(ids.join("")).then((res: any) => {
-          const _ids = ids.join("").split(",")
-          let listData = res.data.songs.map((item: any, index: number) => formatForSong(item, _ids[index]))
-          const value = {
-            listData,
-            playlist: { ...playlist },
-          }
-          dispatch({
-            type: "playListDetail",
-            value,
-          })
-          return Promise.resolve(value)
-        })
-      }).then((data) => setData(data))
   }
 
   const handlePlay = (songIndex: number) => {
-    dispatch(songPlayAction(songIndex))
+    // dispatch(songPlayAction(songIndex))
   }
 
   // better-scroll 实例
@@ -100,33 +69,32 @@ const PlayListDetails = () => {
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
     // 如果data变化过快, BSInstance 还未完成实例, 会导致init多次执行, 后续可以考虑加入 实例进行中的标志位
-    if (!!data && Array.isArray(data.listData) && BSInstance === null) init()
+    if (!!data && Array.isArray(playList) && BSInstance === null) {
+      init()
+    }
     return () => {}
   }, [data])
 
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    getPlayListDetail("3185023336")
+    getPlayListDetail("3185023336").then((res: any) => setData(res))
     return () => {}
   }, [])
 
   return (
-    // <div>123</div>
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
       <div className="list-detail" ref={listDetailRef}>
-        {
-          !beforePullDown && <div style={{color:"red"}}>pulldown!</div>
-        }
-        {!!data && data.playlist && (
+        {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
+        {!!playListDetail && (
           <div>
             <div className="detail-wrapper">
               <div className="detail">
                 <div className="coverImg">
-                  <img src={data.playlist.coverImgUrl} alt="" />
+                  <img src={playListDetail.coverImgUrl} alt="" />
                 </div>
                 <div className="info">
-                  <div>{data.playlist.name}</div>
-                  <div>{data.playlist.nickname}</div>
+                  <div>{playListDetail.name}</div>
+                  <div>{playListDetail.nickname}</div>
                   <div>
                     <img
                       style={{
@@ -134,7 +102,7 @@ const PlayListDetails = () => {
                         height: "30px",
                         borderRadius: "50%",
                       }}
-                      src={data.playlist.avatarUrl}
+                      src={playListDetail.avatarUrl}
                       alt=""
                     />
                   </div>
@@ -143,7 +111,7 @@ const PlayListDetails = () => {
               <div className="edit"></div>
             </div>
             <div className="song-list">
-              {data.listData.map((item: any, index: any) => {
+              {playList.map((item: any, index: any) => {
                 return (
                   <div className="song-item" key={`song-item-${index}`} onTouchStart={() => handlePlay(index)}>
                     <div className="index">{index + 1}</div>
@@ -161,10 +129,25 @@ const PlayListDetails = () => {
             </div>
           </div>
         )}
-        
       </div>
     </div>
   )
 }
 
-export default PlayListDetails
+const stateToProps = (state: any) => ({
+  EventEmitter: state.EventEmitter,
+  playListDetail: state.playListDetail,
+  playList: state.playList,
+  test: state.test,
+})
+
+const dispatchToProps = (dispatch: any) => ({
+  async getPlayListDetail(detailId: any, props: any) {
+    const listData = await dispatch(fetchPlayListDetailAction(detailId))
+    const listByPage = page(listData, 10, 2)
+    const playList = await dispatch(fetchPlayListAction(listByPage))
+    return Promise.resolve(playList)
+  },
+})
+
+export default connect(stateToProps, dispatchToProps)(PlayListDetails)

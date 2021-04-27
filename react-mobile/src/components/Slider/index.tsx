@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useContext } from "react"
-import { StoreContext } from "@/store"
+import {connect} from "react-redux"
+
 import BScroll from "@better-scroll/core"
 import Slide from "@better-scroll/slide"
 import "./index.less"
 
 const Slider = (props: any) => {
-  const { mode, sliderConf, children } = props
-  const { EventEmitter, dispacth } = useContext<any>(StoreContext)
+  const { mode, sliderConf, children, EventEmitter } = props
+
   let SliderInstance: any = null
 
   const sliderRef = useRef<any>(null)
@@ -64,7 +65,6 @@ const Slider = (props: any) => {
     <div className="slider">
       <div className="slider-wrapper" ref={sliderRef}>
         <div className="slider-group" ref={sliderGroupRef}>
-          {/* {getSlot(slots)} */}
           {children}
         </div>
       </div>
@@ -81,4 +81,12 @@ const Slider = (props: any) => {
   )
 }
 
-export default Slider
+const stateToProps = (state: any) => ({
+  EventEmitter: state.EventEmitter,
+})
+
+const dispatchToProps = (dispatch: any) => ({
+
+})
+
+export default connect(stateToProps, dispatchToProps)(Slider)

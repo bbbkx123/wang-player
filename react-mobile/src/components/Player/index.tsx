@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef, useContext, forwardRef } from "react"
+import {connect} from "react-redux"
+import {songPlayAction} from "@/store/actionCreator"
 import {Toast} from "antd-mobile"
-import { StoreContext } from "@/store"
-import { songPlayAction } from "@/store/actions"
 
 // forwardRef((props: PlayerProps, audioRef: any)
 const Player = (props: any) => {
+  const {playListDetail, currentSongIndex,EventEmitter, audioSrc, dispatch} = props
   const audioRef = useRef<any>(null)
-  const { dispatch, EventEmitter, playListDetail, playList, audioSrc, currentSongIndex } = useContext<any>(StoreContext)
 
-  // const [isProgressChanging, setIsProgressChanging] = useState<boolean>(false)
-  // const [volume, setVolume] = useState<number>(0)
   const [loop, setLoop] = useState<boolean>(false)
   // const [autoPlay, setAutoPlay] = useState<boolean>(false)
 
@@ -57,7 +55,7 @@ const Player = (props: any) => {
     } else {
       index = currentSongIndex === 0 ? playListDetail.listData.length - 1 : currentSongIndex - 1
     }
-    dispatch(songPlayAction(index))
+    // dispatch(songPlayAction(index))
   }
 
   useEffect(() => {
@@ -83,5 +81,18 @@ const Player = (props: any) => {
 
   return <audio ref={audioRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
+const stateToProps = (state: any) => ({
+  EventEmitter: state.EventEmitter,
+  playListDetail: state.playListDetail,
+  playList: state.playList,
+  audioSrc: state.audioSrc,
+  currentSongIndex: state.currentSongIndex,
+})
 
-export default Player
+const dispatchToProps = (dispatch: any) => ({
+  dispatch () {
+    return dispatch
+  }
+})
+
+export default connect(stateToProps, dispatchToProps)(Player)
