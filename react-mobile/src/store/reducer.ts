@@ -23,21 +23,14 @@ interface actionType {
 
 const defaultState: any = {
   EventEmitter: new EventEmitter(),
-
   startTime: 0,
-  playListDetail: {
-    avatarUrl: "",
-  },
+  playListDetail: null,
   playList: [],
   currentSongIndex: null,
   playStatus: null,
-  // currentTime: null,
   duration: 0,
   volume: 0,
   audioSrc: undefined,
-
-
-  test: 0,
 }
 
 const reducer = (state: any = defaultState, action: actionType) => {

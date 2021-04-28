@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
-import {  page } from "@/utils/tools"
-
-import { fetchPlayListDetailAction, fetchPlayListAction } from "@/store/actionCreator"
+import { page as formatPageData } from "@/utils/tools"
+import { Toast } from "antd-mobile"
+import { fetchPlayListDetailAction, fetchPlayListAction, songPlayAction } from "@/store/actionCreator"
 
 import "./index.less"
 
@@ -15,22 +15,30 @@ interface useFun {
 
 const use: useFun = BScroll.use
 use(PullDown)
+use(PullUp)
 
 // 待添加: pullup
 
 const PlayListDetails = (props: any) => {
-  const { playList, playListDetail, getPlayListDetail } = props
+  const { playList, playListDetail } = props
+  const { handlePlay, getSongList, getPlayListDetail, handlePullUp } = props
   const listDetailRef = useRef<any>()
   const pullDownWrapperRef = useRef<any>()
+  const instanceRef = useRef<any>(null)
+  const pageRef = useRef<any>({
+    size: 10,
+    pageNo: 0,
+    total: null,
+    totalPage: null,
+    modelForClient: [],
+    modelForPage: [],
+  })
 
-  const [data, setData] = useState<any>()
   const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
 
-  let BSInstance: any = null
-
   const init = () => {
-    BSInstance = new BScroll(pullDownWrapperRef.current, {
+    instanceRef.current = new BScroll(pullDownWrapperRef.current, {
       scrollY: true,
       scrollX: false,
       // 锁定方向
@@ -43,41 +51,57 @@ const PlayListDetails = (props: any) => {
       pullUpLoad: true,
     })
 
-    BSInstance.on("pullingDown", () => {
+    instanceRef.current.on("pullingDown", () => {
       // console.log("pull-down")
       setBeforePullDown(false)
       setBeforePullDown(true)
-      BSInstance.finishPullDown()
+      instanceRef.current.finishPullDown()
     })
 
-    // BSInstance.on("pullingUp", () => {
-    //   console.log("pull-up")
-    //     BSInstance.finishPullDown()
-    // })
+    instanceRef.current.on("pullingUp", async () => {
+      setBeforePullUp(false)
+      handlePullUp(pageRef, instanceRef).then(() => {
+        setBeforePullUp(true)
+      })
+    })
 
-    BSInstance.on("scroll", () => {
+    instanceRef.current.on("scroll", () => {
       // console.log("scroll")
     })
   }
 
-  const handlePlay = (songIndex: number) => {
-    // dispatch(songPlayAction(songIndex))
+  const handlePage = (listData: string[], pageSize: number) => {
+    pageRef.current.modelForPage = formatPageData(listData, pageSize)
+    pageRef.current.total = listData.length
+    pageRef.current.totalPage = Math.ceil(listData.length / pageSize)
   }
 
   // better-scroll 实例
   // 问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
-    // 如果data变化过快, BSInstance 还未完成实例, 会导致init多次执行, 后续可以考虑加入 实例进行中的标志位
-    if (!!data && Array.isArray(playList) && BSInstance === null) {
-      init()
+    // 数据加载完成
+    if (Array.isArray(playList) && playList.length > 0) {
+      if (instanceRef.current === null) {
+        init()
+      } else {
+        // if (!beforePullUp) {
+          
+        // }
+      }
     }
-    return () => {}
-  }, [data])
+  }, [playList])
 
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    getPlayListDetail("3185023336").then((res: any) => setData(res))
+    const fun = async () => {
+      let listData = await getPlayListDetail("3185023336")
+      handlePage(listData, 10)
+      if (playList.length === 0) {
+        await getSongList(pageRef.current.modelForPage[0])
+      }
+    }
+    fun()
     return () => {}
   }, [])
 
@@ -85,7 +109,7 @@ const PlayListDetails = (props: any) => {
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
       <div className="list-detail" ref={listDetailRef}>
         {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
-        {!!playListDetail && (
+        {playListDetail && (
           <div>
             <div className="detail-wrapper">
               <div className="detail">
@@ -111,24 +135,37 @@ const PlayListDetails = (props: any) => {
               <div className="edit"></div>
             </div>
             <div className="song-list">
-              {playList.map((item: any, index: any) => {
-                return (
-                  <div className="song-item" key={`song-item-${index}`} onTouchStart={() => handlePlay(index)}>
-                    <div className="index">{index + 1}</div>
-                    <div className="main">
-                      <div className="song-name">{item.name}</div>
-                      <div className="other-info">
-                        <span className="info">{`${item.artist.reduce((prev: any, cur: any) => prev + " " + cur.name, "")} - ${item.album.name}`}</span>
-                        <span>{}</span>
+              {playList &&
+                playList.map((item: any, index: any) => {
+                  return (
+                    <div className="song-item" key={`song-item-${index}`} onTouchStart={() => handlePlay(index)}>
+                      <div className="index">{index + 1}</div>
+                      <div className="main">
+                        <div className="song-name">{item.name}</div>
+                        <div className="other-info">
+                          <span className="info">{`${item.artist.reduce((prev: any, cur: any) => prev + " " + cur.name, "")} - ${item.album.name}`}</span>
+                          <span>{}</span>
+                        </div>
                       </div>
+                      <div className="edit"></div>
                     </div>
-                    <div className="edit"></div>
-                  </div>
-                )
-              })}
+                  )
+                })}
             </div>
           </div>
         )}
+        <div className="pullup-tips">
+          {beforePullUp && (
+            <div className="before-trigger">
+              <span className="pullup-txt">Pull up and load more</span>
+            </div>
+          )}
+          {!beforePullUp && (
+            <div className="after-trigger">
+              <span className="pullup-txt">Loading...</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -144,9 +181,36 @@ const stateToProps = (state: any) => ({
 const dispatchToProps = (dispatch: any) => ({
   async getPlayListDetail(detailId: any, props: any) {
     const listData = await dispatch(fetchPlayListDetailAction(detailId))
-    const listByPage = page(listData, 10, 2)
-    const playList = await dispatch(fetchPlayListAction(listByPage))
+    return Promise.resolve(listData)
+  },
+  async getSongList(songIdArr: string[]) {
+    debugger
+    const playList = await dispatch(fetchPlayListAction(songIdArr))
     return Promise.resolve(playList)
+  },
+  handlePlay(songIndex: number) {
+    dispatch(songPlayAction(songIndex))
+  },
+  async handlePullUp (pageRef: any, instanceRef: any) {
+    debugger
+    console.log("pull-up")
+    
+    // pageNo从0开始, 需要转为实际页码
+    if (pageRef.current.pageNo + 2 > pageRef.current.totalPage) {
+      Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
+      instanceRef.current.finishPullUp()
+      return
+    }
+    pageRef.current.pageNo += 1
+    const songsId = pageRef.current.modelForPage[pageRef.current.pageNo]
+    await dispatch(fetchPlayListAction(songsId))
+
+    setTimeout(() => {
+      instanceRef.current.finishPullUp()
+      instanceRef.current.refresh()
+      // setBeforePullUp(true)
+    }, 1000)
+    return Promise.resolve()
   },
 })
 

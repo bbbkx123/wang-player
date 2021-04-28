@@ -61,15 +61,13 @@ export const formatForSong = (song: any, songId: any) => {
   };
 }
 
-export const page = (idArr: any[], pageSize: number, pageNo :number) => {
+export const page = (idArr: any[], pageSize: number) => {
     const pageNumber = Math.ceil(idArr.length / pageSize)
     const page = new Array(pageNumber)
     for (let i = 0; i < pageNumber; i++) {
       page[i] = idArr.slice(i * pageSize, (i +1) * pageSize)
     }
-    console.log(page);
-    
-    return page[pageNo - 1]
+    return page
   }
 
 // export const getSlot = (slots: any, slot?: any, data?: any) => {

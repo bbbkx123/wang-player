@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef, useContext, forwardRef } from "react"
-import {connect} from "react-redux"
-import {songPlayAction} from "@/store/actionCreator"
-import {Toast} from "antd-mobile"
+import { useState, useEffect, useRef } from "react"
+import { connect } from "react-redux"
+import { songPlayAction } from "@/store/actionCreator"
+import { Toast } from "antd-mobile"
 
-// forwardRef((props: PlayerProps, audioRef: any)
+// forwardRef((props: PlayerProps, audioRef: any)  --- "react"
 const Player = (props: any) => {
-  const {playListDetail, currentSongIndex,EventEmitter, audioSrc, dispatch} = props
+  const { playListDetail, currentSongIndex, EventEmitter, audioSrc, dispatch } = props
   const audioRef = useRef<any>(null)
 
-  const [loop, setLoop] = useState<boolean>(false)
+  const [loop] = useState<boolean>(false)
   // const [autoPlay, setAutoPlay] = useState<boolean>(false)
 
   // 问题: buffer加载时, currentTime需要loading效果
@@ -18,10 +18,10 @@ const Player = (props: any) => {
     const len = playListDetail.listData.length
     if (currentSongIndex < len - 1) {
       dispatch(songPlayAction(currentSongIndex + 1))
-    } else if (currentSongIndex=== len - 1) {
-        // if (this.isLoopPlayList) {
-        //     this.songChangeIndex = 0
-        // }
+    } else if (currentSongIndex === len - 1) {
+      // if (this.isLoopPlayList) {
+      //     this.songChangeIndex = 0
+      // }
     }
   }
 
@@ -33,14 +33,13 @@ const Player = (props: any) => {
   const onCanPlay = () => {
     dispatch({ type: "duration", value: audioRef.current.duration })
     audioRef.current.play()
-    dispatch({type: "playStatus", value: true})
+    dispatch({ type: "playStatus", value: true })
   }
-
   const handlePlay = () => {
-    const {paused, src} = audioRef.current
+    const { paused, src } = audioRef.current
     if (!src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
     paused ? audioRef.current.play() : audioRef.current.pause()
-    dispatch({type: "playStatus", value: !audioRef.current.paused})
+    dispatch({ type: "playStatus", value: !audioRef.current.paused })
   }
 
   const setCurrentTime = (currentTime: any) => {
@@ -49,7 +48,7 @@ const Player = (props: any) => {
 
   const handleToggleSongs = (toggleType: string) => {
     let index = null
-    if (!audioRef.current || !audioRef.current.src) return;
+    if (!audioRef.current || !audioRef.current.src) return
     if (toggleType === "PREV") {
       index = playListDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
     } else {
@@ -63,6 +62,8 @@ const Player = (props: any) => {
     return () => {}
   }, [])
 
+  // 问题: react-hooks/exhaustive-deps
+  // 解决: 如果不需要在useEffect外使用方法, 可以简单的将方法移入useEffect内, 或者禁用
   useEffect(() => {
     EventEmitter.on("player-toggle-status", handlePlay)
     EventEmitter.on("set-current-time", setCurrentTime)
@@ -90,9 +91,9 @@ const stateToProps = (state: any) => ({
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  dispatch () {
+  dispatch() {
     return dispatch
-  }
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(Player)

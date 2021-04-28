@@ -32,8 +32,6 @@ const PlayerControl = withRouter((props: any) => {
 
 const Layouts = (props: any) => {
   const { history } = props
-
-  // const [state, dispatch] = useThunkReducer()
   const [pageTitle, setPageTitle] = useState<string>("default title")
 
   const handleClick = () => {
@@ -46,7 +44,9 @@ const Layouts = (props: any) => {
     setTimeout(() => {
       props.testfun()
     }, 3000)
-    return () => {}
+    return () => {
+      debugger
+    }
   }, [])
 
   return (
@@ -57,7 +57,7 @@ const Layouts = (props: any) => {
         </NavBar>
         {/* <Redirect from="/" to="/recommend" /> */}
         <div className="router-view">
-          {/* <Route path="/play" component={PlayPage}></Route> */}
+          <Route path="/play" component={PlayPage}></Route>
           <Route path="/recommend" component={Recommend}></Route>
           <Route path="/playlistdetails" component={PlayListDetails}></Route>
         </div>
