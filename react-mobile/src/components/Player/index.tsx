@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
-import { songPlayAction } from "@/store/actionCreator"
+import { songReadyAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
 
 // forwardRef((props: PlayerProps, audioRef: any)  --- "react"
 const Player = (props: any) => {
-  const { playListDetail, currentSongIndex, EventEmitter, audioSrc, dispatch } = props
+  const { playListDetail, currentSongIndex, EventEmitter, audioSrc, dispatchForPlayStatus, diapatchForDuration, Ready } = props
   const audioRef = useRef<any>(null)
 
   const [loop] = useState<boolean>(false)
@@ -17,7 +17,7 @@ const Player = (props: any) => {
     audioRef.current.pause()
     const len = playListDetail.listData.length
     if (currentSongIndex < len - 1) {
-      dispatch(songPlayAction(currentSongIndex + 1))
+      Ready(currentSongIndex + 1)
     } else if (currentSongIndex === len - 1) {
       // if (this.isLoopPlayList) {
       //     this.songChangeIndex = 0
@@ -31,15 +31,15 @@ const Player = (props: any) => {
   }
 
   const onCanPlay = () => {
-    dispatch({ type: "duration", value: audioRef.current.duration })
+    diapatchForDuration(audioRef.current.duration)
     audioRef.current.play()
-    dispatch({ type: "playStatus", value: true })
+    dispatchForPlayStatus( true )
   }
   const handlePlay = () => {
     const { paused, src } = audioRef.current
     if (!src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
     paused ? audioRef.current.play() : audioRef.current.pause()
-    dispatch({ type: "playStatus", value: !audioRef.current.paused })
+    dispatchForPlayStatus(!audioRef.current.paused )
   }
 
   const setCurrentTime = (currentTime: any) => {
@@ -54,7 +54,7 @@ const Player = (props: any) => {
     } else {
       index = currentSongIndex === 0 ? playListDetail.listData.length - 1 : currentSongIndex - 1
     }
-    // dispatch(songPlayAction(index))
+    // dispatch(songReadyAction(index))
   }
 
   useEffect(() => {
@@ -91,8 +91,14 @@ const stateToProps = (state: any) => ({
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  dispatch() {
-    return dispatch
+  diapatchForDuration (duration: any) {
+    dispatch({ type: "duration", value: duration })
+  },
+  dispatchForPlayStatus (playStatus: boolean) {
+    dispatch({ type: "playStatus", value: playStatus })
+  },
+  Ready (currentSongIndex: number) {
+    dispatch(songReadyAction(currentSongIndex))
   },
 })
 

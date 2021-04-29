@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { withRouter, Redirect, Route } from "react-router-dom"
 import {connect} from "react-redux"
-import {testAction} from "@/store/actionCreator"
 
 import { NavBar, Icon } from "antd-mobile"
 import Player from "@/components/Player"
@@ -40,12 +39,8 @@ const Layouts = (props: any) => {
 
   useEffect(() => {
     history.push("/recommend")
-
-    setTimeout(() => {
-      props.testfun()
-    }, 3000)
     return () => {
-      debugger
+
     }
   }, [])
 
@@ -61,7 +56,7 @@ const Layouts = (props: any) => {
           <Route path="/recommend" component={Recommend}></Route>
           <Route path="/playlistdetails" component={PlayListDetails}></Route>
         </div>
-        {/* <PlayerControl></PlayerControl> */}
+        <PlayerControl></PlayerControl>
       </div>
       <Player></Player>
     </>
@@ -70,15 +65,12 @@ const Layouts = (props: any) => {
 
 const stateToProps = (state: any) => {
   return {
-    test: state.test
   }
 }
 
 const dispatchToProps = (dispatch: any) => {
   return {
-    testfun () {
-      dispatch(testAction())
-    }
+    
   }
 }
 

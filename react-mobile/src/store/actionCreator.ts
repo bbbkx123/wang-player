@@ -1,17 +1,7 @@
 import { fetchSongUrl, fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
 import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
-export const testAction = () => {
-  return (dispatch: any, getState: any) => {
-    let state = getState()
-    dispatch({
-      type: "test",
-      value: 22231213431,
-    })
-  }
-}
-
-export const songPlayAction = (songIndex: number) => {
+export const songReadyAction = (songIndex: number) => {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: "currentSongIndex", value: songIndex })
     const { playListDetail } = getState()
@@ -45,10 +35,13 @@ export const fetchPlayListAction = (idArr: any[]) => {
     const state1 = getState()
     const ids = idArr.join(",")
     const response = await fetchSongsDetail(ids)
-    let temp = response.data.songs.map((item: any, index: number) => formatForSong(item, idArr[index]))
-    temp = state1.playList.concat(temp) 
-    dispatch({ type: "playList", value: temp })
-    const state2 = getState()
-    return Promise.resolve(state2.playList)
+    let value = response.data.songs.map((item: any, index: number) => formatForSong(item, idArr[index]))
+    // temp = state1.playList.concat(temp) 
+    // dispatch({ type: "playList", value: temp })
+    // const state2 = getState()
+    // return Promise.resolve(state2.playList)
+    return Promise.resolve({value, getState })
   }
 }
+
+

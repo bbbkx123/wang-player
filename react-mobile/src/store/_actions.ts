@@ -1,6 +1,6 @@
 import { fetchSongUrl } from "@/service/index";
 
-export const songPlayAction = (songIndex: number) => {
+export const songReadyAction = (songIndex: number) => {
   return (dispatch: any, getState: any) => {
     dispatch({ type: "currentSongIndex", value: songIndex });
     const { playListDetail } = getState();

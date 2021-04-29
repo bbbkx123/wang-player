@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import ProgressBar from "@/components/ProgressBar"
-import {songPlayAction} from "@/store/actionCreator"
+import {songReadyAction} from "@/store/actionCreator"
 import { formatForPlayTime } from "@/utils/tools"
 import { useWatch } from "@/utils/hook"
 import "./index.less"
@@ -77,6 +77,7 @@ const PlayPage = (props: any) => {
 
   const onTimeupdate = (payload: any) => {
     const { currentTime } = payload
+    console.log(props);
     setCurrentTime(currentTime)
     setPercent(currentTime / duration)
     // console.log(duration, currentTime);
@@ -150,7 +151,7 @@ const stateToProps = (state: any) => ({
 
 const dispatchToProps = (dispatch: any) => ({
   handlePlay (songIndex: number) {
-    dispatch(songPlayAction(songIndex))
+    dispatch(songReadyAction(songIndex))
   }
 })
 
