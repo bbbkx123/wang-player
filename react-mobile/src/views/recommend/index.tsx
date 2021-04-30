@@ -1,25 +1,60 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { withRouter } from "react-router-dom"
 import Slider from "@/components/Slider"
 
 import * as api from "@/service"
+import * as define from "./define"
+
+import "./index.less"
 
 const Recommend = (props: any) => {
   const { history } = props
   const [bannerArr, setBannerArr] = useState([])
-  const [bannerActions, setBannerActions] = useState<any[]>([])
-  const [currentIndexOfBanner, setCurrentIndexOfBanner] = useState<number>(0)
-  const [sliderConf, setSliderConf] = useState<any>({
-    scrollX: true,
-    scrollY: false,
-    momentum: false,
-    slide: {
-      // loop: this.loop,
-      threshold: 0.3,
-    },
-  })
+  const [icons, setIcons] = useState<any[]>(define.icons)
+  const [recommendDetails, setRecommendDetails] = useState<any[]>([])
+  const iconSliderConf = useRef<any>()
+  const sliderConf = useRef<any>()
+  const recommendConf = useRef<any>()
+
   const fun1 = () => {
     history.push("/playlistdetails")
+  }
+  sliderConf.current = {
+    bscroll: {
+      scrollX: true,
+      scrollY: false,
+      momentum: false,
+      slide: {
+        loop: true,
+        threshold: 0.1,
+        speed: 400,
+        listenFlick: true,
+        autoplay: true,
+        interval: 3000,
+      },
+    },
+  }
+
+  iconSliderConf.current = {
+    bscroll: {
+      scrollX: true,
+      scrollY: false,
+      momentum: true,
+      click: true,
+    },
+    sliderItemWidth: 75,
+    sliderItemHeight: 75,
+  }
+
+  recommendConf.current = {
+    bscroll: {
+      scrollX: true,
+      scrollY: false,
+      momentum: true,
+      click: true,
+    },
+    sliderItemWidth: 125,
+    sliderItemHeight: 135,
   }
 
   const getBanner = () => {
@@ -31,66 +66,61 @@ const Recommend = (props: any) => {
     })
   }
 
-  const handleBannerInit = (bannerArr: any[]) => {
-    return bannerArr.map(() => {
-      return { prev: false, current: false, next: false }
+  const getPersonalized = () => {
+    const limit = 6
+    api.getPersonalized(limit).then((res) => {
+      setRecommendDetails(res.data.result)
     })
   }
 
-  const handleBannerAutoScroll = () => {
-    // if (!this.timer) {
-    //   // console.log(this.timer)
-    //   this.timer = setInterval(() => {
-    //     this.handleBannerScrollForNextBtn()
-    //     // console.log('auto')
-    //   }, 5000)
-    // }
-  }
-
-  const handleBannerActive = (index: number) => {
-    const _bannerActions = handleBannerInit(bannerArr)
-    if (!_bannerActions) return console.log("bannerActions is null")
-    if (index === 0) {
-      _bannerActions[_bannerActions.length - 1].prev = true
-      _bannerActions[0].current = true
-      _bannerActions[1].next = true
-    } else if (index === _bannerActions.length - 1) {
-      _bannerActions[_bannerActions.length - 2].prev = true
-      _bannerActions[_bannerActions.length - 1].current = true
-      _bannerActions[0].next = true
-    } else {
-      _bannerActions[index - 1].prev = true
-      _bannerActions[index].current = true
-      _bannerActions[index + 1].next = true
-    }
-    setBannerActions(_bannerActions)
-  }
 
   useEffect(() => {
     getBanner()
-  }, [])
-
-  useEffect(() => {
-    // ??? 长度小于3 需要处理
-    if (bannerArr.length > 2) {
-      setCurrentIndexOfBanner(0)
-      handleBannerActive(currentIndexOfBanner)
-      handleBannerAutoScroll()
+    getPersonalized()
+    return () => {
+      sliderConf.current = null
+      iconSliderConf.current = null
+      recommendConf.current = null
     }
-  }, [bannerArr])
+  }, [])
 
   return (
     <div>
-      <button onClick={fun1}>click</button>
       <div className="banner-container">
-        <Slider mode="Slide" sliderConf={sliderConf}>
-          {bannerActions.length > 0 &&
-            bannerArr.map((banner: any, index: number) => {
-              if (banner) {
-                return <img src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
-              }
-            })}
+        <Slider mode="banner" config={sliderConf.current}>
+          {bannerArr.map((banner: any, index: number) => {
+            if (banner) {
+              return <img src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
+            }
+          })}
         </Slider>
+        )
+      </div>
+      <div className="icon-wrapper">
+        <Slider config={iconSliderConf.current}>
+          {icons.map((item, index) => {
+            return (
+              <div className="children-item" key={index} onClick={fun1}>
+                <img style={{ width: 50, height: 50 }} src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
+                <span>{item.name}</span>
+              </div>
+            )
+          })}
+        </Slider>
+      </div>
+      <div className="recommend-wrapper">
+        {recommendDetails.length > 0 && (
+          <Slider config={recommendConf.current}>
+            {recommendDetails.map((item: any, index: number) => {
+              return (
+                <div className="children-item" key={index} onClick={fun1}>
+                  <img style={{ width: 100, height: 100 }} src={item.picUrl} alt={item.name} />
+                  <span className="text">{item.name}</span>
+                </div>
+              )
+            })}
+          </Slider>
+        )}
       </div>
     </div>
   )

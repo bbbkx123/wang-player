@@ -6,24 +6,27 @@ import Slide from "@better-scroll/slide"
 import "./index.less"
 
 const Slider = (props: any) => {
-  const { mode, sliderConf, children, EventEmitter } = props
+  const { mode, config,children} = props
+  const {EventEmitter} = props
 
-  let SliderInstance: any = null
-
+  const instance = useRef<any>()
   const sliderRef = useRef<any>(null)
   const sliderGroupRef = useRef<any>(null)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [dots, setDots] = useState<any[]>([])
+  
+  
+  instance.current = {bscroll: null, excuting: false, mark: Math.random()}
 
   const initial = () => {
-    if (mode === "Slide") {
+    if (mode === "banner") {
       BScroll.use(Slide)
     }
-    if (SliderInstance !== null) return
-    SliderInstance = new BScroll(sliderRef.current, sliderConf)
-    let hooks = SliderInstance.scroller.actionsHandler.hooks
-    if (props.mode === "Slide") {
-      SliderInstance.on("slideWillChange", (page: any) => {
+    if (instance.current.bscroll !== null) return
+    instance.current.bscroll = new BScroll(sliderRef.current, config.bscroll)
+    let hooks = instance.current.bscroll.scroller.actionsHandler.hooks
+    if (mode === "banner") {
+      instance.current.bscroll.on("slideWillChange", (page: any) => {
         setCurrentPageIndex(page.pageX)
       })
     }
@@ -38,11 +41,10 @@ const Slider = (props: any) => {
     let width = 0
     let children = elRefSliderGroup.children
     let sliderWidth = elRefSlider.clientWidth
-    let _width = typeof props.sliderItemWidth === "number" ? props.sliderItemWidth : sliderWidth
-    let _height = props.sliderItemHeight
+    let _width = typeof config.sliderItemWidth === "number" ? config.sliderItemWidth : sliderWidth
+    let _height = config.sliderItemHeight
     let needSetHeight = typeof _height === "number" && _height > 0
-    setDots([...elRefSliderGroup.children].map(() => true))
-
+    if (mode === "banner") setDots([...elRefSliderGroup.children].map(() => true))
     for (let i = 0, len = children.length; i < len; i++) {
       let child = children[i]
       child.classList.add("slider-item")
@@ -54,12 +56,26 @@ const Slider = (props: any) => {
   }
 
   useEffect(() => {
+    console.log();
+    debugger
     // 存在children 为false的情况， 避免children不存在又创建BScroll实例
-    if (SliderInstance === null && Array.isArray(children)) {
-      initial()
+    if (instance.current.bscroll === null && !instance.current.excuting && children.length > 0) {
       setSliderWidth()
+      instance.current.excuting = true
+      initial()
+    }
+    return () => {
+      console.log("destory");
+      
     }
   }, [children])
+
+  useEffect(() => {
+    return () => {
+      sliderRef.current = null
+      sliderGroupRef.current = null
+    }
+  }, [])
 
   return (
     <div className="slider">
@@ -68,7 +84,7 @@ const Slider = (props: any) => {
           {children}
         </div>
       </div>
-      {mode === "Slide" && dots.length > 0 && (
+      {mode === "banner" && dots.length > 0 && (
         <div className="dots">
           {dots.map((dot, index) => {
             let className = currentPageIndex === index ? "active" : ""

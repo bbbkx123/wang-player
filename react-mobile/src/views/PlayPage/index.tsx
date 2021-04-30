@@ -77,7 +77,6 @@ const PlayPage = (props: any) => {
 
   const onTimeupdate = (payload: any) => {
     const { currentTime } = payload
-    console.log(props);
     setCurrentTime(currentTime)
     setPercent(currentTime / duration)
     // console.log(duration, currentTime);

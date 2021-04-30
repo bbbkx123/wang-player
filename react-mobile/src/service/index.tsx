@@ -34,3 +34,10 @@ export const fetchSongUrl = (id: string) => get('/song/url', {params: {id}})
  * 
  */
  export const getBanner = (type: number) => get('/banner', {params: {type}})
+
+ /**
+ * 推荐歌单
+ * @param {Number} limit 取出数量
+ * 
+ */
+export const getPersonalized = (limit: number) => get('/personalized', {params: {limit}})

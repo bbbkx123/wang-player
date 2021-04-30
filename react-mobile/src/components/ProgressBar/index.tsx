@@ -89,11 +89,17 @@ const ProgressBar = (props: any) => {
   }
 
   useEffect(() => {
+    // 问题: setTimeout
     setTimeout(() => {
       if (progressBar.current) {
         setBarWidth(progressBar.current.clientWidth - progressBarWidth)
       }
     }, 0)
+    return () => {
+      progressBar.current = null
+      progress.current = null
+      progressBtn.current = null
+    }
   }, [])
 
   useEffect(() => {

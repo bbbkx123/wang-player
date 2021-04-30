@@ -5,12 +5,16 @@ import store from "@/store"
 import "antd-mobile/dist/antd-mobile.css"
 
 import App from "./App"
+import React from "react"
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router>
-      <App></App>
-    </Router>
-  </Provider>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <Router>
+        <App></App>
+      </Router>
+    </Provider>
+  </React.StrictMode>
+  ,
   document.getElementById("root")
 )
