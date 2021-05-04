@@ -8,8 +8,10 @@ import "./index.less"
 
 const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
-  const { EventEmitter, playListDetail, playStatus, duration } = props
-  const {handlePlay} = props
+  const posterElemRef = useRef<any>()
+  const deg = useRef<number>()
+  const { EventEmitter, playListDetail, playStatus, duration, currentSongIndex, playList, } = props
+  const {handlePlay, setPlayStatus} = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [progressWidth, setProgressWidth] = useState<number>(0)
@@ -80,28 +82,10 @@ const PlayPage = (props: any) => {
     setCurrentTime(currentTime)
     setPercent(currentTime / duration)
     // console.log(duration, currentTime);
+    deg.current = (deg.current || 0) + 3
+    rotate(deg.current)
+    // debugger
   }
-
-  useEffect(() => {
-    if (playRef.current && playRef.current.clientWidth) {
-      setProgressWidth(playRef.current.clientWidth - 70)
-    }
-
-    EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
-    EventEmitter.on("progress-change", handleProgressChange, handleProgressChange, { passive: false })
-    EventEmitter.on("timeupdate", onTimeupdate)
-    return () => {
-      EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
-      EventEmitter.off("progress-change", handleProgressChange, handleProgressChange, { passive: false })
-      EventEmitter.off("timeupdate", onTimeupdate)
-    }
-  }, [])
-
-  useWatch(playListDetail, (prev) => {
-    if (prev && prev.detailId === playListDetail.detailId) return
-    const initIndex = 0
-    handlePlay(initIndex)
-  })
 
   // 初始audio实例
   // 1. 通过audio.current.src直接设置无效, 在标签中设置src可以生效 src={xxx}
@@ -113,20 +97,60 @@ const PlayPage = (props: any) => {
   }
 
   const handleNextSong = () => {
-    EventEmitter.emit("player-toggle-song", "PREV")
-  }
-
-  const handlePrevSong = () => {
     EventEmitter.emit("player-toggle-song", "NEXT")
   }
 
-  const togglePlayStatusClass = () => {
-    return !playStatus ? "iconstart" : "iconpause-circle"
+  const handlePrevSong = () => {
+    EventEmitter.emit("player-toggle-song", "PREV")
   }
+
+  const togglePlayStatusClass = () => {
+    return 
+  }
+
+  const rotate = (deg: number) => {
+    if (posterElemRef.current && posterElemRef.current.style) {
+      posterElemRef.current.style.transform = `rotate(${deg}deg)`
+    }
+  }
+
+  useEffect(() => {
+    deg.current = 0
+    if (playRef.current && playRef.current.clientWidth) {
+      setProgressWidth(playRef.current.clientWidth - 70)
+    }
+
+    EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
+    EventEmitter.on("progress-change", handleProgressChange, { passive: false })
+    EventEmitter.on("timeupdate", onTimeupdate)
+    return () => {
+      EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
+      EventEmitter.off("progress-change", handleProgressChange, { passive: false })
+      EventEmitter.off("timeupdate", onTimeupdate)
+    }
+  }, [])
+
+  useWatch(playListDetail, (prev) => {
+    if (prev && prev.detailId === playListDetail.detailId) return
+    const initIndex = 0
+    handlePlay(initIndex)
+  })
+
+  // useEffect(() => {
+  //   if () {
+
+  //   }
+  // }, [playStatus])
 
   return (
     <div ref={playRef} className="play">
-      <div className="play--poster">play</div>
+      <div className="play--poster">
+        <div ref={posterElemRef} className="play--poster-wrapper">
+          {
+            playList[currentSongIndex] && <img src={playList[currentSongIndex].album.picUrl + '?param=300y300'} alt=""/>
+          } 
+        </div>
+      </div>
       <div className="play--progress">
         <span className="time left">{formatForPlayTime(currentTime)}</span>
         <ProgressBar percent={percent} progressWidth={progressWidth}></ProgressBar>
@@ -134,7 +158,7 @@ const PlayPage = (props: any) => {
       </div>
       <div className="play--control">
         <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>
-        <div style={{ fontSize: "48px" }} className={`iconfont ${togglePlayStatusClass()}`} onClick={togglePlay}></div>
+        <div style={{ fontSize: "48px" }} className={`iconfont ${typeof playStatus === "boolean" && playStatus ? "iconpause-circle" : "iconstart"}`} onClick={togglePlay}></div>
         <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
       </div>
     </div>
@@ -144,14 +168,19 @@ const PlayPage = (props: any) => {
 const stateToProps = (state: any) => ({
   EventEmitter: state.EventEmitter,
   playListDetail: state.playListDetail,
+  playList: state.playList,
   playStatus: state.playStatus,
+  currentSongIndex: state.currentSongIndex,
   duration: state.duration,
 })
 
 const dispatchToProps = (dispatch: any) => ({
   handlePlay (songIndex: number) {
     dispatch(songReadyAction(songIndex))
-  }
+  },
+  setPlayStatus(status: boolean) {
+    dispatch({type: "playStatus", value: status})
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(PlayPage)

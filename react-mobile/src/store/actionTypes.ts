@@ -8,5 +8,3 @@ export const DURATION = "duration"
 export const VOLUME = "volume"
 export const AUDIO_SRC = "audioSrc"
 
-
-export const TEST = "test"

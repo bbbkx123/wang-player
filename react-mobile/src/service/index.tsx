@@ -41,3 +41,10 @@ export const fetchSongUrl = (id: string) => get('/song/url', {params: {id}})
  * 
  */
 export const getPersonalized = (limit: number) => get('/personalized', {params: {limit}})
+
+ /**
+ * 推荐新音乐
+ * @param {Number} limit 取出数量
+ * 
+ */
+  export const getNewSong = (limit: number) => get('/personalized/newsong', {params: {limit}})

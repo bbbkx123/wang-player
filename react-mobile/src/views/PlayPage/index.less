@@ -4,7 +4,15 @@
   height: calc(100% - 45px);
   
   .play--poster {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 80%;
+    .play--poster-wrapper {
+      transition: all linear 0.25s;
+      overflow: hidden;
+      border-radius: 50%;
+    }
   }
   .play--progress {
     display: flex;

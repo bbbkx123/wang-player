@@ -1,4 +1,3 @@
-import {useEffect, useRef} from 'react'
 
 /**
  * 节流
@@ -52,10 +51,23 @@ export const formatForPlayListDetail = (data: any) => {
   };
 }
 
+export const formatForNewSongList = (data: any) => {
+  const { picUrl, name } = data;
+  const {album, artists} = data.song
+  const {albumName } = album.name
+  const artistsNames = artists.map((item: any) => item.name);
+  return {
+    artistsNames: artistsNames.join("/"),
+    picUrl,
+    name,
+    albumName,
+  };
+}
+
 export const formatForSong = (song: any, songId: any) => {
   return {
     name: song.name,
-    artist: song.ar,
+    artist: song.ar.map((item: any) => item.name).join("/"),
     album: song.al,
     sid: songId,
   };

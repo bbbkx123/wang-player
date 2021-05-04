@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { page as formatPageData } from "@/utils/tools"
 import { Toast } from "antd-mobile"
+import List from "@/components/List"
 import { fetchPlayListDetailAction, fetchPlayListAction, songReadyAction } from "@/store/actionCreator"
 import BScroll from "@better-scroll/core"
 import PullDown from "@better-scroll/pull-down"
@@ -20,7 +21,6 @@ use(PullUp)
 const PlayListDetails = (props: any) => {
   const { playList, playListDetail } = props
   const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForPlayList } = props
-  const listDetailRef = useRef<any>()
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
@@ -116,7 +116,7 @@ const PlayListDetails = (props: any) => {
 
   return (
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
-      <div className="list-detail" ref={listDetailRef}>
+      <div className="list-detail">
         {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
         {playListDetail && (
           <div>
@@ -144,22 +144,7 @@ const PlayListDetails = (props: any) => {
               <div className="edit"></div>
             </div>
             <div className="song-list">
-              {playList &&
-                playList.map((item: any, index: any) => {
-                  return (
-                    <div className="song-item" key={`song-item-${index}`} onTouchStart={onTouchStart} onTouchEnd={() => onTouchEnd(index)}>
-                      <div className="index">{index + 1}</div>
-                      <div className="main">
-                        <div className="song-name">{item.name}</div>
-                        <div className="other-info">
-                          <span className="info">{`${item.artist.reduce((prev: any, cur: any) => prev + " " + cur.name, "")} - ${item.album.name}`}</span>
-                          <span>{}</span>
-                        </div>
-                      </div>
-                      <div className="edit"></div>
-                    </div>
-                  )
-                })}
+              <List data={playList} mode="PLAY_LIST" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
             </div>
           </div>
         )}
@@ -182,14 +167,13 @@ const PlayListDetails = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  EventEmitter: state.EventEmitter,
+  // EventEmitter: state.EventEmitter,
   playListDetail: state.playListDetail,
   playList: state.playList,
-  test: state.test,
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  async getPlayListDetail(detailId: any, props: any) {
+  async getPlayListDetail(detailId: any) {
     const listData = await dispatch(fetchPlayListDetailAction(detailId))
     return Promise.resolve(listData)
   },

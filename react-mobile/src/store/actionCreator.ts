@@ -32,14 +32,9 @@ export const fetchPlayListDetailAction = (detailId: string) => {
  */
 export const fetchPlayListAction = (idArr: any[]) => {
   return async (dispatch: any, getState: any) => {
-    const state1 = getState()
     const ids = idArr.join(",")
     const response = await fetchSongsDetail(ids)
     let value = response.data.songs.map((item: any, index: number) => formatForSong(item, idArr[index]))
-    // temp = state1.playList.concat(temp) 
-    // dispatch({ type: "playList", value: temp })
-    // const state2 = getState()
-    // return Promise.resolve(state2.playList)
     return Promise.resolve({value, getState })
   }
 }

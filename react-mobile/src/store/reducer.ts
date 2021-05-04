@@ -76,11 +76,6 @@ const reducer = (state: any = defaultState, action: actionType) => {
         ...state,
         audioSrc: value,
       }
-    case types.TEST:
-      return {
-        ...state,
-        test: value,
-      }
     default:
       return state
   }
