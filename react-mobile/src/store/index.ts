@@ -1,10 +1,17 @@
-
-// import { createContext, useReducer, useRef, useEffect } from "react";
-
-import {createStore, applyMiddleware, compose} from "redux"
+import {createStore, applyMiddleware, combineReducers} from "redux"
 import thunk from "redux-thunk"
 
-import reducer from "./reducer"
+import PlayListReducer from "./playlist/reducer"
+import AudioRedcuer from "./audio/reducer"
+import GlobalReducer from "./global/reducer"
+import PlayPageReducer from "./playpage/reducer"
+
+const reducer = combineReducers({
+  playlist: PlayListReducer,
+  audio: AudioRedcuer,
+  global: GlobalReducer,
+  playpage: PlayPageReducer,
+})
 
 const store = createStore(reducer, applyMiddleware(thunk))
 

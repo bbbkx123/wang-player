@@ -20,7 +20,7 @@ use(PullUp)
 
 const PlayListDetails = (props: any) => {
   const { playList, playListDetail } = props
-  const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForPlayList } = props
+  const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForPlayList, dispatchForPlayStatus } = props
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
@@ -86,13 +86,13 @@ const PlayListDetails = (props: any) => {
     const date = new Date().getTime()
     if (date - touchTimeRef.current.date <= 75) {
       handlePlay(songIndex)
+      dispatchForPlayStatus(true)
     }
     touchTimeRef.current = null
   }
 
-  // better-scroll 实例
-  // 问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
-  // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度小), 因此在data.playlist获取到后在进行实例
+  // *问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
+  // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度数值小), 因此在data.playlist获取到后在进行实例
   useEffect(() => {
     // 数据加载完成
     if (Array.isArray(playList) && playList.length > 0) {
@@ -167,9 +167,8 @@ const PlayListDetails = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  // EventEmitter: state.EventEmitter,
-  playListDetail: state.playListDetail,
-  playList: state.playList,
+  playListDetail: state.playlist.detail,
+  playList: state.playlist.data,
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -185,7 +184,10 @@ const dispatchToProps = (dispatch: any) => ({
     dispatch(songReadyAction(songIndex))
   },
   diapatchForPlayList(playList: any[]) {
-    dispatch({ type: "playList", value: playList })
+    dispatch({ type: "play-list/data", value: playList })
+  },
+  dispatchForPlayStatus (status: boolean) {
+    dispatch({type: "audio/play-status", value: status})
   },
   async handlePullUp(pageRef: any, instanceRef: any) {
     console.log("pull-up")
@@ -203,7 +205,7 @@ const dispatchToProps = (dispatch: any) => ({
     const prommise = new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          dispatch({ type: "playList", value: state.playList.concat(payload.value) })
+          dispatch({ type: "play-list/data", value: state.playlist.data.concat(payload.value) })
           instanceRef.current.finishPullUp()
           instanceRef.current.refresh()
           resolve(true)

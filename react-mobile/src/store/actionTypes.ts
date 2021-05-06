@@ -1,10 +1,22 @@
-export const START_TIME = "startTime"
-export const PLAY_LIST_DETAIL = "playListDetail"
-export const PLAY_LIST = "playList"
-export const PAGE = "page"
-export const CURRENT_SONG_INDEX = "currentSongIndex"
-export const PLAY_STATUS = "playStatus"
-export const DURATION = "duration"
-export const VOLUME = "volume"
-export const AUDIO_SRC = "audioSrc"
+/**
+ * audio
+ */
+export const AUDIO__START_TIME = "audio/start-time"
+export const AUDIO__PLAY_STATUS = "audio/play-status"
+export const AUDIO__DURATION = "audio/duration"
+// export const AUDIO__VOLUME = "audio/volume"
+export const AUDIO__SRC = "audio/src"
+
+/**
+ * play-list
+ */
+export const PLAY_LIST__DETAIL = "play-list/detail"
+export const PLAY_LIST__DATA = "play-list/data"
+export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
+
+/**
+ * play-page
+ */
+// export const PLAY_PAGE__DEG = "play-page/deg"
+
 

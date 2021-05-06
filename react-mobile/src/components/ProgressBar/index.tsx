@@ -10,7 +10,7 @@ const progressBarWidth = 16
 const refelctTime = 0.1
 
 // ! 问题: 全面屏手势滑动会进行翻页, 导致touchmove不能正确调用
-// ? 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
+// 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
 
 const ProgressBar = (props: any) => {
   const { percent, progressWidth } = props
@@ -30,7 +30,6 @@ const ProgressBar = (props: any) => {
     // 解决mouseup和click重发触发的问题
     let diff = (new Date().getTime() - startTime) / 1000
     if (diff > refelctTime) return
-    // .getBoundingClientRect()
     const rect = progressBar.current.getBoundingClientRect()
     const offsetWidth = e.touches[0].clientX - rect.left
     handleOffset(offsetWidth)
@@ -43,13 +42,13 @@ const ProgressBar = (props: any) => {
   }
 
   const progressTouchMove = (e: any) => {
-    // ?   Math.max(0, this.progressClientWidth + deltaX) -->  0  移动超出左边界
-    // ?   Math.max(0, this.progressClientWidth + deltaX) -->  delta  正常移动
-    // ?
-    // ?   this.barWidth 实际进度条宽度
-    // ?   b = Math.max(0, this.progressClientWidth + deltaX)
-    // ?   Math.min(a, b)  -->  a 超出右边界
-    // ?   Math.min(a, b)  -->  b 正常移动
+    //   Math.max(0, this.progressClientWidth + deltaX) -->  0  移动超出左边界
+    //   Math.max(0, this.progressClientWidth + deltaX) -->  delta  正常移动
+    // 
+    //   barWidth 实际进度条宽度
+    //   b = Math.max(0, this.progressClientWidth + deltaX)
+    //   Math.min(a, b)  -->  a 超出右边界
+    //   Math.min(a, b)  -->  b 正常移动
 
     if (!touch.initiated) return
     const deltaX = e.touches[0].clientX - touch.startX
@@ -73,7 +72,7 @@ const ProgressBar = (props: any) => {
   }
 
   const progressTouchEnd = () => {
-    // 出现问题: 从$refs获取样式数据会取到更新之前的数据
+    // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
     EventEmitter.emit("progress-change", getPrecent())
@@ -89,7 +88,7 @@ const ProgressBar = (props: any) => {
   }
 
   useEffect(() => {
-    // 问题: setTimeout
+    // !问题: 能否移除setTimeout
     setTimeout(() => {
       if (progressBar.current) {
         setBarWidth(progressBar.current.clientWidth - progressBarWidth)
@@ -126,13 +125,13 @@ const ProgressBar = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  startTime: state.startTime,
-  EventEmitter: state.EventEmitter,
+  startTime: state.audio.startTime,
+  EventEmitter: state.global.EventEmitter,
 })
 
 const dispatchToProps = (dispatch: any) => ({
   setStartTime() {
-    dispatch({ type: "startTime", value: new Date().getTime() })
+    dispatch({ type: "audio/start-time", value: new Date().getTime() })
   },
 })
 

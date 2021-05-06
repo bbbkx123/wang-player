@@ -44,9 +44,9 @@ const Slider = (props: any) => {
 
     const marginLeft = 5
     if (mode === "banner") {
-      setDots(Array.from({length: 10}).map(item => true))
+      setDots(Array.from({ length: 10 }).map((item) => true))
     }
-    
+
     for (let i = 0, len = children.length; i < len; i++) {
       let child = children[i]
       child.classList.add("slider-item")
@@ -59,20 +59,14 @@ const Slider = (props: any) => {
       elRefSliderGroup.style.width = `${sliderWidth * children.length}px`
     } else if (mode === "normal-scroll-x") {
       const childClientWidth = children[0].children[0].clientWidth
-      elRefSliderGroup.style.width = `${
-        (childClientWidth + marginLeft) * children.length
-      }px`
+      elRefSliderGroup.style.width = `${(childClientWidth + marginLeft) * children.length}px`
     }
   }
 
   useEffect(() => {
     console.log()
     // 存在children 为false的情况， 避免children不存在又创建BScroll实例
-    if (
-      instance.current.bscroll === null &&
-      !instance.current.excuting &&
-      children.length > 0
-    ) {
+    if (instance.current.bscroll === null && !instance.current.excuting && children.length > 0) {
       setSliderWidth()
       instance.current.excuting = true
       initial()
@@ -110,7 +104,7 @@ const Slider = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  EventEmitter: state.EventEmitter,
+  EventEmitter: state.global.EventEmitter,
 })
 
 const dispatchToProps = (dispatch: any) => ({})

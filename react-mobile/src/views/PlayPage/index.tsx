@@ -9,9 +9,9 @@ import "./index.less"
 const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
-  const deg = useRef<number>()
-  const { EventEmitter, playListDetail, playStatus, duration, currentSongIndex, playList, } = props
-  const {handlePlay, setPlayStatus} = props
+  const degRef = useRef<number>()
+  const { EventEmitter, playListDetail, playStatus, duration, currentSongIndex, playList } = props
+  const {handlePlay, dispatchForDeg} = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [progressWidth, setProgressWidth] = useState<number>(0)
@@ -81,10 +81,8 @@ const PlayPage = (props: any) => {
     const { currentTime } = payload
     setCurrentTime(currentTime)
     setPercent(currentTime / duration)
-    // console.log(duration, currentTime);
-    deg.current = (deg.current || 0) + 3
-    rotate(deg.current)
-    // debugger
+    degRef.current = (degRef.current || 0) + 2
+    rotate(degRef.current)
   }
 
   // 初始audio实例
@@ -104,10 +102,6 @@ const PlayPage = (props: any) => {
     EventEmitter.emit("player-toggle-song", "PREV")
   }
 
-  const togglePlayStatusClass = () => {
-    return 
-  }
-
   const rotate = (deg: number) => {
     if (posterElemRef.current && posterElemRef.current.style) {
       posterElemRef.current.style.transform = `rotate(${deg}deg)`
@@ -115,7 +109,12 @@ const PlayPage = (props: any) => {
   }
 
   useEffect(() => {
-    deg.current = 0
+    // if (deg !== null) {
+    //   degRef.current = deg
+    //   posterElemRef.current.style.transform = `rotate(${deg}deg)`
+    // } else {
+      degRef.current = 0
+    // }
     if (playRef.current && playRef.current.clientWidth) {
       setProgressWidth(playRef.current.clientWidth - 70)
     }
@@ -127,6 +126,9 @@ const PlayPage = (props: any) => {
       EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
       EventEmitter.off("progress-change", handleProgressChange, { passive: false })
       EventEmitter.off("timeupdate", onTimeupdate)
+
+      // let deg = (degRef.current || 0) % 360
+      // dispatchForDeg(deg)
     }
   }, [])
 
@@ -135,12 +137,6 @@ const PlayPage = (props: any) => {
     const initIndex = 0
     handlePlay(initIndex)
   })
-
-  // useEffect(() => {
-  //   if () {
-
-  //   }
-  // }, [playStatus])
 
   return (
     <div ref={playRef} className="play">
@@ -166,21 +162,22 @@ const PlayPage = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  EventEmitter: state.EventEmitter,
-  playListDetail: state.playListDetail,
-  playList: state.playList,
-  playStatus: state.playStatus,
-  currentSongIndex: state.currentSongIndex,
-  duration: state.duration,
+  EventEmitter: state.global.EventEmitter,
+  playListDetail: state.playlist.detail,
+  playList: state.playlist.data,
+  playStatus: state.audio.playStatus,
+  currentSongIndex: state.playlist.currentSongIndex,
+  duration: state.audio.duration,
+  // deg: state.playpage.deg,
 })
 
 const dispatchToProps = (dispatch: any) => ({
   handlePlay (songIndex: number) {
     dispatch(songReadyAction(songIndex))
   },
-  setPlayStatus(status: boolean) {
-    dispatch({type: "playStatus", value: status})
-  },
+  // dispatchForDeg (deg: number) {
+  //   dispatch({type: "play-page/deg", value: deg})
+  // }
 })
 
 export default connect(stateToProps, dispatchToProps)(PlayPage)

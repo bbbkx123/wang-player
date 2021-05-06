@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, memo } from "react"
+import { useState, useEffect, useRef } from "react"
 import { withRouter, Redirect, Route } from "react-router-dom"
 import { connect } from "react-redux"
 
@@ -10,32 +10,11 @@ import Recommend from "@/views/Recommend"
 import PlayListDetails from "@/views/PlayListDetails"
 import "./index.less"
 
-const PlayerControl = withRouter((props: any) => {
-  const { history, song } = props
-  
-  const togglePlayPage = () => {
-    const { pathname } = history.location
-    if (pathname === "/play") {
-      history.go(-1)
-    } else {
-      history.push("/play")
-    }
-  }
-
-  return (
-    <div className="player-control" onClick={togglePlayPage}>
-      <div>{song.name} </div>
-      <div> - {song.artist}</div>
-    </div>
-  )
-})
-
-const Player1 = memo(Player)
 
 const Layouts = (props: any) => {
   const { history } = props
   const {currentSongIndex, playList, get1} = props
-  const [pageTitle, setPageTitle] = useState<string>("default title")
+  // const [pageTitle, setPageTitle] = useState<string>("default title")
   const [currentSong, setCurrentSong] = useState<any>()
 
   const handleClick = () => {
@@ -45,7 +24,6 @@ const Layouts = (props: any) => {
   const togglePlayPage = () => {
     const { pathname } = history.location
     if (pathname === "/play") {
-      // get1()
       history.push("/playlistdetails")
     } else {
       history.push("/play")
@@ -57,9 +35,6 @@ const Layouts = (props: any) => {
     return () => {}
   }, [])
 
-  // const getPlayer = useCallback(() => <Player></Player>,[])
-
-  
   useEffect(() => {
     if (typeof currentSongIndex === "number" && playList.length > 0) {
       setCurrentSong(playList[currentSongIndex])
@@ -78,7 +53,7 @@ const Layouts = (props: any) => {
             <Icon key="1" type="ellipsis" />,
           ]}
         >
-          {pageTitle}
+          {/* {pageTitle} */}
         </NavBar>
         {/* <Redirect from="/" to="/recommend" /> */}
         <div className="router-view">
@@ -95,22 +70,22 @@ const Layouts = (props: any) => {
           ) 
         }
       </div>
-      <Player1></Player1>
+      <Player></Player>
     </>
   )
 }
 
 const stateToProps = (state: any) => {
   return {
-    currentSongIndex: state.currentSongIndex,
-    playList: state.playList,
+    currentSongIndex: state.playlist.currentSongIndex,
+    playList: state.playlist.data,
   }
 }
 
 const dispatchToProps = (dispatch: any) => {
   return {
     get1 () {
-      dispatch({type: "playList", value: []})
+      dispatch({type: "play-list/data", value: []})
     }
   }
 }

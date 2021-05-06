@@ -3,11 +3,11 @@ import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
 export const songReadyAction = (songIndex: number) => {
   return async (dispatch: any, getState: any) => {
-    dispatch({ type: "currentSongIndex", value: songIndex })
-    const { playListDetail } = getState()
-    const sid = playListDetail.listData[songIndex]
+    dispatch({ type: "play-list/current-song-index", value: songIndex })
+    const { playlist } = getState()
+    const sid = playlist.detail.listData[songIndex]
     let song = await fetchSongUrl(sid)
-    dispatch({ type: "audioSrc", value: song.data.data[0].url })
+    dispatch({ type: "audio/src", value: song.data.data[0].url })
   }
 }
 
@@ -19,9 +19,9 @@ export const songReadyAction = (songIndex: number) => {
 export const fetchPlayListDetailAction = (detailId: string) => {
   return async (dispatch: any, getState: any) => {
     const response = await fetchPlayListDetail(detailId)
-    dispatch({ type: "playListDetail", value: formatForPlayListDetail(response.data) })
-    const { playListDetail } = getState()
-    return Promise.resolve(playListDetail.listData)
+    dispatch({ type: "play-list/detail", value: formatForPlayListDetail(response.data) })
+    const { playlist } = getState()
+    return Promise.resolve(playlist.detail.listData)
   }
 }
 
