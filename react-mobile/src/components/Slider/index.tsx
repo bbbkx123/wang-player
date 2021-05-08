@@ -5,6 +5,7 @@ import BScroll from "@better-scroll/core"
 import Slide from "@better-scroll/slide"
 import "./index.less"
 
+// normal-scroll-y 普通纵向滑动
 // normal-scroll-x 普通横向滑动
 // banner banner模式
 
@@ -15,6 +16,7 @@ const Slider = (props: any) => {
   const instance = useRef<any>()
   const sliderRef = useRef<any>(null)
   const sliderGroupRef = useRef<any>(null)
+  const sliderWrapperElemRef = useRef<any>()
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [dots, setDots] = useState<any[]>([])
 
@@ -46,7 +48,6 @@ const Slider = (props: any) => {
     if (mode === "banner") {
       setDots(Array.from({ length: 10 }).map((item) => true))
     }
-
     for (let i = 0, len = children.length; i < len; i++) {
       let child = children[i]
       child.classList.add("slider-item")
@@ -63,11 +64,20 @@ const Slider = (props: any) => {
     }
   }
 
+  const setSliderHeight = () => {
+    sliderRef.current.style.height = sliderWrapperElemRef.current.clientHeight + 'px'
+  }
+
   useEffect(() => {
-    console.log()
     // 存在children 为false的情况， 避免children不存在又创建BScroll实例
-    if (instance.current.bscroll === null && !instance.current.excuting && children.length > 0) {
-      setSliderWidth()
+    if (instance.current.bscroll === null && !instance.current.excuting) {
+      if (Array.isArray(children) && children.length > 0) {
+        if (mode === "banner" || mode === "normal-scroll-x") setSliderWidth()
+      } else if (children && !Array.isArray(children)) {
+        if  (mode === "normal-scroll-y" ) {
+          setSliderHeight()
+        }
+      }
       instance.current.excuting = true
       initial()
     }
@@ -80,12 +90,13 @@ const Slider = (props: any) => {
     return () => {
       sliderRef.current = null
       sliderGroupRef.current = null
+      sliderWrapperElemRef.current = null
     }
   }, [])
 
   return (
-    <div className="slider">
-      <div className="slider-wrapper" ref={sliderRef}>
+    <div className="slider-wrapper" ref={sliderWrapperElemRef}>
+      <div className="slider" ref={sliderRef}>
         <div className="slider-group" ref={sliderGroupRef}>
           {children}
         </div>

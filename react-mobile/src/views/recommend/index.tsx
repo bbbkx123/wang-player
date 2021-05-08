@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { withRouter } from "react-router-dom"
+// import { withRouter } from "react-router-dom"
 import { formatForNewSongList } from "@/utils/tools"
 import Slider from "@/components/Slider"
 import List from "@/components/List"
@@ -8,7 +8,6 @@ import * as api from "@/service"
 import * as define from "./define"
 
 import "./index.less"
-import BScroll from "@better-scroll/core"
 
 const Recommend = (props: any) => {
   const { history } = props
@@ -16,11 +15,11 @@ const Recommend = (props: any) => {
   const [icons] = useState<any[]>(define.icons)
   const [recommendDetails, setRecommendDetails] = useState<any[]>([])
   const [newSongList, setNewSongList] = useState<any[]>([])
+  const [dataReady, setDataReady] = useState<boolean>(false)
   const iconSliderConf = useRef<any>()
   const sliderConf = useRef<any>()
   const recommendConf = useRef<any>()
-  const recommendInstanceRef = useRef<any>()
-  const recommendElemRef = useRef<any>()
+  const recommendPageConfRef = useRef<any>()
 
   const fun1 = () => {
     history.push("/playlistdetails")
@@ -54,14 +53,12 @@ const Recommend = (props: any) => {
     },
   }
 
-  const BScrollInit = () => {
-    recommendInstanceRef.current = new BScroll(recommendElemRef.current, {
-      scrollY: true,
-      scrollX: false,
-      // 锁定方向
-      directionLockThreshold: 0,
-      freeScroll: false,
-    })
+  recommendPageConfRef.current = {
+    scrollY: true,
+    scrollX: false,
+    // 锁定方向
+    directionLockThreshold: 0,
+    freeScroll: false,
   }
 
   useEffect(() => {
@@ -74,20 +71,20 @@ const Recommend = (props: any) => {
         return Promise.resolve()
       })
       .then(() => {
-        !recommendInstanceRef.current && BScrollInit()
+        setDataReady(true)
       })
     return () => {
       sliderConf.current = null
       iconSliderConf.current = null
       recommendConf.current = null
+      recommendPageConfRef.current = null
     }
   }, [])
 
-  return (
-    <div className="recommend" ref={recommendElemRef}>
-      <div>
-        {/* banner滑动存在问题 */}
-        <div className="banner-container">
+  const recommendPage = (
+    <>
+    {/* banner滑动存在问题 */}
+    <div className="banner-container">
           <Slider mode="banner" config={sliderConf.current}>
             {bannerArr.length > 0 &&
               bannerArr.map((banner: any, index: number) => {
@@ -96,7 +93,7 @@ const Recommend = (props: any) => {
           </Slider>
         </div>
         <div className="icon-wrapper">
-          <Slider config={iconSliderConf.current} mode="normal-scroll-x">
+          <Slider mode="normal-scroll-x" config={iconSliderConf.current} >
             {icons.map((item, index) => {
               return (
                 <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={fun1}>
@@ -110,7 +107,7 @@ const Recommend = (props: any) => {
         <div className="recommend-wrapper">
           <p className="recommend-wrapper--title">推荐歌单</p>
           {recommendDetails.length > 0 && (
-            <Slider config={recommendConf.current} mode="normal-scroll-x">
+            <Slider mode="normal-scroll-x" config={recommendConf.current} >
               {recommendDetails.map((item: any, index: number) => {
                 return (
                   <div className="children-item" style={{ width: 140, height: 160 }} key={`recommend-detail-${index}`} onClick={fun1}>
@@ -126,9 +123,16 @@ const Recommend = (props: any) => {
           <p>不可错过的精选</p>
           {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"></List>}
         </div>
-      </div>
+      </>
+  ) 
+
+  return (
+    <div style={{position: "absolute", height:"100%", width: "100%"}}>
+      {
+        dataReady && <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>{recommendPage}</Slider>
+      }
     </div>
   )
 }
 
-export default withRouter(Recommend)
+export default Recommend

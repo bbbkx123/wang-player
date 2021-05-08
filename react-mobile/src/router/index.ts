@@ -1,6 +1,46 @@
+import PlayPage from "@/views/PlayPage"
+import Recommend from "@/views/Recommend"
+import PlayListDetails from "@/views/PlayListDetails"
 
-const config = {
+import {HomePage, AboutPage} from "@/views/test1"
 
-}
+const RouterConfig: any[] = [
+  {
+    path: "/play",
+    component: PlayPage,
+    sceneConfig: {
+      enter: "from-bottom",
+      exit: "to-bottom",
+    },
+  },
+  {
+    path: "/",
+    component: Recommend,
+    sceneConfig: {
+      enter: "from-bottom",
+      exit: "to-bottom",
+    },
+  },
+  {
+    path: "/playlistdetails",
+    component: PlayListDetails,
+    sceneConfig: {
+      enter: "from-bottom",
+      exit: "to-bottom",
+    },
+  },
+  // {
+  //   path: '/',
+  //   component: HomePage,
+  // },
+  {
+    path: "/about",
+    component: AboutPage,
+    sceneConfig: {
+      enter: "from-bottom",
+      exit: "to-bottom",
+    },
+  },
+]
 
-export const a = 1
+export default RouterConfig

@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react"
-import { withRouter, Redirect, Route } from "react-router-dom"
+import React, { useState, useEffect, useRef } from "react"
+import { withRouter, Switch, Route } from "react-router-dom"
 import { connect } from "react-redux"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import { NavBar, Icon } from "antd-mobile"
 import Player from "@/components/Player"
@@ -8,13 +9,25 @@ import Player from "@/components/Player"
 import PlayPage from "@/views/PlayPage"
 import Recommend from "@/views/Recommend"
 import PlayListDetails from "@/views/PlayListDetails"
+
+import RouterConfig from "@/router"
+
 import "./index.less"
 
+let oldLocation: any = null
+const DEFAULT_SCENE_CONFIG = {
+  enter: "from-right",
+  exit: "to-exit",
+}
+
+const getSceneConfig = (location: any) => {
+  const matchedRoute = RouterConfig.find((config) => new RegExp(`^${config.path}$`).test(location.pathname))
+  return (matchedRoute && matchedRoute.sceneConfig) || DEFAULT_SCENE_CONFIG
+}
 
 const Layouts = (props: any) => {
-  const { history } = props
-  const {currentSongIndex, playList, get1} = props
-  // const [pageTitle, setPageTitle] = useState<string>("default title")
+  const { history, location } = props
+  const { currentSongIndex, playList } = props
   const [currentSong, setCurrentSong] = useState<any>()
 
   const handleClick = () => {
@@ -31,9 +44,27 @@ const Layouts = (props: any) => {
   }
 
   useEffect(() => {
-    history.push("/recommend")
+    // history.push("/recommend")
     return () => {}
   }, [])
+
+  let classNames = ""
+  if (history.action === "PUSH") {
+    classNames = "forward-" + getSceneConfig(location)?.enter
+  } else if (history.action === "POP" && oldLocation) {
+    classNames = "back-" + getSceneConfig(oldLocation)?.exit
+  }
+
+  // 更新旧location
+  oldLocation = location
+
+  const fun1 = () => {
+    history.push("/playlistdetails")
+  }
+
+  const fun2 = () => {
+    history.goBack()
+  }
 
   useEffect(() => {
     if (typeof currentSongIndex === "number" && playList.length > 0) {
@@ -41,38 +72,46 @@ const Layouts = (props: any) => {
     }
   }, [currentSongIndex, playList])
 
-  return (
+  const dom = (
     <>
       <div className="layouts">
         <NavBar
           mode="dark"
           icon={<Icon type="left" />}
           onLeftClick={handleClick}
-          rightContent={[
-            <Icon key="0" type="search" style={{ marginRight: "16px" }} />,
-            <Icon key="1" type="ellipsis" />,
-          ]}
+          rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}
+        ></NavBar>
+
+        <button onClick={fun1}>to about</button>
+        <button onClick={fun2}>back</button>
+
+        <TransitionGroup
+          childFactory={(child) => {
+            return React.cloneElement(child, { classNames })
+          }}
+          className="router-view"
         >
-          {/* {pageTitle} */}
-        </NavBar>
-        {/* <Redirect from="/" to="/recommend" /> */}
-        <div className="router-view">
-          <Route path="/play" component={PlayPage}></Route>
-          <Route path="/recommend" component={Recommend}></Route>
-          <Route path="/playlistdetails" component={PlayListDetails}></Route>
-        </div>
-        {
-          currentSong && (
-            <div className="player-control" onClick={togglePlayPage}>
+          <CSSTransition timeout={500} key={location.pathname}>
+            <Switch location={location}>
+              {RouterConfig.map((config: any, index: number) => (
+                <Route key={index} exact {...config}></Route>
+              ))}
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+
+        {/* {currentSong && (
+          <div className="player-control" onClick={togglePlayPage}>
             <div>{currentSong.name} </div>
             <div> - {currentSong.artist}</div>
           </div>
-          ) 
-        }
+        )} */}
       </div>
       <Player></Player>
     </>
   )
+
+  return dom
 }
 
 const stateToProps = (state: any) => {
@@ -84,9 +123,9 @@ const stateToProps = (state: any) => {
 
 const dispatchToProps = (dispatch: any) => {
   return {
-    get1 () {
-      dispatch({type: "play-list/data", value: []})
-    }
+    get1() {
+      dispatch({ type: "play-list/data", value: [] })
+    },
   }
 }
 
