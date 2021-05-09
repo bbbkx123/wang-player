@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from "react"
-import { connect } from "react-redux"
-import { page as formatPageData } from "@/utils/tools"
-import { Toast } from "antd-mobile"
-import List from "@/components/List"
-import { fetchPlayListDetailAction, fetchPlayListAction, songReadyAction } from "@/store/actionCreator"
-import BScroll from "@better-scroll/core"
-import PullDown from "@better-scroll/pull-down"
-import PullUp from "@better-scroll/pull-up"
-import "./index.less"
+import { useState, useEffect, useRef } from 'react'
+import { connect } from 'react-redux'
+import { page as formatPageData } from '@/utils/tools'
+import { Toast } from 'antd-mobile'
+import List from '@/components/List'
+import { fetchPlayListDetailAction, fetchPlayListAction, songReadyAction } from '@/store/actionCreator'
+import BScroll from '@better-scroll/core'
+import PullDown from '@better-scroll/pull-down'
+import PullUp from '@better-scroll/pull-up'
+import './index.less'
 interface useFun {
   (plugin: any): any
 }
@@ -16,11 +16,12 @@ const use: useFun = BScroll.use
 use(PullDown)
 use(PullUp)
 
-// 待添加: pullup
+// 问题: pullup后, 返回上个页面, 再次进入页面长度异常(很长)
+// 猜想为pullup对transformY设置存在问题
 
 const PlayListDetails = (props: any) => {
-  const { playList, playListDetail } = props
-  const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForPlayList, dispatchForPlayStatus } = props
+  const { playList, playListDetail, history, showMiniPlayer } = props
+  const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForPlayList, dispatchForPlayStatus, dispatchForShowMiniPlayer } = props
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
@@ -36,6 +37,24 @@ const PlayListDetails = (props: any) => {
   const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
 
+  const pullingDown = () => {
+    console.log('pull-down')
+    // setBeforePullDown(true)
+    instanceRef.current.finishPullDown()
+  }
+
+  const pullingUp = async () => {
+    setBeforePullUp(false)
+    handlePullUp(pageRef, instanceRef).then(
+      () => setBeforePullUp(true),
+      (err: any) => {
+        setBeforePullUp(true)
+        Toast.fail(err, 1.5, () => {}, false)
+      }
+    )
+    instanceRef.current.finishPullUp()
+  }
+
   const init = () => {
     instanceRef.current = new BScroll(pullDownWrapperRef.current, {
       scrollY: true,
@@ -48,25 +67,13 @@ const PlayListDetails = (props: any) => {
         stop: 50,
       },
       pullUpLoad: {
-        threshold: 100,
+        threshold: -125,
         stop: 50,
       },
     })
 
-    instanceRef.current.on("pullingDown", () => {
-      console.log("pull-down")
-      // setBeforePullDown(true)
-      instanceRef.current.finishPullDown()
-    })
-
-    instanceRef.current.on("pullingUp", async () => {
-      setBeforePullUp(false)
-      handlePullUp(pageRef, instanceRef).then(() => setBeforePullUp(true), (err: any) => {
-        setBeforePullUp(true)
-        Toast.fail(err, 1.5, () => {}, false)
-      })
-    })
-
+    instanceRef.current.on('pullingDown', pullingDown)
+    instanceRef.current.on('pullingUp', pullingUp)
     // instanceRef.current.on("scroll", () => {
     //   // console.log("scroll")
     // })
@@ -79,7 +86,7 @@ const PlayListDetails = (props: any) => {
   }
 
   const onTouchStart = () => {
-    touchTimeRef.current = {date: new Date().getTime() } 
+    touchTimeRef.current = { date: new Date().getTime() }
   }
 
   const onTouchEnd = (songIndex: number) => {
@@ -87,6 +94,7 @@ const PlayListDetails = (props: any) => {
     if (date - touchTimeRef.current.date <= 75) {
       handlePlay(songIndex)
       dispatchForPlayStatus(true)
+      if (!showMiniPlayer) dispatchForShowMiniPlayer(true)
     }
     touchTimeRef.current = null
   }
@@ -105,19 +113,26 @@ const PlayListDetails = (props: any) => {
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
     const fetch = async () => {
-      let listData = await getPlayListDetail("3185023336")
+      if (!history.location.query || !history.location.query.id) return
+      let listData = await getPlayListDetail(history.location.query.id)
       handlePage(listData, 10)
       let payload = await getSongList(pageRef.current.modelForPage[0])
       diapatchForPlayList(payload.value)
     }
     fetch()
-    return () => {}
+    return () => {
+      if (instanceRef.current) {
+        instanceRef.current.off('pullingDown', pullingDown)
+        instanceRef.current.off('pullingUp', pullingUp)
+      }
+      pullDownWrapperRef.current = null
+    }
   }, [])
 
   return (
     <div ref={pullDownWrapperRef} className="pull-down-wrapper">
       <div className="list-detail">
-        {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
+        {!beforePullDown && <div style={{ color: 'red' }}>pulldown!</div>}
         {playListDetail && (
           <div>
             <div className="detail-wrapper">
@@ -131,9 +146,9 @@ const PlayListDetails = (props: any) => {
                   <div>
                     <img
                       style={{
-                        width: "30px",
-                        height: "30px",
-                        borderRadius: "50%",
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
                       }}
                       src={playListDetail.avatarUrl}
                       alt=""
@@ -160,7 +175,7 @@ const PlayListDetails = (props: any) => {
             </div>
           )}
         </div>
-        <div style={{width: "100%", height: "50px"}}></div>
+        <div style={{ width: '100%', height: '50px' }}></div>
       </div>
     </div>
   )
@@ -169,6 +184,7 @@ const PlayListDetails = (props: any) => {
 const stateToProps = (state: any) => ({
   playListDetail: state.playlist.detail,
   playList: state.playlist.data,
+  showMiniPlayer: state.global.showMiniPlayer,
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -184,17 +200,20 @@ const dispatchToProps = (dispatch: any) => ({
     dispatch(songReadyAction(songIndex))
   },
   diapatchForPlayList(playList: any[]) {
-    dispatch({ type: "play-list/data", value: playList })
+    dispatch({ type: 'play-list/data', value: playList })
   },
-  dispatchForPlayStatus (status: boolean) {
-    dispatch({type: "audio/play-status", value: status})
+  dispatchForPlayStatus(status: boolean) {
+    dispatch({ type: 'audio/play-status', value: status })
+  },
+  dispatchForShowMiniPlayer(status: boolean) {
+    dispatch({ type: 'global/show-mini-player', value: status })
   },
   async handlePullUp(pageRef: any, instanceRef: any) {
-    console.log("pull-up")
+    console.log('pull-up')
     const { totalPage, modelForPage } = pageRef.current
     // pageNo从0开始, 需要转为实际页码
     if (pageRef.current.pageNo + 2 > totalPage) {
-      Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 1.5, () => {}, false)
+      Toast.fail('没有选择歌曲 (￣o￣) . z Z　', 1.5, () => {}, false)
       instanceRef.current.finishPullUp()
       return
     }
@@ -205,7 +224,7 @@ const dispatchToProps = (dispatch: any) => ({
     const prommise = new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          dispatch({ type: "play-list/data", value: state.playlist.data.concat(payload.value) })
+          dispatch({ type: 'play-list/data', value: state.playlist.data.concat(payload.value) })
           instanceRef.current.finishPullUp()
           instanceRef.current.refresh()
           resolve(true)

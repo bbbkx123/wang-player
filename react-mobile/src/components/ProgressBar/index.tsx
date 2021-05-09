@@ -13,7 +13,7 @@ const refelctTime = 0.1
 // 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
 
 const ProgressBar = (props: any) => {
-  const { percent, progressWidth } = props
+  const { percent } = props
   const { startTime, EventEmitter } = props
   const { setStartTime } = props
   const progressBar = useRef<any>(null),
@@ -110,7 +110,7 @@ const ProgressBar = (props: any) => {
   }, [percent])
 
   return (
-    <div className="progress-bar__container" ref={progressBar} onClick={progressClick} style={{ width: `${progressWidth}px` }}>
+    <div className="progress-bar__container" ref={progressBar} onClick={progressClick} >
       <div className="progress-bar" onTouchStart={progressTouchStart} onTouchMove={_progressTouchMove} onTouchEnd={progressTouchEnd}>
         <div className="progress-bar__background"></div>
         {/* 进度条 */}

@@ -1,72 +1,26 @@
-import { useState, useEffect, useRef } from "react"
-import { connect } from "react-redux"
-import ProgressBar from "@/components/ProgressBar"
-import {songReadyAction} from "@/store/actionCreator"
-import { formatForPlayTime } from "@/utils/tools"
-import { useWatch } from "@/utils/hook"
-import "./index.less"
+import { useState, useEffect, useRef } from 'react'
+import { connect } from 'react-redux'
+import ProgressBar from '@/components/ProgressBar'
+import { songReadyAction } from '@/store/actionCreator'
+import { formatForPlayTime } from '@/utils/tools'
+import { useWatch } from '@/utils/hook'
+import './index.less'
 
 const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const degRef = useRef<number>()
   const { EventEmitter, playListDetail, playStatus, duration, currentSongIndex, playList } = props
-  const {handlePlay, dispatchForDeg} = props
+  const { handlePlay, dispatchForShowMiniPlayer } = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [progressWidth, setProgressWidth] = useState<number>(0)
-  // const [loop, setLoop] = useState<boolean>(false)
-  // const eventsName = EventEmitter.eventNames()
-
-  // progress事件订阅
-  // useEffect(() => {
-  //   if (!eventsName.includes("progress-changing")) {
-  // EventEmitter.addListener(
-  //   "progress-changing",
-  //   (percent: number) => {
-  //     setPercent(percent)
-  //   },
-  //   { passive: false }
-  // )
-  //   }
-  //   return () => {
-  //     EventEmitter.removeAllListeners(["progress-changing"])
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  // EventEmitter.addListener(
-  //   "progress-change",
-  //   (percent: number) => {
-  //     setPercent(percent)
-  // audioRef.current.currentTime = duration * percent;
-  //     EventEmitter.emit("set-current-time", duration * percent)
-  //   },
-  //   { passive: false }
-  // )
-
-  //   return () => {
-  //     EventEmitter.removeAllListeners(["progress-change"])
-  //   }
-  // }, [duration])
 
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
    * 解决: 独立使用useEffect, useEffect(()=>{}, [currentTime, duration])可以获取到
    * 后续发现不存在问题, 待观察
    */
-  // useEffect(() => {
-  // EventEmitter.addListener("timeupdate", (payload: any) => {
-  //   const { currentTime } = payload
-  //   setCurrentTime(currentTime)
-  //   setPercent(currentTime / duration)
-  //   // console.log(duration, currentTime);
-  // })
-
-  //   return () => {
-  //     EventEmitter.removeAllListeners(["timeupdate"])
-  //   }
-  // }, [duration])
 
   const handleProgressChanging = (percent: number) => {
     setPercent(percent)
@@ -74,7 +28,7 @@ const PlayPage = (props: any) => {
 
   const handleProgressChange = (percent: number) => {
     setPercent(percent)
-    EventEmitter.emit("set-current-time", duration * percent)
+    EventEmitter.emit('set-current-time', duration * percent)
   }
 
   const onTimeupdate = (payload: any) => {
@@ -91,15 +45,15 @@ const PlayPage = (props: any) => {
   //  77需要通过查看网站信息 设置允许声音
 
   const togglePlay = () => {
-    EventEmitter.emit("player-toggle-status")
+    EventEmitter.emit('player-toggle-status')
   }
 
   const handleNextSong = () => {
-    EventEmitter.emit("player-toggle-song", "NEXT")
+    EventEmitter.emit('player-toggle-song', 'NEXT')
   }
 
   const handlePrevSong = () => {
-    EventEmitter.emit("player-toggle-song", "PREV")
+    EventEmitter.emit('player-toggle-song', 'PREV')
   }
 
   const rotate = (deg: number) => {
@@ -113,26 +67,28 @@ const PlayPage = (props: any) => {
     //   degRef.current = deg
     //   posterElemRef.current.style.transform = `rotate(${deg}deg)`
     // } else {
-      degRef.current = 0
+    degRef.current = 0
     // }
     if (playRef.current && playRef.current.clientWidth) {
       setProgressWidth(playRef.current.clientWidth - 70)
     }
+    // 进入播放页面隐藏miniplayer
+    dispatchForShowMiniPlayer(false)
 
-    EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
-    EventEmitter.on("progress-change", handleProgressChange, { passive: false })
-    EventEmitter.on("timeupdate", onTimeupdate)
+    EventEmitter.on('progress-changing', handleProgressChanging, { passive: false })
+    EventEmitter.on('progress-change', handleProgressChange, { passive: false })
+    EventEmitter.on('timeupdate', onTimeupdate)
     return () => {
-      EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
-      EventEmitter.off("progress-change", handleProgressChange, { passive: false })
-      EventEmitter.off("timeupdate", onTimeupdate)
-
+      EventEmitter.off('progress-changing', handleProgressChanging, { passive: false })
+      EventEmitter.off('progress-change', handleProgressChange, { passive: false })
+      EventEmitter.off('timeupdate', onTimeupdate)
+      dispatchForShowMiniPlayer(true)
       // let deg = (degRef.current || 0) % 360
       // dispatchForDeg(deg)
     }
   }, [])
 
-  useWatch(playListDetail, (prev) => {
+  useWatch(playListDetail, prev => {
     if (prev && prev.detailId === playListDetail.detailId) return
     const initIndex = 0
     handlePlay(initIndex)
@@ -142,20 +98,18 @@ const PlayPage = (props: any) => {
     <div ref={playRef} className="play">
       <div className="play--poster">
         <div ref={posterElemRef} className="play--poster-wrapper">
-          {
-            playList[currentSongIndex] && <img src={playList[currentSongIndex].album.picUrl + '?param=300y300'} alt=""/>
-          } 
+          {playList[currentSongIndex] && <img src={playList[currentSongIndex].album.picUrl + '?param=300y300'} alt="" />}
         </div>
       </div>
       <div className="play--progress">
         <span className="time left">{formatForPlayTime(currentTime)}</span>
-        <ProgressBar percent={percent} progressWidth={progressWidth}></ProgressBar>
+        <ProgressBar percent={percent}></ProgressBar>
         <span className="time right">{formatForPlayTime(duration)}</span>
       </div>
       <div className="play--control">
-        <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>
-        <div style={{ fontSize: "48px" }} className={`iconfont ${typeof playStatus === "boolean" && playStatus ? "iconpause-circle" : "iconstart"}`} onClick={togglePlay}></div>
-        <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
+        <div style={{ fontSize: '32px' }} className="iconfont iconprev" onClick={handlePrevSong}></div>
+        <div style={{ fontSize: '48px' }} className={`iconfont ${typeof playStatus === 'boolean' && playStatus ? 'iconpause-circle' : 'iconstart'}`} onClick={togglePlay}></div>
+        <div style={{ fontSize: '32px' }} className="iconfont iconnext" onClick={handleNextSong}></div>
       </div>
     </div>
   )
@@ -169,11 +123,15 @@ const stateToProps = (state: any) => ({
   currentSongIndex: state.playlist.currentSongIndex,
   duration: state.audio.duration,
   // deg: state.playpage.deg,
+  // showMiniPlayer: state.global.showMiniPlayer,
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  handlePlay (songIndex: number) {
+  handlePlay(songIndex: number) {
     dispatch(songReadyAction(songIndex))
+  },
+  dispatchForShowMiniPlayer (status:boolean) {
+    dispatch({type: "global/show-mini-player", value: status})
   },
   // dispatchForDeg (deg: number) {
   //   dispatch({type: "play-page/deg", value: deg})

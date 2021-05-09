@@ -3,9 +3,9 @@ import { connect } from "react-redux"
 import { songReadyAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
 
-// forwardRef((props: PlayerProps, audioElemRef: any)  --- "react"
 const Player = (props: any) => {
-  const { playListDetail, currentSongIndex, EventEmitter, audioSrc, dispatchForPlayStatus, diapatchForDuration, Ready } = props
+  const {playListDetail, currentSongIndex, EventEmitter  , audioSrc,} = props
+  const { dispatchForPlayStatus, diapatchForDuration, toggleSong } = props
   const audioElemRef = useRef<any>(null)
   // *问题: 直接访问playListDetail为null, 暂时将playListDetail存入ref
   // 在useEffect(() => {}, [])访问, playListDetail是初始值null, 暂时这样实现 
@@ -17,7 +17,7 @@ const Player = (props: any) => {
     audioElemRef.current.pause()
     const len = playListDetail.listData.length
     if (currentSongIndex < len - 1) {
-      Ready(currentSongIndex + 1)
+      toggleSong(currentSongIndex + 1)
     } else if (currentSongIndex === len - 1) {
       // if (this.isLoopPlayList) {
       //     this.songChangeIndex = 0
@@ -58,7 +58,7 @@ const Player = (props: any) => {
         index = currentSongIndex - 1
       }
     }
-    Ready(index)
+    toggleSong(index)
   }
 
   useEffect(() => {
@@ -106,9 +106,9 @@ const dispatchToProps = (dispatch: any) => ({
   dispatchForPlayStatus (playStatus: boolean) {
     dispatch({ type: "audio/play-status", value: playStatus })
   },
-  Ready (currentSongIndex: number) {
+  toggleSong (currentSongIndex: number) {
     dispatch(songReadyAction(currentSongIndex))
-  },
+  }
 })
 
 export default connect(stateToProps, dispatchToProps)(Player)

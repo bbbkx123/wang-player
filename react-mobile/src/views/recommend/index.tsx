@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from 'react'
 // import { withRouter } from "react-router-dom"
-import { formatForNewSongList } from "@/utils/tools"
-import Slider from "@/components/Slider"
-import List from "@/components/List"
+import { formatForNewSongList } from '@/utils/tools'
+import Slider from '@/components/Slider'
+import List from '@/components/List'
 
-import * as api from "@/service"
-import * as define from "./define"
+import * as api from '@/service'
+import * as define from './define'
 
-import "./index.less"
+import './index.less'
 
 const Recommend = (props: any) => {
   const { history } = props
@@ -21,8 +21,8 @@ const Recommend = (props: any) => {
   const recommendConf = useRef<any>()
   const recommendPageConfRef = useRef<any>()
 
-  const fun1 = () => {
-    history.push("/playlistdetails")
+  const pageToPlaylistDetail = (id: number) => {
+    history.push({pathname: "/playlistdetails", query: {id}})
   }
   sliderConf.current = {
     bscroll: {
@@ -83,54 +83,57 @@ const Recommend = (props: any) => {
 
   const recommendPage = (
     <>
-    {/* banner滑动存在问题 */}
-    <div className="banner-container">
-          <Slider mode="banner" config={sliderConf.current}>
-            {bannerArr.length > 0 &&
-              bannerArr.map((banner: any, index: number) => {
-                return <img style={{ height: 130, width: "100%" }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
-              })}
-          </Slider>
-        </div>
-        <div className="icon-wrapper">
-          <Slider mode="normal-scroll-x" config={iconSliderConf.current} >
-            {icons.map((item, index) => {
+      {/* banner滑动存在问题 */}
+      <div className="banner-container">
+        <Slider mode="banner" config={sliderConf.current}>
+          {bannerArr.length > 0 &&
+            bannerArr.map((banner: any, index: number) => {
+              return <img style={{ height: 130, width: '100%' }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
+            })}
+        </Slider>
+      </div>
+      <div className="icon-wrapper">
+        <Slider mode="normal-scroll-x" config={iconSliderConf.current}>
+          {icons.map((item, index) => {
+            return (
+              <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={() => pageToPlaylistDetail(0)}>
+                <img src={process.env.PUBLIC_URL + '/image/' + item.name + '.png'} alt="" />
+                <span>{item.name}</span>
+              </div>
+            )
+          })}
+        </Slider>
+      </div>
+      <div className="recommend-wrapper">
+        <p className="recommend-wrapper--title">推荐歌单</p>
+        {recommendDetails.length > 0 && (
+          <Slider mode="normal-scroll-x" config={recommendConf.current}>
+            {recommendDetails.map((item: any, index: number) => {
               return (
-                <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={fun1}>
-                  <img src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
-                  <span>{item.name}</span>
+                <div className="children-item" style={{ width: 140, height: 160 }} key={`recommend-detail-${index}`} onClick={() => pageToPlaylistDetail(item.id)}>
+                  <img src={item.picUrl} alt={item.name} />
+                  <span className="text">{item.name}</span>
                 </div>
               )
             })}
           </Slider>
-        </div>
-        <div className="recommend-wrapper">
-          <p className="recommend-wrapper--title">推荐歌单</p>
-          {recommendDetails.length > 0 && (
-            <Slider mode="normal-scroll-x" config={recommendConf.current} >
-              {recommendDetails.map((item: any, index: number) => {
-                return (
-                  <div className="children-item" style={{ width: 140, height: 160 }} key={`recommend-detail-${index}`} onClick={fun1}>
-                    <img src={item.picUrl} alt={item.name} />
-                    <span className="text">{item.name}</span>
-                  </div>
-                )
-              })}
-            </Slider>
-          )}
-        </div>
-        <div>
-          <p>不可错过的精选</p>
-          {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"></List>}
-        </div>
-      </>
-  ) 
+        )}
+      </div>
+      <div>
+        <p>不可错过的精选</p>
+        {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"></List>}
+        <div style={{width: "100%", height: 100}}></div>
+      </div>
+    </>
+  )
 
   return (
-    <div style={{position: "absolute", height:"100%", width: "100%"}}>
-      {
-        dataReady && <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>{recommendPage}</Slider>
-      }
+    <div style={{ position: 'absolute', height: '100%', width: 'calc(100% - 20px)' }}>
+      {dataReady && (
+        <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>
+          {recommendPage}
+        </Slider>
+      )}
     </div>
   )
 }

@@ -20,3 +20,8 @@ export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
 // export const PLAY_PAGE__DEG = "play-page/deg"
 
 
+/**
+ * global
+ */
+
+export const GLOBAL__SHOW_MINI_PLAYER = "global/show-mini-player"

@@ -1,22 +1,22 @@
 @import '../style/index.less';
 
 @time: 500ms;
+@pageLevel1: 1;
+@pageLevel2: 2;
+
 
 .layouts {
-  // overflow-y: hidden;
   position: relative;
   height: 100%;
   background-color: @style-background-color;
   color: @style-color;
   .router-view {
     height: calc(100% - 45px);
-    // height: 100%;
     padding: 0 10px;
     background-color: black;
     overflow: hidden;
   }
 }
-
 
 .player-control {
   position: fixed;
@@ -30,63 +30,62 @@
   border-top: 1px solid rgba(255,255,255, .1) ;
 }
 
-
 // forward(进入 - 加载组件(显示) - history.action === "PUSH" 动画前) - 向上平移
 .forward-from-bottom-enter {
-  z-index: 2;
+  z-index: @pageLevel2;
   opacity: 0;
   transform: translateY(100%);
 }
 
 // forward(进入 - 加载组件(显示) - history.action === "PUSH", 动画中) - 向上平移
 .forward-from-bottom-enter-active {
-  z-index: 2;
+  z-index: @pageLevel2;
   opacity: 1;
   transform: translateY(0);
-  transition: all @time;
+  transition: all ease-in @time;
 }
 
 // forward(进入 - 卸载组件(隐藏) - history.action === "PUSH", 动画前) - 淡出
 .forward-from-bottom-exit {
-  z-index: 1;
+  z-index: @pageLevel1;
   opacity: 1;
 }
 
 // forward(进入 - 卸载组件(隐藏) - history.action === "PUSH", 动画中) - 淡出
 .forward-from-bottom-exit-active {
-  z-index: 1;
+  z-index: @pageLevel1;
   opacity: 0;
   transition: all @time;
 }
 
 // back(离开 - 加载组件(显示) - history.action === "POP", 动画前) - 淡入
 .back-to-bottom-enter {
-  z-index: 1;
+  z-index: @pageLevel1;
   opacity: 0;
 }
 
 // back(离开 - 加载组件(显示) - history.action === "POP", 动画中) - 淡入
 .back-to-bottom-enter-active {
-  z-index: 1;
+  z-index: @pageLevel1;
   opacity: .5;
-  transform: all @time;
+  transition: all ease-in @time;
 }
 
 .back-to-bottom-enter-done {
-  z-index: 1;
+  z-index: @pageLevel1;
   opacity: 1;
 }
 
 // back(离开 - 加载组件(隐藏) - history.action === "POP", 动画前) - 淡入
 .back-to-bottom-exit {
-  z-index: 2;
+  z-index: @pageLevel2;
   opacity: 1;
   transform: translateY(0);
 }
 
 // back(离开 - 加载组件(隐藏) - history.action === "POP", 动画前) - 淡入
 .back-to-bottom-exit-active {
-  z-index: 2;
+  z-index: @pageLevel2;
   opacity: 0;
   transform: translateY(100%);
   transition: all @time;

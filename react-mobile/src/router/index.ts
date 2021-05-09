@@ -2,7 +2,6 @@ import PlayPage from "@/views/PlayPage"
 import Recommend from "@/views/Recommend"
 import PlayListDetails from "@/views/PlayListDetails"
 
-import {HomePage, AboutPage} from "@/views/test1"
 
 const RouterConfig: any[] = [
   {
@@ -24,18 +23,6 @@ const RouterConfig: any[] = [
   {
     path: "/playlistdetails",
     component: PlayListDetails,
-    sceneConfig: {
-      enter: "from-bottom",
-      exit: "to-bottom",
-    },
-  },
-  // {
-  //   path: '/',
-  //   component: HomePage,
-  // },
-  {
-    path: "/about",
-    component: AboutPage,
     sceneConfig: {
       enter: "from-bottom",
       exit: "to-bottom",
