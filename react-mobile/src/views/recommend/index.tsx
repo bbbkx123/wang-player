@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from "react"
 // import { withRouter } from "react-router-dom"
-import { formatForNewSongList } from '@/utils/tools'
-import Slider from '@/components/Slider'
-import List from '@/components/List'
+import { formatForNewSongList } from "@/utils/tools"
+import Slider from "@/components/Slider"
+import List from "@/components/List"
 
-import * as api from '@/service'
-import * as define from './define'
+import * as api from "@/service"
+import * as define from "./define"
+import "./index.less"
 
-import './index.less'
+import Loading from "@/utils/Loading"
 
 const Recommend = (props: any) => {
   const { history } = props
@@ -20,9 +21,10 @@ const Recommend = (props: any) => {
   const sliderConf = useRef<any>()
   const recommendConf = useRef<any>()
   const recommendPageConfRef = useRef<any>()
+  const loadingInstance = useRef<any>()
 
   const pageToPlaylistDetail = (id: number) => {
-    history.push({pathname: "/playlistdetails", query: {id}})
+    history.push({ pathname: "/playlistdetails", query: { id } })
   }
   sliderConf.current = {
     bscroll: {
@@ -62,22 +64,30 @@ const Recommend = (props: any) => {
   }
 
   useEffect(() => {
+    // if (loadingInstance.current === undefined) {
+    //   loadingInstance.current = new Loading({ tipLabel: "xxxx", type: 3 })
+    // }
+    // loadingInstance.current.init()
     Promise.all([api.getBanner(0), api.getPersonalized(6), api.getNewSong(6)])
       .then(([res1, res2, res3]) => {
         setBannerArr(res1.data.banners)
         setRecommendDetails(res2.data.result)
         const data = res3.data.result.map((item: any) => formatForNewSongList(item))
         setNewSongList(data)
+        setDataReady(true)
         return Promise.resolve()
       })
       .then(() => {
-        setDataReady(true)
+        setTimeout(() => {
+          // loadingInstance.current.hide()
+        }, 500)
       })
     return () => {
       sliderConf.current = null
       iconSliderConf.current = null
       recommendConf.current = null
       recommendPageConfRef.current = null
+      loadingInstance.current = null
     }
   }, [])
 
@@ -88,7 +98,7 @@ const Recommend = (props: any) => {
         <Slider mode="banner" config={sliderConf.current}>
           {bannerArr.length > 0 &&
             bannerArr.map((banner: any, index: number) => {
-              return <img style={{ height: 130, width: '100%' }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
+              return <img style={{ height: 130, width: "100%" }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
             })}
         </Slider>
       </div>
@@ -97,7 +107,7 @@ const Recommend = (props: any) => {
           {icons.map((item, index) => {
             return (
               <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={() => pageToPlaylistDetail(0)}>
-                <img src={process.env.PUBLIC_URL + '/image/' + item.name + '.png'} alt="" />
+                <img src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
                 <span>{item.name}</span>
               </div>
             )
@@ -122,13 +132,13 @@ const Recommend = (props: any) => {
       <div>
         <p>不可错过的精选</p>
         {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"></List>}
-        <div style={{width: "100%", height: 100}}></div>
+        <div style={{ width: "100%", height: 100 }}></div>
       </div>
     </>
   )
 
   return (
-    <div style={{ position: 'absolute', height: '100%', width: 'calc(100% - 20px)' }}>
+    <div style={{ position: "absolute", height: "100%", width: "calc(100% - 20px)" }}>
       {dataReady && (
         <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>
           {recommendPage}

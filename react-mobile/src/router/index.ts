@@ -24,8 +24,8 @@ const RouterConfig: any[] = [
     path: "/playlistdetails",
     component: PlayListDetails,
     sceneConfig: {
-      enter: "from-bottom",
-      exit: "to-bottom",
+      enter: "from-right",
+      exit: "to-left",
     },
   },
 ]

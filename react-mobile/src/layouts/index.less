@@ -22,6 +22,7 @@
   position: fixed;
   bottom: 0;
   z-index: 1000;
+  transform: translateY(100%);
   display: flex;
   align-items: center;
   width: 100%;
@@ -30,6 +31,7 @@
   border-top: 1px solid rgba(255,255,255, .1) ;
 }
 
+// 注意
 // forward(进入 - 加载组件(显示) - history.action === "PUSH" 动画前) - 向上平移
 .forward-from-bottom-enter {
   z-index: @pageLevel2;
@@ -89,4 +91,95 @@
   opacity: 0;
   transform: translateY(100%);
   transition: all @time;
+}
+
+
+
+
+// 
+.forward-from-right-enter {
+  z-index: @pageLevel2;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.forward-from-right-enter-active {
+  z-index: @pageLevel2;
+  transform: translateX(0);
+  opacity: 1;
+  transition: all @time;
+}
+
+.forward-from-right-exit {
+  z-index: @pageLevel1;
+  opacity: 1;
+}
+
+.forward-from-right-exit-active {
+  z-index:@pageLevel1;
+  opacity: 0;
+  transition: all @time;
+}
+
+.back-to-left-enter {
+  z-index: @pageLevel1;
+  opacity: 0;
+}
+
+.back-to-left-enter-active {
+  z-index: @pageLevel1;
+  opacity: 1;
+  transition: all @time;
+}
+
+.back-to-left-exit {
+  z-index: @pageLevel2;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.back-to-left-exit-active {
+  z-index: @pageLevel2;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all @time;
+}
+
+
+.show-mini-enter {
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.show-mini-enter-active {
+  z-index: 1000;
+  opacity: 1;
+  transform: translateY(0);
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 200ms;
+}
+
+.show-mini-enter-done {
+  z-index: 1000;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.show-mini-exit {
+  z-index: 1000;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.show-mini-exit-active {
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 200ms;
+}
+
+.show-mini-exit-done {
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(100);
 }

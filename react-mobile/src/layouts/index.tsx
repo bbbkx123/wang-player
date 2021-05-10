@@ -1,91 +1,76 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { withRouter, Switch, Route } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import React from "react"
+import { withRouter, Switch, Route } from "react-router-dom"
+import { connect } from "react-redux"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
 
-import { NavBar, Icon } from 'antd-mobile'
-import Player from '@/components/Player'
+import { NavBar, Icon } from "antd-mobile"
+import Player from "@/components/Player"
 
-import RouterConfig from '@/router'
+import RouterConfig from "@/router"
 
-import './index.less'
+import "./index.less"
 
-
-// 问题: token了解
-// 问题: 
-/**
- * 1. react实现路由守卫 
- * 2. mini歌曲列表 
- * 3. 单曲播放(歌单逻辑) 
- * 4. miniplayer transition过渡 
- * 5. 搜索页面 
- * 6. 歌词
- * 7. 评论
- */
- 
 let oldLocation: any = null
 const DEFAULT_SCENE_CONFIG = {
-  enter: 'from-right',
-  exit: 'to-exit',
+  enter: "from-right",
+  exit: "to-exit",
 }
 
+// 注意: 过渡实现逻辑
 const getSceneConfig = (location: any) => {
-  const matchedRoute = RouterConfig.find(config => new RegExp(`^${config.path}$`).test(location.pathname))
+  const matchedRoute = RouterConfig.find((config) => new RegExp(`^${config.path}$`).test(location.pathname))
   return (matchedRoute && matchedRoute.sceneConfig) || DEFAULT_SCENE_CONFIG
 }
 
 const Layouts = (props: any) => {
   const { history, location } = props
-  const { currentSongIndex, playList, showMiniPlayer } = props
+  const { currentSongIndex, playList, showMiniPlayer, get1 } = props
 
   const goBack = () => {
-    const {location} = history
-    const {pathname} = location
-    if (pathname === "/") return 
+    const { location } = history
+    const { pathname } = location
+    if (pathname === "/") return
     history.goBack()
   }
 
   const togglePlayPage = () => {
     const { pathname } = history.location
-    if (pathname === '/play') {
-      history.push('/playlistdetails')
+    if (pathname === "/play") {
+      history.push("/playlistdetails")
     } else {
-      history.push('/play')
+      history.push("/play")
     }
   }
 
-  useEffect(() => {
-    // history.push("/recommend")
-    return () => {}
-  }, [])
-
-  let classNames = ''
-  if (history.action === 'PUSH') {
-    classNames = 'forward-' + getSceneConfig(location)?.enter
-  } else if (history.action === 'POP' && oldLocation) {
-    classNames = 'back-' + getSceneConfig(oldLocation)?.exit
+  // 注意: 过渡实现逻辑
+  let classNames = ""
+  if (history.action === "PUSH") {
+    classNames = "forward-" + getSceneConfig(location)?.enter
+  } else if (history.action === "POP" && oldLocation) {
+    classNames = "back-" + getSceneConfig(oldLocation)?.exit
   }
 
   // 更新旧location
   oldLocation = location
 
+  const fun1 = () => {
+    get1(true)
+  }
+
   const dom = (
     <>
       <div className="layouts">
-        <NavBar
-          mode="dark"
-          icon={<Icon type="left" />}
-          onLeftClick={goBack}
-          rightContent={[<Icon key="0" type="search" style={{ marginRight: '16px' }} />, <Icon key="1" type="ellipsis" />]}
-        ></NavBar>
+        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}></NavBar>
+
+        {/* <button onClick={fun1}>click</button> */}
 
         <TransitionGroup
-          childFactory={child => {
+          childFactory={(child) => {
             return React.cloneElement(child, { classNames })
           }}
           className="router-view"
         >
-          <CSSTransition timeout={500} key={location.pathname}>
+          <CSSTransition timeout={500} key={location.pathname} unmountOnExit>
             <Switch location={location}>
               {RouterConfig.map((config: any, index: number) => (
                 <Route key={index} exact {...config}></Route>
@@ -94,13 +79,17 @@ const Layouts = (props: any) => {
           </CSSTransition>
         </TransitionGroup>
 
-        {showMiniPlayer && (
-          <div className="player-control" onClick={togglePlayPage}>
-            <div>{playList[currentSongIndex].name} </div>
-            <div> - {playList[currentSongIndex].artist}</div>
-          </div>
-        )}
+        {
+          <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200} unMountOnExit>
+            <div className="player-control" onClick={togglePlayPage}>
+              {/* <div>{playList[currentSongIndex].name} </div> */}
+              {/* <div> - {playList[currentSongIndex].artist}</div> */}
+              <div>1111111111111</div>
+            </div>
+          </CSSTransition>
+        }
       </div>
+
       <Player></Player>
     </>
   )
@@ -119,7 +108,7 @@ const stateToProps = (state: any) => {
 const dispatchToProps = (dispatch: any) => {
   return {
     get1() {
-      dispatch({ type: 'play-list/data', value: [] })
+      dispatch({ type: "global/show-mini-player", value: true })
     },
   }
 }

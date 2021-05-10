@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { page as formatPageData } from '@/utils/tools'
-import { Toast } from 'antd-mobile'
-import List from '@/components/List'
+
 import { fetchPlayListDetailAction, fetchPlayListAction, songReadyAction } from '@/store/actionCreator'
+
 import BScroll from '@better-scroll/core'
 import PullDown from '@better-scroll/pull-down'
 import PullUp from '@better-scroll/pull-up'
+
+import { Toast } from 'antd-mobile'
+import List from '@/components/List'
+
+import { page as formatPageData } from '@/utils/tools'
+import Loading from "@/utils/Loading"
+
 import './index.less'
 interface useFun {
   (plugin: any): any
@@ -113,11 +119,18 @@ const PlayListDetails = (props: any) => {
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
     const fetch = async () => {
+      // const loadingInstance = new Loading({ tipLabel: "xxxx", type: 3 })
+      // loadingInstance.init()
+      // debugger
       if (!history.location.query || !history.location.query.id) return
       let listData = await getPlayListDetail(history.location.query.id)
       handlePage(listData, 10)
       let payload = await getSongList(pageRef.current.modelForPage[0])
       diapatchForPlayList(payload.value)
+      setTimeout(() => {
+        // debugger
+        // loadingInstance.hide()
+      }, 500)
     }
     fetch()
     return () => {
