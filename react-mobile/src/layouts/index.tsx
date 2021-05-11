@@ -25,11 +25,15 @@ const getSceneConfig = (location: any) => {
 const Layouts = (props: any) => {
   const { history, location } = props
   const { currentSongIndex, playList, showMiniPlayer, get1 } = props
+  const { dispatchForDetailId } = props
 
   const goBack = () => {
     const { location } = history
     const { pathname } = location
-    if (pathname === "/") return
+    if (pathname === "/") {
+      dispatchForDetailId(null)
+      return
+    }
     history.goBack()
   }
 
@@ -61,16 +65,13 @@ const Layouts = (props: any) => {
     <>
       <div className="layouts">
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}></NavBar>
-
-        {/* <button onClick={fun1}>click</button> */}
-
         <TransitionGroup
           childFactory={(child) => {
             return React.cloneElement(child, { classNames })
           }}
           className="router-view"
         >
-          <CSSTransition timeout={500} key={location.pathname} unmountOnExit>
+          <CSSTransition timeout={500} key={location.pathname} unMountOnExit>
             <Switch location={location}>
               {RouterConfig.map((config: any, index: number) => (
                 <Route key={index} exact {...config}></Route>
@@ -80,11 +81,17 @@ const Layouts = (props: any) => {
         </TransitionGroup>
 
         {
-          <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200} unMountOnExit>
+          <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200}>
             <div className="player-control" onClick={togglePlayPage}>
-              {/* <div>{playList[currentSongIndex].name} </div> */}
-              {/* <div> - {playList[currentSongIndex].artist}</div> */}
-              <div>1111111111111</div>
+            {/* <div>{JSON.stringify(currentSongIndex)}</div>
+              <div>{JSON.stringify(playList)}</div> */}
+              
+              {playList.length > 0 && typeof currentSongIndex === "number" && (
+                <>
+                  <div>{playList[currentSongIndex].name} </div>
+                  <div> - {playList[currentSongIndex].artist}</div>
+                </>
+              )}
             </div>
           </CSSTransition>
         }
@@ -109,6 +116,9 @@ const dispatchToProps = (dispatch: any) => {
   return {
     get1() {
       dispatch({ type: "global/show-mini-player", value: true })
+    },
+    dispatchForDetailId(id: number) {
+      dispatch({ type: "global/detail-id", value: id })
     },
   }
 }

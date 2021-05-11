@@ -4,18 +4,18 @@ import { songReadyAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
 
 const Player = (props: any) => {
-  const {playListDetail, currentSongIndex, EventEmitter  , audioSrc,} = props
-  const { dispatchForPlayStatus, diapatchForDuration, toggleSong } = props
+  const { listDetail, currentSongIndex, EventEmitter, audioSrc, showMiniPlayer } = props
+  const { dispatchForPlayStatus, diapatchForDuration, toggleSong, dispatchForShowMiniPlayer  } = props
   const audioElemRef = useRef<any>(null)
-  // *问题: 直接访问playListDetail为null, 暂时将playListDetail存入ref
-  // 在useEffect(() => {}, [])访问, playListDetail是初始值null, 暂时这样实现 
-  const temp = useRef<any>({playListDetail, currentSongIndex})
+  // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
+  // 在useEffect(() => {}, [])访问, listDetail是初始值null, 暂时这样实现
+  const temp = useRef<any>({ listDetail, currentSongIndex })
   const [loop] = useState<boolean>(false)
 
   // !问题: buffer加载时, currentTime需要loading效果
   const onEnded = () => {
     audioElemRef.current.pause()
-    const len = playListDetail.listData.length
+    const len = listDetail.listData.length
     if (currentSongIndex < len - 1) {
       toggleSong(currentSongIndex + 1)
     } else if (currentSongIndex === len - 1) {
@@ -32,13 +32,15 @@ const Player = (props: any) => {
 
   const onCanPlay = () => {
     diapatchForDuration(audioElemRef.current.duration)
+    dispatchForPlayStatus(true)
+    if (!showMiniPlayer) dispatchForShowMiniPlayer(true)
     audioElemRef.current.play()
   }
   const handlePlay = () => {
     const { paused, src } = audioElemRef.current
     if (!src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
     paused ? audioElemRef.current.play() : audioElemRef.current.pause()
-    dispatchForPlayStatus(!audioElemRef.current.paused )
+    dispatchForPlayStatus(!audioElemRef.current.paused)
   }
 
   const setCurrentTime = (currentTime: any) => {
@@ -47,14 +49,14 @@ const Player = (props: any) => {
 
   const handleToggleSongs = (toggleType: string) => {
     let index = null
-    const {playListDetail, currentSongIndex} = temp.current
+    const { listDetail, currentSongIndex } = temp.current
     if (!audioElemRef.current || !audioElemRef.current.src) return
     if (toggleType === "NEXT") {
-      index = playListDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
+      index = listDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
     } else {
       if (currentSongIndex === 0) {
         return
-      }else if (currentSongIndex < playListDetail.listData.length) {
+      } else if (currentSongIndex < listDetail.listData.length) {
         index = currentSongIndex - 1
       }
     }
@@ -80,8 +82,8 @@ const Player = (props: any) => {
   }, [])
 
   useEffect(() => {
-    temp.current.playListDetail = playListDetail
-  }, [playListDetail])
+    temp.current.listDetail = listDetail
+  }, [listDetail])
 
   useEffect(() => {
     temp.current.currentSongIndex = currentSongIndex
@@ -92,23 +94,27 @@ const Player = (props: any) => {
 const stateToProps = (state: any) => {
   return {
     EventEmitter: state.global.EventEmitter,
-    playListDetail: state.playlist.detail,
+    listDetail: state.global.listDetail,
     playList: state.playlist.data,
     audioSrc: state.audio.src,
     currentSongIndex: state.playlist.currentSongIndex,
+    showMiniPlayer: state.global.showMiniPlayer,
   }
 }
 
 const dispatchToProps = (dispatch: any) => ({
-  diapatchForDuration (duration: any) {
+  diapatchForDuration(duration: any) {
     dispatch({ type: "audio/duration", value: duration })
   },
-  dispatchForPlayStatus (playStatus: boolean) {
+  dispatchForPlayStatus(playStatus: boolean) {
     dispatch({ type: "audio/play-status", value: playStatus })
   },
-  toggleSong (currentSongIndex: number) {
+  dispatchForShowMiniPlayer(status: boolean) {
+    dispatch({ type: "global/show-mini-player", value: status })
+  },
+  toggleSong(currentSongIndex: number) {
     dispatch(songReadyAction(currentSongIndex))
-  }
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(Player)

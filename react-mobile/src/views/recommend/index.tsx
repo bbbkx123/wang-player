@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from "react"
+import {connect} from "react-redux"
 // import { withRouter } from "react-router-dom"
-import { formatForNewSongList } from "@/utils/tools"
+
 import Slider from "@/components/Slider"
 import List from "@/components/List"
 
 import * as api from "@/service"
 import * as define from "./define"
+import { formatForNewSongList } from "@/utils/tools"
+import {songReadyAction} from "@/store/actionCreator"
+import Loading from "@/utils/Loading"
+
 import "./index.less"
 
-import Loading from "@/utils/Loading"
+
 
 const Recommend = (props: any) => {
   const { history } = props
+  const {dispatchForDetailId, dispatchForPlayList, handlePlay} = props
   const [bannerArr, setBannerArr] = useState([])
   const [icons] = useState<any[]>(define.icons)
   const [recommendDetails, setRecommendDetails] = useState<any[]>([])
@@ -22,9 +28,11 @@ const Recommend = (props: any) => {
   const recommendConf = useRef<any>()
   const recommendPageConfRef = useRef<any>()
   const loadingInstance = useRef<any>()
+  const touchTimeRef = useRef<any>()
 
   const pageToPlaylistDetail = (id: number) => {
-    history.push({ pathname: "/playlistdetails", query: { id } })
+    dispatchForDetailId(id)
+    history.push({ pathname: "/playlistdetails"})
   }
   sliderConf.current = {
     bscroll: {
@@ -63,6 +71,20 @@ const Recommend = (props: any) => {
     freeScroll: false,
   }
 
+  const onTouchStart = () => {
+    touchTimeRef.current = { date: new Date().getTime() }
+  }
+
+  const onTouchEnd = (songIndex: number) => {
+    const date = new Date().getTime()
+    if (date - touchTimeRef.current.date <= 100) {
+      // 单曲播放通过模拟歌单播放, 将单曲存入playlist中
+      dispatchForPlayList([newSongList[songIndex]])
+      handlePlay(0)
+    }
+    touchTimeRef.current = null
+  }
+
   useEffect(() => {
     // if (loadingInstance.current === undefined) {
     //   loadingInstance.current = new Loading({ tipLabel: "xxxx", type: 3 })
@@ -78,9 +100,9 @@ const Recommend = (props: any) => {
         return Promise.resolve()
       })
       .then(() => {
-        setTimeout(() => {
-          // loadingInstance.current.hide()
-        }, 500)
+        // setTimeout(() => {
+        //   loadingInstance.current.hide()
+        // }, 500)
       })
     return () => {
       sliderConf.current = null
@@ -88,6 +110,7 @@ const Recommend = (props: any) => {
       recommendConf.current = null
       recommendPageConfRef.current = null
       loadingInstance.current = null
+      touchTimeRef.current = null
     }
   }, [])
 
@@ -131,14 +154,14 @@ const Recommend = (props: any) => {
       </div>
       <div>
         <p>不可错过的精选</p>
-        {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"></List>}
+        {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"  onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
         <div style={{ width: "100%", height: 100 }}></div>
       </div>
     </>
   )
 
   return (
-    <div style={{ position: "absolute", height: "100%", width: "calc(100% - 20px)" }}>
+    <div style={{ position: "absolute", height: "calc(100% - 45px)", width: "calc(100% - 20px)" }}>
       {dataReady && (
         <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>
           {recommendPage}
@@ -148,4 +171,20 @@ const Recommend = (props: any) => {
   )
 }
 
-export default Recommend
+const stateToProps = (state: any) => ({
+  // detailId: state.global.detailId,
+})
+
+const dispatchToProps = (dispatch: any) => ({
+  dispatchForDetailId (id: number) {
+    dispatch({type: "global/detail-id", value: id})
+  },
+  dispatchForPlayList (playlist: any[]) {
+    dispatch({type: "play-list/data", value: playlist})
+  },
+  handlePlay(songIndex: number) {
+    dispatch(songReadyAction(songIndex))
+  },
+})
+
+export default connect(stateToProps, dispatchToProps)(Recommend)

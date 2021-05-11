@@ -9,7 +9,7 @@ const List = (props: any) => {
           if (mode === "PLAY_LIST") {
             return <PlayListStyle item={item} key={`song-item1-${index}`} index={index} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}/>
           } else if (mode === "NEW_SONG") {
-            return <NewSongListStyle item={item}  key={`song-item2-${index}`}></NewSongListStyle>
+            return <NewSongListStyle item={item}  key={`song-item2-${index}`} index={index} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></NewSongListStyle>
           }
           return 
         })}
@@ -40,12 +40,12 @@ const PlayListStyle = (props: any) => {
 }
 
 const NewSongListStyle = (props: any) => {
-  const {item, onTouchStart, onTouchEnd} = props
+  const {item, index, onTouchStart, onTouchEnd} = props
   return (
-    // onTouchStart={onTouchStart}
-    //   onTouchEnd={() => onTouchEnd(index)}
     <div
       className="song-item new-song"
+      onTouchStart={onTouchStart}
+      onTouchEnd={() => onTouchEnd(index)}
     >
       <div className="pic">
         <img src={item.picUrl} alt=""/>

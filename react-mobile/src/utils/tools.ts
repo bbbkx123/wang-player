@@ -39,7 +39,7 @@ export const formatForPlayTime = (time: any) => {
 
 
 export const formatForPlayListDetail = (data: any) => {
-  const { coverImgUrl, name, trackIds, tracks } = data.playlist;
+  const { coverImgUrl, name, trackIds, id } = data.playlist;
   const { avatarUrl, nickname } = data.playlist.creator;
   const listData = trackIds.map((item: any) => item.id);
   return {
@@ -48,11 +48,12 @@ export const formatForPlayListDetail = (data: any) => {
     name,
     coverImgUrl,
     listData,
+    id,
   };
 }
 
 export const formatForNewSongList = (data: any) => {
-  const { picUrl, name } = data;
+  const { picUrl, name, id } = data;
   const {album, artists} = data.song
   const {albumName } = album.name
   const artistsNames = artists.map((item: any) => item.name);
@@ -61,6 +62,7 @@ export const formatForNewSongList = (data: any) => {
     picUrl,
     name,
     albumName,
+    sid: id,
   };
 }
 

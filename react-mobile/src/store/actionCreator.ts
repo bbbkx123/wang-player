@@ -1,3 +1,5 @@
+import {Toast} from "antd-mobile"
+
 import { fetchSongUrl, fetchPlayListDetail, fetchSongsDetail } from "@/service/index"
 import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
@@ -5,9 +7,15 @@ export const songReadyAction = (songIndex: number) => {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: "play-list/current-song-index", value: songIndex })
     const { playlist } = getState()
-    const sid = playlist.detail.listData[songIndex]
+    const {sid} = playlist.data[songIndex]
     let song = await fetchSongUrl(sid)
-    dispatch({ type: "audio/src", value: song.data.data[0].url })
+    const {url} = song.data.data[0]
+    if (typeof url !== "string") {
+      Toast.fail("歌曲暂不支持播放 (￣o￣) . z Z　", 3, () => {}, false)
+      return
+    } else {
+      dispatch({ type: "audio/src", value:  url})
+    }
   }
 }
 
@@ -19,9 +27,9 @@ export const songReadyAction = (songIndex: number) => {
 export const fetchPlayListDetailAction = (detailId: string) => {
   return async (dispatch: any, getState: any) => {
     const response = await fetchPlayListDetail(detailId)
-    dispatch({ type: "play-list/detail", value: formatForPlayListDetail(response.data) })
-    const { playlist } = getState()
-    return Promise.resolve(playlist.detail.listData)
+    dispatch({ type: "global/list-detail", value: formatForPlayListDetail(response.data) })
+    const { global } = getState()
+    return Promise.resolve(global.listDetail.listData)
   }
 }
 
@@ -35,6 +43,7 @@ export const fetchPlayListAction = (idArr: any[]) => {
     const ids = idArr.join(",")
     const response = await fetchSongsDetail(ids)
     let value = response.data.songs.map((item: any, index: number) => formatForSong(item, idArr[index]))
+    // 注意
     return Promise.resolve({value, getState })
   }
 }

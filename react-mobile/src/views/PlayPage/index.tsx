@@ -10,7 +10,7 @@ const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const degRef = useRef<number>()
-  const { EventEmitter, playListDetail, playStatus, duration, currentSongIndex, playList } = props
+  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList } = props
   const { handlePlay, dispatchForShowMiniPlayer } = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
@@ -88,8 +88,8 @@ const PlayPage = (props: any) => {
     }
   }, [])
 
-  useWatch(playListDetail, prev => {
-    if (prev && prev.detailId === playListDetail.detailId) return
+  useWatch(listDetail, prev => {
+    if (prev && prev.detailId === listDetail.detailId) return
     const initIndex = 0
     handlePlay(initIndex)
   })
@@ -117,7 +117,7 @@ const PlayPage = (props: any) => {
 
 const stateToProps = (state: any) => ({
   EventEmitter: state.global.EventEmitter,
-  playListDetail: state.playlist.detail,
+  listDetail: state.global.listDetail,
   playList: state.playlist.data,
   playStatus: state.audio.playStatus,
   currentSongIndex: state.playlist.currentSongIndex,

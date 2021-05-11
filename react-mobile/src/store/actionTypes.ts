@@ -10,7 +10,6 @@ export const AUDIO__SRC = "audio/src"
 /**
  * play-list
  */
-export const PLAY_LIST__DETAIL = "play-list/detail"
 export const PLAY_LIST__DATA = "play-list/data"
 export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
 
@@ -25,3 +24,6 @@ export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
  */
 
 export const GLOBAL__SHOW_MINI_PLAYER = "global/show-mini-player"
+export const GLOBAL__DETAIL_ID = "global/detail-id"
+export const GLOBAL__LIST_DETAIL = "global/list-detail"
+export const GLOBAL__PLAY_LIST = "global/play-list"
