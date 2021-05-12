@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import ProgressBar from '@/components/ProgressBar'
-import { songReadyAction } from '@/store/actionCreator'
+import { beforeCanPlayAction } from '@/store/actionCreator'
 import { formatForPlayTime } from '@/utils/tools'
 import { useWatch } from '@/utils/hook'
 import './index.less'
@@ -11,7 +11,7 @@ const PlayPage = (props: any) => {
   const posterElemRef = useRef<any>()
   const degRef = useRef<number>()
   const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList } = props
-  const { handlePlay, dispatchForShowMiniPlayer } = props
+  const { play, dispatchForShowMiniPlayer } = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [progressWidth, setProgressWidth] = useState<number>(0)
@@ -91,7 +91,7 @@ const PlayPage = (props: any) => {
   useWatch(listDetail, prev => {
     if (prev && prev.detailId === listDetail.detailId) return
     const initIndex = 0
-    handlePlay(initIndex)
+    play(initIndex)
   })
 
   return (
@@ -127,8 +127,8 @@ const stateToProps = (state: any) => ({
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  handlePlay(songIndex: number) {
-    dispatch(songReadyAction(songIndex))
+  play(songIndex: number) {
+    dispatch(beforeCanPlayAction(songIndex))
   },
   dispatchForShowMiniPlayer (status:boolean) {
     dispatch({type: "global/show-mini-player", value: status})

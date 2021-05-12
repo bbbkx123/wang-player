@@ -1,10 +1,12 @@
-import React from "react"
+import React, {useRef, useState} from "react"
 import { withRouter, Switch, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import { NavBar, Icon } from "antd-mobile"
 import Player from "@/components/Player"
+import MiniPlayer from "@/components/MiniPlayer"
+import MiniList from "@/components/MiniList"
 
 import RouterConfig from "@/router"
 
@@ -24,8 +26,10 @@ const getSceneConfig = (location: any) => {
 
 const Layouts = (props: any) => {
   const { history, location } = props
-  const { currentSongIndex, playList, showMiniPlayer, get1 } = props
+ 
   const { dispatchForDetailId } = props
+
+  const [show, setShow] = useState<boolean>(false)
 
   const goBack = () => {
     const { location } = history
@@ -37,14 +41,7 @@ const Layouts = (props: any) => {
     history.goBack()
   }
 
-  const togglePlayPage = () => {
-    const { pathname } = history.location
-    if (pathname === "/play") {
-      history.push("/playlistdetails")
-    } else {
-      history.push("/play")
-    }
-  }
+  
 
   // 注意: 过渡实现逻辑
   let classNames = ""
@@ -58,13 +55,15 @@ const Layouts = (props: any) => {
   oldLocation = location
 
   const fun1 = () => {
-    get1(true)
+    setShow((prev: boolean) => !prev)
   }
 
   const dom = (
     <>
       <div className="layouts">
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}></NavBar>
+        <button onClick={fun1}>mini-list</button>
+        
         <TransitionGroup
           childFactory={(child) => {
             return React.cloneElement(child, { classNames })
@@ -79,22 +78,8 @@ const Layouts = (props: any) => {
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-
-        {
-          <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200}>
-            <div className="player-control" onClick={togglePlayPage}>
-            {/* <div>{JSON.stringify(currentSongIndex)}</div>
-              <div>{JSON.stringify(playList)}</div> */}
-              
-              {playList.length > 0 && typeof currentSongIndex === "number" && (
-                <>
-                  <div>{playList[currentSongIndex].name} </div>
-                  <div> - {playList[currentSongIndex].artist}</div>
-                </>
-              )}
-            </div>
-          </CSSTransition>
-        }
+        <MiniPlayer></MiniPlayer>
+        <MiniList show={show}></MiniList>
       </div>
 
       <Player></Player>
@@ -104,19 +89,10 @@ const Layouts = (props: any) => {
   return dom
 }
 
-const stateToProps = (state: any) => {
-  return {
-    currentSongIndex: state.playlist.currentSongIndex,
-    playList: state.playlist.data,
-    showMiniPlayer: state.global.showMiniPlayer,
-  }
-}
+const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => {
   return {
-    get1() {
-      dispatch({ type: "global/show-mini-player", value: true })
-    },
     dispatchForDetailId(id: number) {
       dispatch({ type: "global/detail-id", value: id })
     },

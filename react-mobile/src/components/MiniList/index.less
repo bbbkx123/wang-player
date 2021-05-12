@@ -1,0 +1,51 @@
+@time: 500ms;
+
+.mini-list--container {
+  position: absolute;
+  z-index: 2000;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: calc(100% - 20px);
+  height: 400px;
+  border-radius: 20px;
+  background-color: red;
+}
+
+.mini-list-enter {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 100%);
+}
+
+.mini-list-enter-active {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition: all @time;
+}
+
+.mini-list-enter-done {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.mini-list-exit {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.mini-list-exit-active {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 100%);
+  transition: all @time;
+}
+
+.mini-list-exit-done {
+  z-index: 2000;
+  opacity: 1;
+  transform: translate(-50%, 100%);
+}

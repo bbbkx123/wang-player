@@ -2,14 +2,19 @@ import "./index.less"
 
 const List = (props: any) => {
   const { data, mode, onTouchStart, onTouchEnd } = props
+  const config = {onTouchStart, onTouchEnd}
+
   return (
     <>
       {data &&
         data.map((item: any, index: number) => {
+          Object.assign(config, {item, key: `${mode}-${index}`, index})
           if (mode === "PLAY_LIST") {
-            return <PlayListStyle item={item} key={`song-item1-${index}`} index={index} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}/>
+            return <PlayListStyle {...config}/>
           } else if (mode === "NEW_SONG") {
-            return <NewSongListStyle item={item}  key={`song-item2-${index}`} index={index} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></NewSongListStyle>
+            return <NewSongListStyle {...config}></NewSongListStyle>
+          } else if (mode === "MINI_LIST") {
+            return <MiniListStyle {...config}></MiniListStyle>
           }
           return 
         })}
@@ -54,6 +59,24 @@ const NewSongListStyle = (props: any) => {
         <div className="song-name"><span>{`${item.name} - `}</span><span style={{fontSize: "10px", color: "rgba(255,255,255, .5)"}}>{`${item.artistsNames}`}</span></div>
         <div className="other-info">
           <span className="info">{item.albumName || "albumName - albumName - albumName"}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const MiniListStyle = (props: any) => {
+  const {item, index, onTouchStart, onTouchEnd} = props
+  return (
+    <div
+      className="song-item mini-list"
+      onTouchStart={onTouchStart}
+      onTouchEnd={() => onTouchEnd(index)}
+    >
+      <div className="main">
+        <div className="song-name">{`${item.name} - ${item.artistsNames}`}</div>
+        <div className="edit">
+          
         </div>
       </div>
     </div>

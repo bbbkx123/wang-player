@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 
-import { fetchPlayListDetailAction, fetchPlayListAction, songReadyAction } from "@/store/actionCreator"
+import { fetchPlayListDetailAction, fetchPlayListAction, beforeCanPlayAction } from "@/store/actionCreator"
 
 import BScroll from "@better-scroll/core"
 import PullDown from "@better-scroll/pull-down"
@@ -26,12 +26,11 @@ use(PullUp)
 // 猜想为pullup对transformY设置存在问题
 
 const PlayListDetails = (props: any) => {
-  const { listDetail, history, detailId, playListOfListDetail } = props
-  const { handlePlay, getSongList, getPlayListDetail, handlePullUp, diapatchForListDetail, diapatchForPlayList, dispatchForPlayListOfListDetail } = props
+  const { listDetail, history, detailId, playListOfListDetail, playList } = props
+  const { play, getSongList, getPlayListDetail, handlePullUp, diapatchForListDetail, diapatchForPlayList, dispatchForPlayListOfListDetail } = props
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
-  const playList = useRef<any>()
   const pageRef = useRef<any>({
     size: 10,
     pageNo: 0,
@@ -52,7 +51,7 @@ const PlayListDetails = (props: any) => {
 
   const pullingUp = async () => {
     setBeforePullUp(false)
-    handlePullUp(pageRef, instanceRef).then(
+    handlePullUp(pageRef, instanceRef, playListOfListDetail).then(
       () => setBeforePullUp(true),
       (err: any) => {
         setBeforePullUp(true)
@@ -100,7 +99,7 @@ const PlayListDetails = (props: any) => {
     const date = new Date().getTime()
     if (date - touchTimeRef.current.date <= 75) {
       diapatchForPlayList(playListOfListDetail)
-      handlePlay(songIndex)
+      play(songIndex)
     }
     touchTimeRef.current = null
   }
@@ -124,8 +123,8 @@ const PlayListDetails = (props: any) => {
 
       let listData = await getPlayListDetail(detailId)
       handlePage(listData, 10)
-      let payload = await getSongList(pageRef.current.modelForPage[0])
-      dispatchForPlayListOfListDetail(payload.value)
+      let value = await getSongList(pageRef.current.modelForPage[0])
+      dispatchForPlayListOfListDetail(value)
       setTimeout(() => {
         //
         // loadingInstance.hide()
@@ -214,11 +213,11 @@ const dispatchToProps = (dispatch: any) => ({
     return Promise.resolve(listData)
   },
   async getSongList(songIdArr: string[]) {
-    const payload = await dispatch(fetchPlayListAction(songIdArr))
-    return Promise.resolve(payload)
+    const value = await dispatch(fetchPlayListAction(songIdArr))
+    return Promise.resolve(value)
   },
-  handlePlay(songIndex: number) {
-    dispatch(songReadyAction(songIndex))
+  play(songIndex: number) {
+    dispatch(beforeCanPlayAction(songIndex))
   },
   diapatchForPlayList(playList: any[]) {
     dispatch({ type: "play-list/data", value: playList })
@@ -232,7 +231,7 @@ const dispatchToProps = (dispatch: any) => ({
   dispatchForPlayStatus(status: boolean) {
     dispatch({ type: "audio/play-status", value: status })
   },
-  async handlePullUp(pageRef: any, instanceRef: any) {
+  async handlePullUp(pageRef: any, instanceRef: any, playListOfListDetail:any) {
     console.log("pull-up")
     const { totalPage, modelForPage } = pageRef.current
     // pageNo从0开始, 需要转为实际页码
@@ -243,12 +242,11 @@ const dispatchToProps = (dispatch: any) => ({
     }
     pageRef.current.pageNo += 1
     const songsId = modelForPage[pageRef.current.pageNo]
-    const payload = await dispatch(fetchPlayListAction(songsId))
-    const state = payload.getState()
+    const value = await dispatch(fetchPlayListAction(songsId))
     const prommise = new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
-          dispatch({ type: "play-list/data", value: state.playlist.data.concat(payload.value) })
+          dispatch({ type: "global/play-list", value: [...playListOfListDetail].concat(value) })
           instanceRef.current.finishPullUp()
           instanceRef.current.refresh()
           resolve(true)

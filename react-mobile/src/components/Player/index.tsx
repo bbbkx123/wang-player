@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
-import { songReadyAction } from "@/store/actionCreator"
+import { beforeCanPlayAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
 
 const Player = (props: any) => {
@@ -34,7 +34,7 @@ const Player = (props: any) => {
     diapatchForDuration(audioElemRef.current.duration)
     dispatchForPlayStatus(true)
     if (!showMiniPlayer) dispatchForShowMiniPlayer(true)
-    audioElemRef.current.play()
+    // audioElemRef.current.play()
   }
   const handlePlay = () => {
     const { paused, src } = audioElemRef.current
@@ -113,7 +113,7 @@ const dispatchToProps = (dispatch: any) => ({
     dispatch({ type: "global/show-mini-player", value: status })
   },
   toggleSong(currentSongIndex: number) {
-    dispatch(songReadyAction(currentSongIndex))
+    dispatch(beforeCanPlayAction(currentSongIndex))
   },
 })
 

@@ -6,13 +6,14 @@
 @indexWidth: 50px;
 @editWidth: 50px;
 
+.song-item {
+  display: flex;
+  width: 100%;
+}
 
 .song-item.play-list {
-  display: flex;
   margin-bottom: 25px;
   padding-top: 5px;
-  // box-sizing: border-box;
-  width: 100%;
   .index {
     display: table-cell;
     vertical-align: middle;
@@ -52,8 +53,6 @@
 }
 
 .song-item.new-song {
-  display: flex;
-  width: 100%;
   padding: 5px 0;
   .pic {
     margin-right: 10px;
@@ -74,6 +73,21 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+  }
+}
+
+
+.song-item.mini-list {
+  .main {
+    display: flex;
+    height: 50px;
+    width: 100%;
+    .song-name {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

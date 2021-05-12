@@ -8,7 +8,7 @@ import List from "@/components/List"
 import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
-import {songReadyAction} from "@/store/actionCreator"
+import {beforeCanPlayAction} from "@/store/actionCreator"
 import Loading from "@/utils/Loading"
 
 import "./index.less"
@@ -17,7 +17,7 @@ import "./index.less"
 
 const Recommend = (props: any) => {
   const { history } = props
-  const {dispatchForDetailId, dispatchForPlayList, handlePlay} = props
+  const {dispatchForDetailId, dispatchForPlayList, play} = props
   const [bannerArr, setBannerArr] = useState([])
   const [icons] = useState<any[]>(define.icons)
   const [recommendDetails, setRecommendDetails] = useState<any[]>([])
@@ -80,7 +80,7 @@ const Recommend = (props: any) => {
     if (date - touchTimeRef.current.date <= 100) {
       // 单曲播放通过模拟歌单播放, 将单曲存入playlist中
       dispatchForPlayList([newSongList[songIndex]])
-      handlePlay(0)
+      play(0)
     }
     touchTimeRef.current = null
   }
@@ -118,15 +118,15 @@ const Recommend = (props: any) => {
     <>
       {/* banner滑动存在问题 */}
       <div className="banner-container">
-        <Slider mode="banner" config={sliderConf.current}>
+        {/* <Slider mode="banner" config={sliderConf.current}>
           {bannerArr.length > 0 &&
             bannerArr.map((banner: any, index: number) => {
               return <img style={{ height: 130, width: "100%" }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
             })}
-        </Slider>
+        </Slider> */}
       </div>
       <div className="icon-wrapper">
-        <Slider mode="normal-scroll-x" config={iconSliderConf.current}>
+        {/* <Slider mode="normal-scroll-x" config={iconSliderConf.current}>
           {icons.map((item, index) => {
             return (
               <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={() => pageToPlaylistDetail(0)}>
@@ -135,7 +135,7 @@ const Recommend = (props: any) => {
               </div>
             )
           })}
-        </Slider>
+        </Slider> */}
       </div>
       <div className="recommend-wrapper">
         <p className="recommend-wrapper--title">推荐歌单</p>
@@ -153,8 +153,8 @@ const Recommend = (props: any) => {
         )}
       </div>
       <div>
-        <p>不可错过的精选</p>
-        {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"  onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
+        {/* <p>不可错过的精选</p>
+        {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG"  onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>} */}
         <div style={{ width: "100%", height: 100 }}></div>
       </div>
     </>
@@ -182,8 +182,8 @@ const dispatchToProps = (dispatch: any) => ({
   dispatchForPlayList (playlist: any[]) {
     dispatch({type: "play-list/data", value: playlist})
   },
-  handlePlay(songIndex: number) {
-    dispatch(songReadyAction(songIndex))
+  play(songIndex: number) {
+    dispatch(beforeCanPlayAction(songIndex))
   },
 })
 
