@@ -27,10 +27,7 @@ const MiniList = (props: any) => {
 
   useEffect(() => {
     if (listDetail && listDetail.listData.length > 0) {
-      getSongs(listDetail.listData).then((res: any) => {
-      console.log(JSON.stringify(res))
-      setData(res)
-    })
+      getSongs(listDetail.listData).then((res: any) => setData(res))
     }
     return () => {}
   }, [listDetail])
@@ -39,6 +36,7 @@ const MiniList = (props: any) => {
     <>
       <CSSTransition in={show} timeout={500} classNames="mini-list">
         <div className="mini-list--container">
+          <div className="mini-list--title">当前播放</div>
           {data.length > 0 && (
             <Slider mode="normal-scroll-y" config={miniListConf.current}>
               <List mode="MINI_LIST" data={data} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>

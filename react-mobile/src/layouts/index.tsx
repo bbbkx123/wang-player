@@ -27,7 +27,7 @@ const getSceneConfig = (location: any) => {
 const Layouts = (props: any) => {
   const { history, location } = props
  
-  const { dispatchForDetailId } = props
+  const { dispatchForDetailId, dispatchForShowMiniPlayer } = props
 
   const [show, setShow] = useState<boolean>(false)
 
@@ -37,8 +37,14 @@ const Layouts = (props: any) => {
     if (pathname === "/") {
       dispatchForDetailId(null)
       return
+    } else if (pathname === "/play") {
+      dispatchForShowMiniPlayer(true)
     }
     history.goBack()
+  }
+
+  const goSearch = () => {
+    history.push("/search")
   }
 
   
@@ -57,12 +63,18 @@ const Layouts = (props: any) => {
   const fun1 = () => {
     setShow((prev: boolean) => !prev)
   }
+  
+  const fun2 = () => {
+    history.push("/search/result")
+  }
 
   const dom = (
     <>
       <div className="layouts">
-        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} />, <Icon key="1" type="ellipsis" />]}></NavBar>
+        {/* <Icon key="1" type="ellipsis" /> */}
+        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch}/>]}></NavBar>
         <button onClick={fun1}>mini-list</button>
+        <button onClick={fun2}>go-search-result</button>
         
         <TransitionGroup
           childFactory={(child) => {
@@ -71,9 +83,10 @@ const Layouts = (props: any) => {
           className="router-view"
         >
           <CSSTransition timeout={500} key={location.pathname} unMountOnExit>
+            {/* 注意  location移除会存在问题*/}
             <Switch location={location}>
               {RouterConfig.map((config: any, index: number) => (
-                <Route key={index} exact {...config}></Route>
+                <Route key={index} {...config}></Route>
               ))}
             </Switch>
           </CSSTransition>
@@ -95,6 +108,9 @@ const dispatchToProps = (dispatch: any) => {
   return {
     dispatchForDetailId(id: number) {
       dispatch({ type: "global/detail-id", value: id })
+    },
+    dispatchForShowMiniPlayer(status: boolean) {
+      dispatch({ type: "global/show-mini-player", value: status })
     },
   }
 }

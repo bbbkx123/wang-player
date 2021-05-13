@@ -29,7 +29,7 @@ const PlayListStyle = (props: any) => {
       className="song-item play-list"
       key={`song-item1-${index}`}
       onTouchStart={onTouchStart}
-      onTouchEnd={() => onTouchEnd(index)}
+      onTouchEnd={() => onTouchEnd(index, item.sid)}
     >
       <div className="index">{index + 1}</div>
       <div className="main">
@@ -74,10 +74,8 @@ const MiniListStyle = (props: any) => {
       onTouchEnd={() => onTouchEnd(index)}
     >
       <div className="main">
-        <div className="song-name">{`${item.name} - ${item.artistsNames}`}</div>
-        <div className="edit">
-          
-        </div>
+        <div className="song-name">{`${item.name} - ${item.album.name}`}</div>
+        <div className="edit"></div>
       </div>
     </div>
   )

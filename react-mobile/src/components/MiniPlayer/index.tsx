@@ -34,10 +34,6 @@ const MiniPlayer = (props: any) => {
     }
   }
 
-  useEffect(() => {
-    console.log(showMiniPlayer)
-  }, [showMiniPlayer])
-
   return (
     <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200}>
       {display()}

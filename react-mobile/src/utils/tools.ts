@@ -66,6 +66,17 @@ export const formatForNewSongList = (data: any) => {
   };
 }
 
+export const formatForSearchResult = (data: any) => {
+  const { name, id, album, artists } = data;
+  const artistsNames = artists.map((item: any) => item.name);
+  return {
+    artist: artistsNames.join("/"),
+    name,
+    album: {name: album.name},
+    sid: id,
+  };
+}
+
 export const formatForSong = (song: any, songId: any) => {
   return {
     name: song.name,

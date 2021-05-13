@@ -48,3 +48,20 @@ export const getPersonalized = (limit: number) => get('/personalized', {params: 
  * 
  */
   export const getNewSong = (limit: number) => get('/personalized/newsong', {params: {limit}})
+
+  /**
+ * 搜索
+ * @param {String} keywords 关键字
+ * @param {Number} limit 取出数量
+ * @param {Number} offset 偏移数量，用于分页 , 如 : 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ * 
+ * result: 
+ * bannerItem.targetType
+ * 3000 网页跳转
+ * 1004 mv
+ * 1000 歌单
+ * 1    歌曲
+ * 10   专辑
+ * 
+ */
+export const getSearchResult = (keywords: string, limit: number, offset: number) => get('/search', {params: {keywords, limit, offset}})

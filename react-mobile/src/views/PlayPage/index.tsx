@@ -82,7 +82,6 @@ const PlayPage = (props: any) => {
       EventEmitter.off('progress-changing', handleProgressChanging, { passive: false })
       EventEmitter.off('progress-change', handleProgressChange, { passive: false })
       EventEmitter.off('timeupdate', onTimeupdate)
-      dispatchForShowMiniPlayer(true)
       // let deg = (degRef.current || 0) % 360
       // dispatchForDeg(deg)
     }
