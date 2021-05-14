@@ -15,6 +15,8 @@ const List = (props: any) => {
             return <NewSongListStyle {...config}></NewSongListStyle>
           } else if (mode === "MINI_LIST") {
             return <MiniListStyle {...config}></MiniListStyle>
+          } else if (mode === "COMMENT_LIST") {
+            return <CommentListStyle {...config}></CommentListStyle>
           }
           return 
         })}
@@ -78,6 +80,30 @@ const MiniListStyle = (props: any) => {
         <div className="edit"></div>
       </div>
     </div>
+  )
+}
+
+
+const CommentListStyle = (props: any) => {
+  const {item, index, onTouchStart, onTouchEnd} = props
+  return (
+    <div className="comment-item-container">
+        <div className="avatar-container">
+          <div className="avatar" style={{backgroundImage: `url(${item.user.avatarUrl}?param=35y35)`}}></div>
+        </div>
+        <div className="comment-item-main-container">
+          <div className="comment">
+            <span className="nickname">{`${item.user.nickname} : `}</span>
+          {item.content}
+          </div>
+          <div className="other">
+            <div className="time">{item.time}</div>
+            <div className="like">
+              <i className="iconfont icon-dianzan"></i>({item.likedCount})
+            </div>
+          </div>
+        </div>
+      </div>
   )
 }
 

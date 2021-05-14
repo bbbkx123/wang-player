@@ -86,6 +86,10 @@ export const formatForSong = (song: any, songId: any) => {
   };
 }
 
+export const formatForComment = (comment: any) => {
+  return comment;
+}
+
 export const page = (idArr: any[], pageSize: number) => {
     const pageNumber = Math.ceil(idArr.length / pageSize)
     const page = new Array(pageNumber)
@@ -109,3 +113,5 @@ export const page = (idArr: any[], pageSize: number) => {
 //   if (!slotFn) return null;
 //   return slotFn(data);
 // }
+
+

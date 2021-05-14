@@ -31,7 +31,6 @@ const Player = (props: any) => {
   }
 
   const onCanPlay = () => {
-    debugger
     diapatchForDuration(audioElemRef.current.duration)
     dispatchForPlayStatus(true)
     if (!showMiniPlayer) dispatchForShowMiniPlayer(true)

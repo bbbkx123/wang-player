@@ -5,14 +5,14 @@ import { CSSTransition } from "react-transition-group"
 import List from "@/components/List"
 import Slider from "@/components/Slider"
 
-import { fetchPlayListAction } from "@/store/actionCreator"
+// import { fetchPlayListAction } from "@/store/actionCreator"
 
 import "./index.less"
 
 const MiniList = (props: any) => {
-  const { listDetail, show } = props
-  const { getSongs } = props
-  const [data, setData] = useState<any[]>([])
+  const { show, playList } = props
+  // const { getSongs } = props
+  // const [data, setData] = useState<any[]>([])
   const miniListConf = useRef<any>({
     scrollY: true,
     scrollX: false,
@@ -25,21 +25,21 @@ const MiniList = (props: any) => {
 
   const onTouchEnd = () => {}
 
-  useEffect(() => {
-    if (listDetail && listDetail.listData.length > 0) {
-      getSongs(listDetail.listData).then((res: any) => setData(res))
-    }
-    return () => {}
-  }, [listDetail])
+  // useEffect(() => {
+  //   if (listDetail && listDetail.listData.length > 0) {
+  //     getSongs(listDetail.listData).then((res: any) => setData(res))
+  //   }
+  //   return () => {}
+  // }, [listDetail])
 
   return (
     <>
       <CSSTransition in={show} timeout={500} classNames="mini-list">
         <div className="mini-list--container">
           <div className="mini-list--title">当前播放</div>
-          {data.length > 0 && (
+          {playList.length > 0 && (
             <Slider mode="normal-scroll-y" config={miniListConf.current}>
-              <List mode="MINI_LIST" data={data} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
+              <List mode="MINI_LIST" data={playList} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
             </Slider>
           )}
         </div>
@@ -49,14 +49,15 @@ const MiniList = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  listDetail: state.global.listDetail,
+  // listDetail: state.global.listDetail,
+  playList: state.playlist.data,
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  async getSongs(songIds: any[]) {
-    let songs = await dispatch(fetchPlayListAction(songIds))
-    return Promise.resolve(songs)
-  },
+  // async getSongs(songIds: any[]) {
+  //   let songs = await dispatch(fetchPlayListAction(songIds))
+  //   return Promise.resolve(songs)
+  // },
 })
 
 export default connect(stateToProps, dispatchToProps)(MiniList)

@@ -6,6 +6,8 @@
 @indexWidth: 50px;
 @editWidth: 50px;
 
+@avatarSize: 35px;
+
 .song-item {
   display: flex;
   width: 100%;
@@ -89,6 +91,51 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+  }
+}
+
+
+.comment-item-container {
+  display: flex;
+  width: 100%;
+  min-height: auto;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  color: rgba(255, 255, 255, .7);
+  .avatar-container {
+    padding-top:25px;
+    .avatar {
+      width: @avatarSize;
+      height: @avatarSize;
+      border-radius: 50%;
+    }
+  }
+  .comment-item-main-container {
+    margin-left: 20px;
+    padding-top: 25px;
+    width: calc(100% - @avatarSize);
+    .comment {
+      line-height: 20px;
+      text-align: left;
+      font-size: 13px;
+      .nickname {
+        display: inline-block;
+        font-size: 12px;
+        color: rgba(65,105,225, 1);
+      }
+    }
+    .other {
+      padding: 5px 0;
+      display: flex;
+      font-size: 14px;
+      .time {
+        width: 50%;
+        text-align: left;
+      }
+      .like {
+
+      }
     }
   }
 }

@@ -65,7 +65,7 @@ const Layouts = (props: any) => {
   }
   
   const fun2 = () => {
-    history.push("/search/result")
+    history.push("/comment")
   }
 
   const dom = (
@@ -74,7 +74,7 @@ const Layouts = (props: any) => {
         {/* <Icon key="1" type="ellipsis" /> */}
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch}/>]}></NavBar>
         <button onClick={fun1}>mini-list</button>
-        <button onClick={fun2}>go-search-result</button>
+        <button onClick={fun2}>go-comment</button>
         
         <TransitionGroup
           childFactory={(child) => {

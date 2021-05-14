@@ -41,8 +41,7 @@ const Search = (props: any) => {
 
   const onTouchEnd = async (songIndex: number, id: number) => {
     const date = new Date().getTime()
-    if (date - touchTimeRef.current.date <= 75) {
-      let url = await api.fetchSongUrl(id + "")
+    if (date - touchTimeRef.current.date <= 100) {
       diapatchForPlayList([data[songIndex]])
       play(0)
     }
@@ -58,15 +57,18 @@ const Search = (props: any) => {
   }
 
   useEffect(() => {
-    autoFocusInst.current.focus()
+    // 问题: 自动获取光标动画为从右到左, 路由动画为从左到右; 
+    // autoFocusInst.current.focus()
     return () => {
-
+      touchTimeRef.current = {}
     }
   }, [])
 
   return (
-    <div className="search-page">
+    <div className="search--page page-container">
+      <div className="search--input-container">   
       <SearchBar placeholder="自动获取光标" ref={ref => autoFocusInst.current = ref} onChange={onChange} onSubmit={onSubmit}/>
+      </div>
       <div>
          {data.length > 0 && <List mode="PLAY_LIST" data={data} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
       </div>

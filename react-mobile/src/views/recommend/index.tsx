@@ -9,7 +9,7 @@ import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
 import {beforeCanPlayAction} from "@/store/actionCreator"
-import Loading from "@/utils/Loading"
+import {withLoading} from "@/utils/Loading"
 
 import "./index.less"
 
@@ -29,6 +29,8 @@ const Recommend = (props: any) => {
   const recommendPageConfRef = useRef<any>()
   const loadingInstance = useRef<any>()
   const touchTimeRef = useRef<any>()
+
+  const [loading, setLoading] = useState<boolean>(true)
 
   const pageToPlaylistDetail = (id: number) => {
     dispatchForDetailId(id)
@@ -104,6 +106,10 @@ const Recommend = (props: any) => {
         //   loadingInstance.current.hide()
         // }, 500)
       })
+
+      setTimeout(() => {
+        setLoading(false)
+      }, 3000)
     return () => {
       sliderConf.current = null
       iconSliderConf.current = null
@@ -114,7 +120,7 @@ const Recommend = (props: any) => {
     }
   }, [])
 
-  const recommendPage = (
+  const RecommendMain = () => (
     <>
       {/* banner滑动存在问题 */}
       <div className="banner-container">
@@ -131,7 +137,7 @@ const Recommend = (props: any) => {
             return (
               <div className="children-item" style={{ width: 50, height: 50 }} key={`icon-${index}`} onClick={() => pageToPlaylistDetail(0)}>
                 <img src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
-                <span>{item.name}</span>
+                {/* <span>{item.name}</span> */}
               </div>
             )
           })}
@@ -160,11 +166,13 @@ const Recommend = (props: any) => {
     </>
   )
 
+  const RecommendWithLoading = withLoading(RecommendMain)
+
   return (
-    <div style={{ position: "absolute", height: "calc(100% - 45px)", width: "calc(100% - 20px)" }}>
+    <div className="page-container">
       {dataReady && (
         <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>
-          {recommendPage}
+          <RecommendWithLoading loading={loading}/>
         </Slider>
       )}
     </div>
@@ -186,5 +194,6 @@ const dispatchToProps = (dispatch: any) => ({
     dispatch(beforeCanPlayAction(songIndex))
   },
 })
+
 
 export default connect(stateToProps, dispatchToProps)(Recommend)

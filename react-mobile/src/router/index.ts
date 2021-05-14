@@ -47,8 +47,8 @@ const RouterConfig: any[] = [
     component: Comment,
     exact: false,
     sceneConfig: {
-      enter: "from-right",
-      exit: "to-left",
+      enter: "from-bottom",
+      exit: "to-bottom",
     },
   },
 ]

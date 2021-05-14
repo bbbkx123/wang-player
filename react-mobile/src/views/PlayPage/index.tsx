@@ -14,7 +14,7 @@ const PlayPage = (props: any) => {
   const { play, dispatchForShowMiniPlayer } = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
-  const [progressWidth, setProgressWidth] = useState<number>(0)
+  // const [progressWidth, setProgressWidth] = useState<number>(0)
 
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
@@ -62,6 +62,14 @@ const PlayPage = (props: any) => {
     }
   }
 
+  const poster = () => {
+    if (playList[currentSongIndex].album.picUrl) {
+      return playList[currentSongIndex].album.picUrl + '?param=300y300'
+    } else {
+      return process.env.PUBLIC_URL + "/image/wink.png"
+    }
+  }
+
   useEffect(() => {
     // if (deg !== null) {
     //   degRef.current = deg
@@ -69,9 +77,9 @@ const PlayPage = (props: any) => {
     // } else {
     degRef.current = 0
     // }
-    if (playRef.current && playRef.current.clientWidth) {
-      setProgressWidth(playRef.current.clientWidth - 70)
-    }
+    // if (playRef.current && playRef.current.clientWidth) {
+    //   setProgressWidth(playRef.current.clientWidth - 70)
+    // }
     // 进入播放页面隐藏miniplayer
     dispatchForShowMiniPlayer(false)
 
@@ -97,7 +105,7 @@ const PlayPage = (props: any) => {
     <div ref={playRef} className="play">
       <div className="play--poster">
         <div ref={posterElemRef} className="play--poster-wrapper">
-          {playList[currentSongIndex] && <img src={playList[currentSongIndex].album.picUrl + '?param=300y300'} alt="" />}
+          {playList[currentSongIndex] && <img src={poster()} alt="" />}
         </div>
       </div>
       <div className="play--progress">

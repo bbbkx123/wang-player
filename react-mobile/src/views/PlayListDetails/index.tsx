@@ -11,7 +11,7 @@ import { Toast } from "antd-mobile"
 import List from "@/components/List"
 
 import { page as formatPageData } from "@/utils/tools"
-import Loading from "@/utils/Loading"
+// import Loading from "@/utils/Loading"
 
 import "./index.less"
 interface useFun {
@@ -144,7 +144,7 @@ const PlayListDetails = (props: any) => {
   }, [])
 
   return (
-    <div className="transition-group">
+    <div className="page-container">
       <div ref={pullDownWrapperRef} className="pull-down-wrapper">
         <div className="list-detail">
           {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
