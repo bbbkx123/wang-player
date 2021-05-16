@@ -73,9 +73,9 @@ const Layouts = (props: any) => {
       <div className="layouts">
         {/* <Icon key="1" type="ellipsis" /> */}
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch}/>]}></NavBar>
-        <button onClick={fun1}>mini-list</button>
+        {/* <button onClick={fun1}>mini-list</button>
         <button onClick={fun2}>go-comment</button>
-        
+         */}
         <TransitionGroup
           childFactory={(child) => {
             return React.cloneElement(child, { classNames })

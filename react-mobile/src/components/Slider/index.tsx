@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 
-import BScroll from '@better-scroll/core'
+import BScroll from "@better-scroll/core"
+import PullDown from "@better-scroll/pull-down"
+import PullUp from "@better-scroll/pull-up"
 import Slide from '@better-scroll/slide'
 import './index.less'
 
@@ -10,7 +12,7 @@ import './index.less'
 // banner banner模式
 
 const Slider = (props: any) => {
-  const { mode, config, children } = props
+  const { mode, config, children, height, width} = props
   const { EventEmitter } = props
 
   const instance = useRef<any>()
@@ -23,6 +25,11 @@ const Slider = (props: any) => {
   const initial = () => {
     if (children.length === 0) return
     if (mode === 'banner') BScroll.use(Slide)
+    if (mode === "list-detail") {
+      const use: any = BScroll.use
+      use(PullDown)
+      use(PullUp)
+    }
     instance.current = { ...instance.current, bscroll: new BScroll(sliderRef.current, config.bscroll) }
     let hooks = instance.current.bscroll.scroller.actionsHandler.hooks
     if (mode === 'banner') {
@@ -33,6 +40,16 @@ const Slider = (props: any) => {
     hooks.on('click', (event: any) => {
       EventEmitter.emit('hook-click', event)
     })
+
+    // 问题: 没有进行事件解绑
+    if (mode === "list-detail") {
+      instance.current.bscroll.on('pullingDown', () => {
+        EventEmitter.emit('pullingDown')
+      })
+      instance.current.bscroll.on('pullingUp', () => {
+        EventEmitter.emit('pullingUp', instance.current)
+      })
+    }
   }
 
   const setSliderWidth = () => {
@@ -41,7 +58,7 @@ const Slider = (props: any) => {
     let children = elRefSliderGroup.children
     let sliderWidth = elRefSlider.clientWidth
 
-    const marginLeft = 5
+    const marginLeft = 10
     if (mode === 'banner') {
       setDots(Array.from({ length: 10 }).map(item => true))
     }
@@ -51,6 +68,7 @@ const Slider = (props: any) => {
       if (mode === 'normal-scroll-x') {
         // 添加margin-left: 5px, 用于隔开
         child.classList.add('margin')
+        child.style.width = typeof width === "number" ? `${width}px` : width
       }
     }
     if (mode === 'banner') {
@@ -93,7 +111,7 @@ const Slider = (props: any) => {
   }, [])
 
   return (
-    <div className="slider-wrapper" ref={sliderWrapperElemRef}>
+    <div className="slider-wrapper" ref={sliderWrapperElemRef} style={{height : (typeof height === "number" ? `${height}px`: height) || undefined}}>
       <div className="slider" ref={sliderRef}>
         <div className="slider-group" ref={sliderGroupRef}>
           {children}

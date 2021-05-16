@@ -46,3 +46,23 @@ export const fetchPlayListAction = (idArr: any[]) => {
     return Promise.resolve(value)
   }
 }
+
+
+
+export const pullingUp =  (songsId: any) => async (dispatch: any, getState: any) => {
+  // const {bscroll} = instance
+  // const { totalPage, modelForPage } = pageRef.current
+  // if (pageRef.current.pageNo + 2 > totalPage) {
+  //   Toast.fail('没有选择歌曲 (￣o￣) . z Z　', 1.5, () => {}, false)
+  //   return Promise.resolve()
+  // }
+  // // pageNo从0开始, 需要转为实际页码
+  // pageRef.current.pageNo += 1
+  // const songsId = modelForPage[pageRef.current.pageNo]
+  // debugger
+  const value = await dispatch(fetchPlayListAction(songsId))
+  const state = getState()
+  dispatch({type: 'global/play-list', value: state.global.playList.concat(value)})
+  // bscroll.finishPullUp()
+  // bscroll.refresh()
+}

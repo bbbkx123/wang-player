@@ -58,9 +58,8 @@ const NewSongListStyle = (props: any) => {
         <img src={item.picUrl} alt=""/>
       </div>
       <div className="main">
-        <div className="song-name"><span>{`${item.name} - `}</span><span style={{fontSize: "10px", color: "rgba(255,255,255, .5)"}}>{`${item.artistsNames}`}</span></div>
-        <div className="other-info">
-          <span className="info">{item.albumName || "albumName - albumName - albumName"}</span>
+        <div className="song-name">{`${item.name}`}
+          <span className="info">{` - ${item.artistsNames}`}</span>
         </div>
       </div>
     </div>
