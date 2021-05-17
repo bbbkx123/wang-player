@@ -12,8 +12,8 @@ import './index.less'
 // banner banner模式
 
 const Slider = (props: any) => {
-  const { mode, config, children, height, width} = props
-  const { EventEmitter } = props
+  const { mode, config, children, height, width, pullDown, pullUp, click} = props
+  // const { EventEmitter } = props
 
   const instance = useRef<any>()
   const sliderRef = useRef<any>(null)
@@ -32,22 +32,23 @@ const Slider = (props: any) => {
     }
     instance.current = { ...instance.current, bscroll: new BScroll(sliderRef.current, config.bscroll) }
     let hooks = instance.current.bscroll.scroller.actionsHandler.hooks
+    hooks.on('click', (event: any) => {
+      // EventEmitter.emit('hook-click', event)
+      click && click()
+    })
     if (mode === 'banner') {
       instance.current.bscroll.on('slideWillChange', (page: any) => {
         setCurrentPageIndex(page.pageX)
       })
     }
-    hooks.on('click', (event: any) => {
-      EventEmitter.emit('hook-click', event)
-    })
-
+    
     // 问题: 没有进行事件解绑
-    if (mode === "list-detail") {
+    if (mode === "list-detail" && pullDown && pullUp) {
       instance.current.bscroll.on('pullingDown', () => {
-        EventEmitter.emit('pullingDown')
+        pullDown(instance.current.bscroll)
       })
       instance.current.bscroll.on('pullingUp', () => {
-        EventEmitter.emit('pullingUp', instance.current)
+        pullUp(instance.current.bscroll)
       })
     }
   }
@@ -131,7 +132,7 @@ const Slider = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  EventEmitter: state.global.EventEmitter,
+  // EventEmitter: state.global.EventEmitter,
 })
 
 const dispatchToProps = (dispatch: any) => ({})

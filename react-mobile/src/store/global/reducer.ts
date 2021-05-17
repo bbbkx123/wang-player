@@ -7,6 +7,15 @@ const defaultState = {
   detailId: null,
   listDetail: null,
   playList: [],
+  detailPage: {
+    size: 10,
+    pageNo: 0,
+    songsTotal: null,
+    pageTotal: null,
+    // modelForClient: [],
+    model: [],
+  },
+  searchPage: {}
 }
 
 export default (state: any = defaultState, action: any) => {
@@ -31,6 +40,16 @@ export default (state: any = defaultState, action: any) => {
       return {
         ...state,
         playList: value,
+      }
+    case types.GLOBAL__DETAIL_PAGE:
+      return {
+        ...state,
+        detailPage: value,
+      }
+    case types.GLOBAL__SEARCH_PAGE:
+      return {
+        ...state,
+        searchPage: value,
       }
     default:
       return state

@@ -17,6 +17,8 @@ const List = (props: any) => {
             return <MiniListStyle {...config}></MiniListStyle>
           } else if (mode === "COMMENT_LIST") {
             return <CommentListStyle {...config}></CommentListStyle>
+          } else if (mode === "LYRIC") {
+            return <LyricListStyle {...config}></LyricListStyle>
           }
           return 
         })}
@@ -103,6 +105,16 @@ const CommentListStyle = (props: any) => {
           </div>
         </div>
       </div>
+  )
+}
+
+
+const LyricListStyle = (props: any) => {
+  const {item, index, onTouchStart, onTouchEnd} = props
+  return (
+    <div key={`lyric${index}`}>
+      {item}
+    </div>
   )
 }
 

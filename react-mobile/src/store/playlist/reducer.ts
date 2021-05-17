@@ -3,7 +3,6 @@ import * as types from "../actionTypes"
 const defaultState = {
   data: [],
   currentSongIndex: null,
-  
 }
 
 export default (state: any = defaultState, action: any) => {

@@ -30,10 +30,6 @@ const Recommend = (props: any) => {
 
   const [loading, setLoading] = useState<boolean>(true)
 
-  const pageToPlaylistDetail = (id: number) => {
-    dispatchForDetailId(id)
-    history.push({ pathname: '/playlistdetails' })
-  }
   sliderConf.current = {
     bscroll: {
       scrollX: true,
@@ -69,6 +65,16 @@ const Recommend = (props: any) => {
     // 锁定方向
     directionLockThreshold: 0,
     freeScroll: false,
+  }
+
+  const pageToPlaylistDetail = (id: number) => {
+    dispatchForDetailId(id)
+    history.push({ pathname: '/playlistdetails' })
+  }
+  
+  const fun1 = () => {
+    dispatchForPlayList([{"artist":"Ellis/Laura Brehm","name":"Start Over","album":{"name":"Start Over"},"sid":573027032}])
+    play(0)
   }
 
   const onTouchStart = () => {
@@ -124,7 +130,7 @@ const Recommend = (props: any) => {
         <Slider mode="normal-scroll-x" config={iconSliderConf.current} height={70} width={50}>
           {icons.map((item, index) => {
             return (
-              <div className="children-item" key={`icon-${index}`} onClick={() => pageToPlaylistDetail(0)}>
+              <div className="children-item" key={`icon-${index}`} onClick={fun1}>
                 <img style={{height:50, width:50}} src={process.env.PUBLIC_URL + '/image/' + item.name + '.png'} alt="" />
                 <span>{item.name}</span>
               </div>

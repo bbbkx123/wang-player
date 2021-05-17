@@ -2,19 +2,22 @@ import { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import ProgressBar from '@/components/ProgressBar'
 import { beforeCanPlayAction } from '@/store/actionCreator'
+import {fetchLyricAction} from "@/store/playpage/action"
 import { formatForPlayTime } from '@/utils/tools'
 import { useWatch } from '@/utils/hook'
+import List from "@/components/List"
 import './index.less'
+
 
 const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const degRef = useRef<number>()
-  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList } = props
-  const { play, dispatchForShowMiniPlayer } = props
+  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric } = props
+  const { play, dispatchForShowMiniPlayer, fetchLyricData } = props
   const [percent, setPercent] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<number>(0)
-  // const [progressWidth, setProgressWidth] = useState<number>(0)
+  const [lyricList, setLyricList] = useState<any[]>([])
 
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
@@ -71,17 +74,17 @@ const PlayPage = (props: any) => {
   }
 
   useEffect(() => {
-    // if (deg !== null) {
-    //   degRef.current = deg
-    //   posterElemRef.current.style.transform = `rotate(${deg}deg)`
-    // } else {
     degRef.current = 0
-    // }
-    // if (playRef.current && playRef.current.clientWidth) {
-    //   setProgressWidth(playRef.current.clientWidth - 70)
-    // }
     // 进入播放页面隐藏miniplayer
     dispatchForShowMiniPlayer(false)
+
+    // console.log(lyricText.match(/\[\d{2}:\d{2}\.\d{2,}\]/gm));
+    // let textArr = lyricText.replace(/^((?!\[\d{2}:\d{2}\.\d{2,}\]).)*/gm, '').replace(/\n/gm, ';').split(';')
+
+    // const text = lyricText.split("\n")
+    // setLyric(text)
+
+    fetchLyricData()
 
     EventEmitter.on('progress-changing', handleProgressChanging, { passive: false })
     EventEmitter.on('progress-change', handleProgressChange, { passive: false })
@@ -90,8 +93,6 @@ const PlayPage = (props: any) => {
       EventEmitter.off('progress-changing', handleProgressChanging, { passive: false })
       EventEmitter.off('progress-change', handleProgressChange, { passive: false })
       EventEmitter.off('timeupdate', onTimeupdate)
-      // let deg = (degRef.current || 0) % 360
-      // dispatchForDeg(deg)
     }
   }, [])
 
@@ -101,13 +102,25 @@ const PlayPage = (props: any) => {
     play(initIndex)
   })
 
+  useEffect(() => {
+    console.log(lyric);
+    
+    debugger
+  }, [lyric])
+
   return (
     <div ref={playRef} className="play">
-      <div className="play--poster">
+      {/* <div className="play--poster play--main">
         <div ref={posterElemRef} className="play--poster-wrapper">
           {playList[currentSongIndex] && <img src={poster()} alt="" />}
         </div>
+      </div> */}
+      <div className="play--main play-lyric">
+        {lyric.lyricList.length > 0 && JSON.stringify(lyric)}
+        {/* {lyric && lyric.lyricList.length > 0 && <List mode="LYRIC" data={lyric.lyricList}></List>} */}
       </div>
+
+
       <div className="play--progress">
         <span className="time left">{formatForPlayTime(currentTime)}</span>
         <ProgressBar percent={percent}></ProgressBar>
@@ -129,8 +142,7 @@ const stateToProps = (state: any) => ({
   playStatus: state.audio.playStatus,
   currentSongIndex: state.playlist.currentSongIndex,
   duration: state.audio.duration,
-  // deg: state.playpage.deg,
-  // showMiniPlayer: state.global.showMiniPlayer,
+  lyric: state.playpage.lyric,
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -140,9 +152,9 @@ const dispatchToProps = (dispatch: any) => ({
   dispatchForShowMiniPlayer (status:boolean) {
     dispatch({type: "global/show-mini-player", value: status})
   },
-  // dispatchForDeg (deg: number) {
-  //   dispatch({type: "play-page/deg", value: deg})
-  // }
+  fetchLyricData () {
+    dispatch(fetchLyricAction())
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(PlayPage)

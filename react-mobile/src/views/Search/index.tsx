@@ -43,6 +43,7 @@ const Search = (props: any) => {
     const date = new Date().getTime()
     if (date - touchTimeRef.current.date <= 100) {
       diapatchForPlayList([data[songIndex]])
+      console.log(JSON.stringify(data[songIndex]));
       play(0)
     }
     touchTimeRef.current = null
