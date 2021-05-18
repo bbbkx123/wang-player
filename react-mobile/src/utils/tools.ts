@@ -7,18 +7,19 @@
  */
 export function throttle (fn: any, wait: any, type: any) {
   const context = this
-  return function (_arguments: any[]) {
+  return function (e?: any) {
+    let args = [...arguments]
     if (type === 0) {
       let newTimestamp = new Date().getTime()
       if (!fn._timestamp) fn._timestamp = 0
       if (newTimestamp - fn._timestamp > wait) {
-        fn.call(context, ..._arguments)
+        fn.call(context, ...args)
         fn._timestamp = newTimestamp
       }
     } else {
       if (!fn._timeout) {
         fn._timeout = setTimeout(() => {
-          fn.call(context, ..._arguments)
+          fn.call(context, ...args)
           fn._timeout = null
           clearTimeout(fn._timeout)
         }, wait)

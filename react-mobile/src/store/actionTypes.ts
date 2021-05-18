@@ -17,7 +17,8 @@ export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
 /**
  * play-page
  */
- export const PLAY_PAGE__LYRIC = "play-page/lyric"
+export const PLAY_PAGE__LYRIC = "play-page/lyric"
+export const PLAY_PAGE__CURRENT_LYRIC_LINE = "play-page/current-lyric-line"
 
 
 /**

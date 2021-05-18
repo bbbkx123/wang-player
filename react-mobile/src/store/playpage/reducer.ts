@@ -5,7 +5,8 @@ const defaultState = {
     timeList: [],
     lyricList: [],
     tLyricList: [],
-  }
+  },
+  currentLyricLine: 0,
 }
 
 export default (state: any = defaultState, action: any) => {
@@ -15,6 +16,11 @@ export default (state: any = defaultState, action: any) => {
       return {
         ...state,
         lyric: value,
+      }
+    case types.PLAY_PAGE__CURRENT_LYRIC_LINE:
+      return {
+        ...state,
+        currentLyricLine: value,
       }
     default:
       return state

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { beforeCanPlayAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
+import {throttle} from "@/utils/tools"
 
 const Player = (props: any) => {
   const { listDetail, currentSongIndex, EventEmitter, audioSrc, showMiniPlayer } = props
@@ -30,6 +31,10 @@ const Player = (props: any) => {
   const onTimeUpdate = (e: any) => {
     let currentTime = Number(e.target.currentTime.toFixed(2))
     EventEmitter.emit("timeupdate", { currentTime })
+  }
+
+  const _onTimeUpdate = (e: any) => {
+    throttle(onTimeUpdate, 100, 1)(e)
   }
 
   const onCanPlay = () => {
@@ -91,7 +96,7 @@ const Player = (props: any) => {
     temp.current.currentSongIndex = currentSongIndex
   }, [currentSongIndex])
 
-  return <audio ref={audioElemRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
+  return <audio ref={audioElemRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={_onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
 const stateToProps = (state: any) => {
   return {

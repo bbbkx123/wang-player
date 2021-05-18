@@ -1,7 +1,7 @@
 import "./index.less"
 
 const List = (props: any) => {
-  const { data, mode, onTouchStart, onTouchEnd } = props
+  const { data, mode, onTouchStart, onTouchEnd, current } = props
   const config = {onTouchStart, onTouchEnd}
 
   return (
@@ -18,7 +18,7 @@ const List = (props: any) => {
           } else if (mode === "COMMENT_LIST") {
             return <CommentListStyle {...config}></CommentListStyle>
           } else if (mode === "LYRIC") {
-            return <LyricListStyle {...config}></LyricListStyle>
+            return <LyricListStyle current={current} {...config}></LyricListStyle>
           }
           return 
         })}
@@ -110,9 +110,9 @@ const CommentListStyle = (props: any) => {
 
 
 const LyricListStyle = (props: any) => {
-  const {item, index, onTouchStart, onTouchEnd} = props
+  const {item, index, onTouchStart, onTouchEnd, current} = props
   return (
-    <div key={`lyric${index}`}>
+    <div key={`lyric${index}`} className={`${current === index ? "active" : ""} lyric-item-container`}>
       {item}
     </div>
   )
