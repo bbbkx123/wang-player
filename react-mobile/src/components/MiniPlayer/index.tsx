@@ -1,7 +1,6 @@
 import { CSSTransition } from "react-transition-group"
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
-import { useEffect } from "react"
 
 import "./index.less"
 
