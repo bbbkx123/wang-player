@@ -29,11 +29,11 @@ export function throttle (fn: any, wait: any, type: any) {
 }
 
 // 时间格式化
-export const formatForPlayTime = (time: any) => {
-  if (time === null || typeof time === 'undefined') return
+export const formatForPlayTime = (time: any) :string => {
+  if (time === null || typeof time === 'undefined') return '00:00'
   if (time === 0) return '00:00'
   let _time = parseFloat(time)
-  if (typeof _time !== 'number') return 
+  if (typeof _time !== 'number') return '00:00'
   let _format = (_time: any) => _time >= 10 ? _time : `0${_time}`
   return _format(Math.floor(_time / 60)) + ':' + _format((_time % 60).toFixed(0))
 }

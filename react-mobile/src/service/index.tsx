@@ -75,3 +75,10 @@ export const getSearchResult = (keywords: string, limit: number, offset: number)
  *
  */
 export const fetchMusicComment = (id:string, limit?:number, offset?:number, before?: Number) => get("/comment/music", { params: { id, limit, offset, before } })
+
+/**
+ * 获取歌词
+ * @param id 歌曲id
+ * @returns 
+ */
+export const fetchLyric = (id: string | number) => get("/lyric", {params: {id}})

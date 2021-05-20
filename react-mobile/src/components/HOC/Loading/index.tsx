@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import "./index.less"
 
 const Loading = (props: any) => {
@@ -44,16 +45,13 @@ const Loading = (props: any) => {
   return <div className="loading">{dom3}</div>
 }
 
-export const withLoading = (WrappedComponent: any) => {
-  const WithLoading = (props: any) => {
-    const { loading } = props
-    const tempProps = { ...props, loading: undefined }
-    return (
-      <>
-        {loading && <Loading></Loading>}
-        {/* <WrappedComponent {...tempProps} /> */}
-      </>
-    )
-  }
-  return WithLoading
+export const withLoading = (WrappedComponent: any) => (props: any) => {
+  const { loading } = props
+  const tempProps = { ...props, loading: undefined }
+  return (
+    <>
+      {loading && <Loading></Loading>}
+      <WrappedComponent {...tempProps} />
+    </>
+  )
 }

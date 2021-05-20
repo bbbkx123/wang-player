@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react"
+import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import { beforeCanPlayAction } from "@/store/actionCreator"
 import { Toast } from "antd-mobile"
-import {throttle} from "@/utils/tools"
+import { throttle } from "@/utils/tools"
 
 const Player = (props: any) => {
-  const { listDetail, currentSongIndex, EventEmitter, audioSrc, showMiniPlayer } = props
+  const { history, listDetail, currentSongIndex, EventEmitter, audioSrc, showMiniPlayer, playList } = props
   const { dispatchForPlayStatus, diapatchForDuration, toggleSong, dispatchForShowMiniPlayer } = props
   const audioElemRef = useRef<any>(null)
   // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
@@ -16,14 +17,14 @@ const Player = (props: any) => {
   // !问题: buffer加载时, currentTime需要loading效果
   const onEnded = () => {
     audioElemRef.current.pause()
-    if (listDetail) {
-      const len = listDetail.listData.length
-      if (currentSongIndex < len - 1) {
+    if (playList.length > 0) {
+      if (currentSongIndex < playList.length - 1) {
         toggleSong(currentSongIndex + 1)
-      } else if (currentSongIndex === len - 1) {
+      } else if (currentSongIndex === playList.length - 1) {
         // if (this.isLoopPlayList) {
         //     this.songChangeIndex = 0
         // }
+        dispatchForPlayStatus(false)
       }
     }
   }
@@ -38,10 +39,10 @@ const Player = (props: any) => {
   }
 
   const onCanPlay = () => {
+    const { pathname } = history.location
     diapatchForDuration(audioElemRef.current.duration)
     dispatchForPlayStatus(true)
-    if (!showMiniPlayer) dispatchForShowMiniPlayer(true)
-    // audioElemRef.current.play()
+    if (!showMiniPlayer && pathname !== "/play") dispatchForShowMiniPlayer(true)
   }
   const handlePlay = () => {
     const { paused, src } = audioElemRef.current
@@ -124,4 +125,4 @@ const dispatchToProps = (dispatch: any) => ({
   },
 })
 
-export default connect(stateToProps, dispatchToProps)(Player)
+export default connect(stateToProps, dispatchToProps)(withRouter(Player))

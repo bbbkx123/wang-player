@@ -9,7 +9,7 @@ import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
 import { beforeCanPlayAction } from "@/store/actionCreator"
-import { withLoading } from "@/utils/Loading"
+import { withLoading } from "@/components/HOC/Loading"
 
 import "./index.less"
 
@@ -70,9 +70,13 @@ const Recommend = (props: any) => {
     history.push({ pathname: "/playlistdetails" })
   }
 
-  const fun1 = () => {
-    dispatchForPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
-    play(0)
+  const fun1 = (index: number) => {
+    if (index === 1) {
+      pageToPlaylistDetail(129219563)
+    } else {
+      dispatchForPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
+      play(0)
+    }
   }
 
   const onTouchStart = () => {
@@ -99,7 +103,6 @@ const Recommend = (props: any) => {
       return Promise.resolve()
     }).then(() => {
       setTimeout(() => {
-        console.log("???");
         setLoading(false)
       }, 1000)
     })
@@ -131,7 +134,7 @@ const Recommend = (props: any) => {
         <Slider mode="normal-scroll-x" config={iconSliderConf.current} height={70} width={50}>
           {icons.map((item, index) => {
             return (
-              <div className="children-item" key={`icon-${index}`} onClick={fun1}>
+              <div className="children-item" key={`icon-${index}`} onClick={() => fun1(index)}>
                 <img style={{ height: 50, width: 50 }} src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
                 <span>{item.name}</span>
               </div>

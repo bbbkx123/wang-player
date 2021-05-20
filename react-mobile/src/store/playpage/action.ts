@@ -1,8 +1,10 @@
-import {lyricText} from "@/views/PlayPage/lyric"
+import {fetchLyric} from "@/service"
 
-export const fetchLyricAction = () => (dispatch: any, getState: any) => {
-  let timeList: any = lyricText.match(/\[\d{2}:\d{2}\.\d{2,}\]/gm)
-  const lyricList = lyricText.replace(/\[\d{2}:\d{2}\.\d{2,}\]/gm, '').replace(/\n/gm, ';').split(';')
+export const fetchLyricAction = (id: string | number) => async (dispatch: any, getState: any) => {
+  let res = await fetchLyric(id)
+  let {lyric} = res.data.lrc
+  let timeList: any = lyric.match(/\[\d{2}:\d{2}\.\d{2,}\]/gm)
+  const lyricList = lyric.replace(/\[\d{2}:\d{2}\.\d{2,}\]/gm, '').replace(/\n/gm, ';').split(';')
   const tLyricList: any[] = []
 
   timeList = timeList.map((item: any) => {
@@ -31,4 +33,10 @@ export const getCurrentLineNumAction = (time: number) => (dispatch: any, getStat
     }
   }
   dispatch({type: "play-page/current-lyric-line", value: line})
+}
+
+
+export const getIsProgressChangingAction = () => (dispatch: any, getState: any) => {
+  const state = getState()
+  return state.playpage.isProgressChanging
 }

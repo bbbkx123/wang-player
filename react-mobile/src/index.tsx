@@ -5,7 +5,6 @@ import { Provider } from "react-redux"
 import store from "@/store"
 import "antd-mobile/dist/antd-mobile.css"
 
-import "@/utils/Loading/index.less"
 
 import App from "./App"
 /* <React.StrictMode> */

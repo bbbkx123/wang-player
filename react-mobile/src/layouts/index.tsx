@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react"
+import React, { useState } from "react"
 import { withRouter, Switch, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
@@ -26,14 +26,13 @@ const getSceneConfig = (location: any) => {
 
 const Layouts = (props: any) => {
   const { history, location } = props
- 
+
   const { dispatchForDetailId, dispatchForShowMiniPlayer } = props
 
   const [show, setShow] = useState<boolean>(false)
 
   const goBack = () => {
-    const { location } = history
-    const { pathname } = location
+    const { pathname } = history.location
     if (pathname === "/") {
       dispatchForDetailId(null)
       return
@@ -47,8 +46,6 @@ const Layouts = (props: any) => {
     history.push("/search")
   }
 
-  
-
   // 注意: 过渡实现逻辑
   let classNames = ""
   if (history.action === "PUSH") {
@@ -60,22 +57,11 @@ const Layouts = (props: any) => {
   // 更新旧location
   oldLocation = location
 
-  const fun1 = () => {
-    setShow((prev: boolean) => !prev)
-  }
-  
-  const fun2 = () => {
-    history.push("/comment")
-  }
-
   const dom = (
     <>
       <div className="layouts">
         {/* <Icon key="1" type="ellipsis" /> */}
-        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch}/>]}></NavBar>
-        {/* <button onClick={fun1}>mini-list</button>
-        <button onClick={fun2}>go-comment</button>
-         */}
+        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch} />]}></NavBar>
         <TransitionGroup
           childFactory={(child) => {
             return React.cloneElement(child, { classNames })

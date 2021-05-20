@@ -8,6 +8,7 @@ export const beforeCanPlayAction = (songIndex: number) => async (dispatch: any, 
   dispatch({ type: "play-list/current-song-index", value: songIndex })
   const { playlist } = getState()
   const { sid } = playlist.data[songIndex]
+  dispatch({type: "play-page/song-id", value: sid})
   const song = await fetchSongUrl(sid)
   const { url } = song.data.data[0]
   if (typeof url !== "string") {

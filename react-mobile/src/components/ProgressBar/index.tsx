@@ -15,7 +15,7 @@ const refelctTime = 0.1
 const ProgressBar = (props: any) => {
   const { percent } = props
   const { startTime, EventEmitter } = props
-  const { setStartTime } = props
+  const { setStartTime, dispatchForIsProgressChanging } = props
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null)
@@ -44,7 +44,7 @@ const ProgressBar = (props: any) => {
   const progressTouchMove = (e: any) => {
     //   Math.max(0, this.progressClientWidth + deltaX) -->  0  移动超出左边界
     //   Math.max(0, this.progressClientWidth + deltaX) -->  delta  正常移动
-    // 
+    //
     //   barWidth 实际进度条宽度
     //   b = Math.max(0, this.progressClientWidth + deltaX)
     //   Math.min(a, b)  -->  a 超出右边界
@@ -58,6 +58,7 @@ const ProgressBar = (props: any) => {
   }
 
   const progressTouchStart = (e: any) => {
+    dispatchForIsProgressChanging(true)
     setTouch({
       initiated: true,
       startX: e.touches[0].clientX,
@@ -68,13 +69,14 @@ const ProgressBar = (props: any) => {
 
   // 不进行节流会造成拖动卡顿
   const _progressTouchMove = (e: any) => {
-    throttle(progressTouchMove, 200, 0)([e])
+    throttle(progressTouchMove, 200, 0)(e)
   }
 
   const progressTouchEnd = () => {
     // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
+    dispatchForIsProgressChanging(false)
     EventEmitter.emit("progress-change", getPrecent())
     setTouch({
       ...touch,
@@ -105,12 +107,14 @@ const ProgressBar = (props: any) => {
     // timeupdate事件触发
     if (percent > 0 && !touch.initiated && barWidth !== null) {
       const offsetWidth = percent * barWidth
+      console.log(`percent: ${percent},barWidth: ${barWidth},offsetWidth: ${offsetWidth}`);
+      
       handleOffset(offsetWidth)
     }
   }, [percent])
 
   return (
-    <div className="progress-bar__container" ref={progressBar} onClick={progressClick} >
+    <div className="progress-bar__container" ref={progressBar} onClick={progressClick}>
       <div className="progress-bar" onTouchStart={progressTouchStart} onTouchMove={_progressTouchMove} onTouchEnd={progressTouchEnd}>
         <div className="progress-bar__background"></div>
         {/* 进度条 */}
@@ -132,6 +136,9 @@ const stateToProps = (state: any) => ({
 const dispatchToProps = (dispatch: any) => ({
   setStartTime() {
     dispatch({ type: "audio/start-time", value: new Date().getTime() })
+  },
+  dispatchForIsProgressChanging(status: boolean) {
+    dispatch({ type: "play-page/is-progress-changing", value: status })
   },
 })
 
