@@ -35,7 +35,7 @@ const Player = (props: any) => {
   }
 
   const _onTimeUpdate = (e: any) => {
-    throttle(onTimeUpdate, 100, 1)(e)
+    throttle(onTimeUpdate, 30, 1)(e)
   }
 
   const onCanPlay = () => {

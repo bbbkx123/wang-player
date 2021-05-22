@@ -9,6 +9,7 @@ import List from "@/components/List"
 import "./index.less"
 
 const INITIAL_TOP = 200
+const MOVE = -50
 
 const PlayPage = (props: any) => {
   const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, isProgressChanging } = props
@@ -16,7 +17,10 @@ const PlayPage = (props: any) => {
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
-  const degRef = useRef<number>()
+  const degRef = useRef<any>({
+    deg: null,
+    start: true,
+  })
   const [percent, setPercent] = useState<number>(0)
   const [currentTimeForDisplay, setCurrentTimeForDisplay] = useState<string>('')
   const [showLyric, setShowLyric] = useState<boolean>(false)
@@ -44,11 +48,13 @@ const PlayPage = (props: any) => {
       setCurrentTimeForDisplay(formatForPlayTime(currentTime))
       setPercent(currentTime / duration)
     }
-    
     setCurrentLineNum(currentTime)
-    degRef.current = (degRef.current || 0) + 2
-    if (degRef.current >= 360) degRef.current = 0
-    rotate(degRef.current)
+
+    if (degRef.current.start) {
+      degRef.current.deg = (degRef.current.deg || 0) + 2
+      if (degRef.current.deg >= 360) degRef.current.deg = 0
+      rotate(degRef.current.deg)
+    }
   }
 
   // 初始audio实例
@@ -84,17 +90,20 @@ const PlayPage = (props: any) => {
 
   const scroll = () => {
     if (lyricElemRef.current) {
-      lyricElemRef.current.style.top = INITIAL_TOP + currentLyricLine * -100 + "px"
+      lyricElemRef.current.style.top = INITIAL_TOP + currentLyricLine * MOVE + "px"
     }
   }
 
   const toggleMainView = () => {
-    setTimeout(() => scroll(), 0)
-    setShowLyric((prev) => !prev)
+    setShowLyric((prev) => {
+      degRef.current.start = prev
+      degRef.current.deg = 0
+      return !prev
+    })
   }
 
   useEffect(() => {
-    degRef.current = 0
+    degRef.current.deg = 0
     // 进入播放页面隐藏miniplayer
     dispatchForShowMiniPlayer(false)
     EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
@@ -119,20 +128,29 @@ const PlayPage = (props: any) => {
 
   useEffect(() => {
     scroll()
-    console.log(currentLyricLine)
   }, [currentLyricLine])
+
+  useEffect(() => {
+    if (showLyric) {
+      scroll()
+    } 
+    // else {
+    //   degRef.current.deg = 0
+    //   rotate(degRef.current.deg)
+    // }
+  }, [showLyric])
 
   return (
     <div ref={playRef} className="play">
       <div className="play--main-container" onClick={toggleMainView}>
-        {showLyric && (
+        {!showLyric && (
           <div className="play--poster">
             <div ref={posterElemRef} className="play--poster-wrapper">
               {playList[currentSongIndex] && <img src={poster()} alt="" />}
             </div>
           </div>
         )}
-        {!showLyric && (
+        {showLyric && (
           <div className="play--lyric" ref={(ref) => (lyricElemRef.current = ref)}>
             {lyric && lyric.lyricList.length > 0 && <List mode="LYRIC" data={lyric.lyricList} current={currentLyricLine}></List>}
           </div>

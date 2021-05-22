@@ -24,21 +24,31 @@ const ProgressBar = (props: any) => {
     startX: 0,
   })
   const [progressClientWidth, setProgressClientWidth] = useState<number>(0)
-  const [barWidth, setBarWidth] = useState<number | null>(null)
+  const [barWidth, setBarWidth] = useState<number>(0)
 
   const progressClick = (e: any) => {
     // 解决mouseup和click重发触发的问题
-    let diff = (new Date().getTime() - startTime) / 1000
-    if (diff > refelctTime) return
+    // let diff = (new Date().getTime() - startTime) / 1000
+    // if (diff > refelctTime) return
     const rect = progressBar.current.getBoundingClientRect()
-    const offsetWidth = e.touches[0].clientX - rect.left
-    handleOffset(offsetWidth)
-    EventEmitter.emit("progress-change", getPrecent())
+    const offsetWidth = e.clientX - rect.left
+    const percent = offsetWidth / barWidth
+    EventEmitter.emit("progress-change", percent.toFixed(2))
   }
 
   const handleOffset = (offsetWidth: any) => {
     progress.current.style.width = `${offsetWidth}px`
     progressBtn.current.style.transform = `translate3d(${offsetWidth}px, 0, 0)`
+  }
+
+  const progressTouchStart = (e: any) => {
+    dispatchForIsProgressChanging(true)
+    setTouch({
+      initiated: true,
+      startX: e.touches[0].clientX,
+    })
+    setProgressClientWidth(progress.current.clientWidth)
+    setStartTime()
   }
 
   const progressTouchMove = (e: any) => {
@@ -57,21 +67,6 @@ const ProgressBar = (props: any) => {
     EventEmitter.emit("progress-changing", getPrecent())
   }
 
-  const progressTouchStart = (e: any) => {
-    dispatchForIsProgressChanging(true)
-    setTouch({
-      initiated: true,
-      startX: e.touches[0].clientX,
-    })
-    setProgressClientWidth(progress.current.clientWidth)
-    setStartTime()
-  }
-
-  // 不进行节流会造成拖动卡顿
-  const _progressTouchMove = (e: any) => {
-    throttle(progressTouchMove, 200, 0)(e)
-  }
-
   const progressTouchEnd = () => {
     // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
@@ -82,6 +77,11 @@ const ProgressBar = (props: any) => {
       ...touch,
       initiated: false,
     })
+  }
+
+  // 不进行节流会造成拖动卡顿
+  const _progressTouchMove = (e: any) => {
+    throttle(progressTouchMove, 200, 0)(e)
   }
 
   const getPrecent = () => {
@@ -107,7 +107,7 @@ const ProgressBar = (props: any) => {
     // timeupdate事件触发
     if (percent > 0 && !touch.initiated && barWidth !== null) {
       const offsetWidth = percent * barWidth
-      console.log(`percent: ${percent},barWidth: ${barWidth},offsetWidth: ${offsetWidth}`);
+      // console.log(`percent: ${percent},barWidth: ${barWidth},offsetWidth: ${offsetWidth}`);
       
       handleOffset(offsetWidth)
     }
@@ -115,7 +115,7 @@ const ProgressBar = (props: any) => {
 
   return (
     <div className="progress-bar__container" ref={progressBar} onClick={progressClick}>
-      <div className="progress-bar" onTouchStart={progressTouchStart} onTouchMove={_progressTouchMove} onTouchEnd={progressTouchEnd}>
+      <div className="progress-bar" onTouchStart={progressTouchStart} onTouchMove={progressTouchMove} onTouchEnd={progressTouchEnd}>
         <div className="progress-bar__background"></div>
         {/* 进度条 */}
         <div className="progress-bar--progress" ref={progress}></div>
