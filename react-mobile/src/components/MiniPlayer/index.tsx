@@ -1,24 +1,36 @@
-import { CSSTransition } from "react-transition-group"
-import { connect } from "react-redux"
-import { withRouter } from "react-router-dom"
+import { CSSTransition } from 'react-transition-group'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
-import "./index.less"
+import './index.less'
 
 const MiniPlayer = (props: any) => {
-  const { history, currentSongIndex, playList, showMiniPlayer } = props
+  const { history, currentSongIndex, playList, showMiniPlayer, onShowMiniList } = props
+  const { EventEmitter, playStatus } = props
 
   const display = () => {
     let temp = null
-    if (playList.length > 0 && typeof currentSongIndex === "number") {
+    if (playList.length > 0 && typeof currentSongIndex === 'number') {
       temp = (
         <>
-          <div>{playList[currentSongIndex].name} </div>
-          <div> - {playList[currentSongIndex].artist}</div>
+          <div className="mini-controller--song-info">
+            <div className="mini-controller--song-name">{playList[currentSongIndex].name}</div>
+            <div className="mini-controller--split"> - </div>
+            <div className="mini-controller--artist">{playList[currentSongIndex].artist}</div>
+          </div>
+          <div className="mini-controller--btn-group">
+            <div className="btn" onClick={togglePlay}>
+              <i className={`iconfont ${typeof playStatus === 'boolean' && playStatus ? 'iconpause-circle' : 'iconstart'}`}></i>
+            </div>
+            <div className="btn" onClick={onShowMiniList}>
+              <i className="iconfont iconlist-v4-full"></i>
+            </div>
+          </div>
         </>
       )
     }
     return (
-      <div className="player-control" onClick={togglePlayPage}>
+      <div className="mini-controller" onClick={togglePlayPage}>
         {temp}
       </div>
     )
@@ -26,11 +38,15 @@ const MiniPlayer = (props: any) => {
 
   const togglePlayPage = () => {
     const { pathname } = history.location
-    if (pathname === "/play") {
-      history.push("/playlistdetails")
+    if (pathname === '/play') {
+      history.push('/playlistdetails')
     } else {
-      history.push("/play")
+      history.push('/play')
     }
+  }
+
+  const togglePlay = () => {
+    EventEmitter.emit('player-toggle-status')
   }
 
   return (
@@ -45,6 +61,8 @@ const stateToProps = (state: any) => {
     currentSongIndex: state.playlist.currentSongIndex,
     playList: state.playlist.data,
     showMiniPlayer: state.global.showMiniPlayer,
+    playStatus: state.audio.playStatus,
+    EventEmitter: state.global.EventEmitter,
   }
 }
 export default connect(stateToProps)(withRouter(MiniPlayer))

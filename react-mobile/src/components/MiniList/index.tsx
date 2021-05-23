@@ -36,7 +36,11 @@ const MiniList = (props: any) => {
     <>
       <CSSTransition in={show} timeout={500} classNames="mini-list">
         <div className="mini-list--container">
-          <div className="mini-list--title">当前播放</div>
+          <div className="mini-list--title">
+            <div>当前播放</div>
+            <div >x</div>  
+          </div>
+          
           {playList.length > 0 && (
             <Slider mode="normal-scroll-y" config={miniListConf.current}>
               <List mode="MINI_LIST" data={playList} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>

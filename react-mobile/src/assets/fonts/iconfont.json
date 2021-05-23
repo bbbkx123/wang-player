@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18171249",
+      "name": "列表,栏目",
+      "font_class": "list-v4-full",
+      "unicode": "ea38",
+      "unicode_decimal": 59960
+    },
+    {
+      "icon_id": "4866811",
+      "name": "喜欢",
+      "font_class": "xihuancopy",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
       "icon_id": "18176571",
       "name": "暂停",
       "font_class": "pause-circle",

@@ -20,7 +20,7 @@ const PlayListDetails = (props: any) => {
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
 
-  const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
+  // const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
 
   instanceRef.current = {
@@ -92,29 +92,19 @@ const PlayListDetails = (props: any) => {
   const PlayListDetailMain = (
     <Slider mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
       <div className="list-detail">
-        {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>}
-
+        {/* {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>} */}
         <div>
           {listDetail && (
-            <div className="detail-wrapper">
+            <div className="list-detail--top">
               <div className="detail">
-                <div className="coverImg">
+                <div className="list-detail--coverImg">
                   <img src={listDetail.coverImgUrl} alt="" />
                 </div>
-                <div className="info">
-                  <div className="text">{listDetail.name}</div>
-
-                  <div style={{ display: "flex" }}>
-                    <img
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        borderRadius: "50%",
-                      }}
-                      src={listDetail.avatarUrl}
-                      alt=""
-                    />
-                    <div>{listDetail.nickname}</div>
+                <div className="list-detail--info">
+                  <div className="list-detail--name">{listDetail.name}</div>
+                  <div className="list-detail--creator-info">
+                    <img src={listDetail.avatarUrl}  alt="" />
+                    <div className="list-detail--nickname">{listDetail.nickname}</div>
                   </div>
                 </div>
               </div>

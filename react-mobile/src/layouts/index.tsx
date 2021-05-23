@@ -57,9 +57,19 @@ const Layouts = (props: any) => {
   // 更新旧location
   oldLocation = location
 
+  const fun1 = () => {
+    dispatchForShowMiniPlayer(true)
+  }
+
+  const onShowMiniList = (e: any, show: boolean) => {
+    e.stopPropagation()
+    setShow((prev: boolean) => !prev)
+  }
+
   const dom = (
     <>
       <div className="layouts">
+        <button onClick={fun1}>mini-player</button>
         {/* <Icon key="1" type="ellipsis" /> */}
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch} />]}></NavBar>
         <TransitionGroup
@@ -77,7 +87,7 @@ const Layouts = (props: any) => {
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-        <MiniPlayer></MiniPlayer>
+        <MiniPlayer onShowMiniList={(e: any) => onShowMiniList(e, show)}></MiniPlayer>
         <MiniList show={show}></MiniList>
       </div>
 

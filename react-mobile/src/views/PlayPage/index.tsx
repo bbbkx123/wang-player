@@ -133,11 +133,7 @@ const PlayPage = (props: any) => {
   useEffect(() => {
     if (showLyric) {
       scroll()
-    } 
-    // else {
-    //   degRef.current.deg = 0
-    //   rotate(degRef.current.deg)
-    // }
+    }
   }, [showLyric])
 
   return (

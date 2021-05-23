@@ -1,4 +1,4 @@
-@import url("../../style/index.less");
+@import url('../../style/index.less');
 
 @headerHeight: 50px;
 
@@ -8,7 +8,6 @@
 @indexWidth: 50px;
 @editWidth: 50px;
 
-
 .pull-down-wrapper {
   height: 100%;
 }
@@ -16,56 +15,12 @@
 .list-detail {
   display: flex;
   flex-direction: column;
-  .detail-wrapper {
-    position: relative;
-    height: 250px;
-    .detail-background {
-      position: absolute;
-      top: -@headerHeight;
-      z-index: 0;
-      width: 100%;
-      height: calc(100% + @headerHeight);
-      overflow: hidden;
-      
-    }
-    .detail {
-      position: absolute;
-      z-index: 10;
-      width: calc(100% - 20px);
-      // padding-top: 20px;
-      display: flex;
-      background-color: transparent;
-      .coverImg {
-        width: @coverImgUrlWidth;
-        height: @coverImgUrlWidth;
-        & > img {
-          width: 100%;
-          height: 100%;
-          border-radius: 10px;
-        }
-      }
-      .info {
-        margin-left: 10px;
-        width: calc(100% - 10px - @coverImgUrlWidth);
-        .text {
-          width: 100%;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-        font-size: 14px;
-        > div {
-          background-color: transparent !important;
-        }
-      }
-    }
-  }
   .song-list {
     position: relative;
     padding-top: 30px;
     width: 100%;
     height: auto;
-    background-color: rgb(21,21,21);
+    background-color: rgb(21, 21, 21);
     border-radius: 25px;
     &::after {
       display: block;
@@ -76,6 +31,69 @@
     }
   }
 }
+
+.list-detail--top {
+  position: relative;
+  height: 175px;
+  .detail-background {
+    position: absolute;
+    top: -@headerHeight;
+    z-index: 0;
+    width: 100%;
+    height: calc(100% + @headerHeight);
+    overflow: hidden;
+  }
+  .detail {
+    position: absolute;
+    z-index: 10;
+    width: calc(100% - 20px);
+    // padding-top: 20px;
+    display: flex;
+    background-color: transparent;
+    
+  }
+}
+
+.list-detail--coverImg {
+  width: @coverImgUrlWidth;
+  height: @coverImgUrlWidth;
+  & > img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
+}
+
+.list-detail--info {
+  margin-left: 10px;
+  width: calc(100% - 10px - @coverImgUrlWidth);
+  font-size: 14px;
+  > div {
+    background-color: transparent !important;
+  }
+}
+.list-detail--name {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.list-detail--creator-info {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  > img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+}
+
+.list-detail--nickname {
+  margin-left: 5px;
+}
+
 
 .core-container {
   .scroll-wrapper {
