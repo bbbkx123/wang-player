@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 
-import { beforeCanPlayAction } from "@/store/actionCreator"
+import { beforeCanPlayAction } from "@/store/action"
 import { initialActionForListDetail, appendPlayListAction } from "@/store/global/action"
 
 import { Toast } from "antd-mobile"
 import List from "@/components/List"
-import Slider from "@/components/Slider"
+import Scroll from "@/components/Scroll"
 
 import "./index.less"
 
@@ -90,7 +90,7 @@ const PlayListDetails = (props: any) => {
   }, [])
 
   const PlayListDetailMain = (
-    <Slider mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
+    <Scroll mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
       <div className="list-detail">
         {/* {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>} */}
         <div>
@@ -131,7 +131,7 @@ const PlayListDetails = (props: any) => {
         </div>
         <div style={{ width: "100%", height: "50px" }}></div>
       </div>
-    </Slider>
+    </Scroll>
   )
 
   return <div className="page-container">{playListOfListDetail.length > 0 && PlayListDetailMain}</div>

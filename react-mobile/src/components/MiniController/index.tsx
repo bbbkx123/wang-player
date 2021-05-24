@@ -2,11 +2,13 @@ import { CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
+import {playStatusAction} from "@/store/global/action"
+
 import './index.less'
 
-const MiniPlayer = (props: any) => {
-  const { history, currentSongIndex, playList, showMiniPlayer, onShowMiniList } = props
-  const { EventEmitter, playStatus } = props
+const MiniController = (props: any) => {
+  const { history, currentSongIndex, playList, dispatchForShowMiniList, dispatchForShowController,  togglePlayStatus} = props
+  const { playStatus, showController } = props
 
   const display = () => {
     let temp = null
@@ -36,21 +38,29 @@ const MiniPlayer = (props: any) => {
     )
   }
 
+  const onShowMiniList = (e: any) => {
+    e.stopPropagation()
+    dispatchForShowMiniList(true)
+  }
+
   const togglePlayPage = () => {
     const { pathname } = history.location
     if (pathname === '/play') {
       history.push('/playlistdetails')
     } else {
+      // 进入播放页面隐藏
+      dispatchForShowController(false)
       history.push('/play')
     }
   }
 
-  const togglePlay = () => {
-    EventEmitter.emit('player-toggle-status')
+  const togglePlay = (e: any) => {
+    e.stopPropagation()
+    togglePlayStatus()
   }
 
   return (
-    <CSSTransition in={showMiniPlayer} classNames="show-mini" timeout={200}>
+    <CSSTransition in={showController} classNames="show-mini" timeout={200}>
       {display()}
     </CSSTransition>
   )
@@ -60,9 +70,21 @@ const stateToProps = (state: any) => {
   return {
     currentSongIndex: state.playlist.currentSongIndex,
     playList: state.playlist.data,
-    showMiniPlayer: state.global.showMiniPlayer,
+    showController: state.global.showController,
     playStatus: state.audio.playStatus,
-    EventEmitter: state.global.EventEmitter,
+    audio: state.global.audio,
   }
 }
-export default connect(stateToProps)(withRouter(MiniPlayer))
+
+const dispatchToProps = (dispatch: any) => ({
+  dispatchForShowMiniList(status: boolean) {
+    dispatch({ type: "global/show-mini-list", value: status })
+  },
+  dispatchForShowController(status: boolean) {
+    dispatch({ type: "global/show-controller", value: status })
+  },
+  togglePlayStatus() {
+    dispatch(playStatusAction())
+  },
+})
+export default connect(stateToProps, dispatchToProps)(withRouter(MiniController))

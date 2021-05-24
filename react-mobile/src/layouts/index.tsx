@@ -1,11 +1,11 @@
-import React, { useState } from "react"
+import React from "react"
 import { withRouter, Switch, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import { NavBar, Icon } from "antd-mobile"
 import Player from "@/components/Player"
-import MiniPlayer from "@/components/MiniPlayer"
+import MiniController from "@/components/MiniController"
 import MiniList from "@/components/MiniList"
 
 import RouterConfig from "@/router"
@@ -27,9 +27,7 @@ const getSceneConfig = (location: any) => {
 const Layouts = (props: any) => {
   const { history, location } = props
 
-  const { dispatchForDetailId, dispatchForShowMiniPlayer } = props
-
-  const [show, setShow] = useState<boolean>(false)
+  const { dispatchForDetailId, dispatchForShowController } = props
 
   const goBack = () => {
     const { pathname } = history.location
@@ -37,7 +35,7 @@ const Layouts = (props: any) => {
       dispatchForDetailId(null)
       return
     } else if (pathname === "/play") {
-      dispatchForShowMiniPlayer(true)
+      dispatchForShowController(true)
     }
     history.goBack()
   }
@@ -58,26 +56,21 @@ const Layouts = (props: any) => {
   oldLocation = location
 
   const fun1 = () => {
-    dispatchForShowMiniPlayer(true)
-  }
-
-  const onShowMiniList = (e: any, show: boolean) => {
-    e.stopPropagation()
-    setShow((prev: boolean) => !prev)
+    dispatchForShowController(true)
   }
 
   const dom = (
     <>
       <div className="layouts">
-        <button onClick={fun1}>mini-player</button>
+        {/* <button onClick={fun1}>mini-player</button> */}
         {/* <Icon key="1" type="ellipsis" /> */}
-        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={goBack} rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch} />]}></NavBar>
-        <TransitionGroup
-          childFactory={(child) => {
-            return React.cloneElement(child, { classNames })
-          }}
-          className="router-view"
-        >
+        <NavBar
+          mode="dark"
+          icon={<Icon type="left" />}
+          onLeftClick={goBack}
+          rightContent={[<Icon key="0" type="search" style={{ marginRight: "16px" }} onClick={goSearch} />]}
+        ></NavBar>
+        <TransitionGroup childFactory={(child) => React.cloneElement(child, { classNames })} className="router-view">
           <CSSTransition timeout={500} key={location.pathname} unMountOnExit>
             {/* 注意  location移除会存在问题*/}
             <Switch location={location}>
@@ -87,10 +80,9 @@ const Layouts = (props: any) => {
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-        <MiniPlayer onShowMiniList={(e: any) => onShowMiniList(e, show)}></MiniPlayer>
-        <MiniList show={show}></MiniList>
+        <MiniController></MiniController>
+        <MiniList></MiniList>
       </div>
-
       <Player></Player>
     </>
   )
@@ -105,8 +97,8 @@ const dispatchToProps = (dispatch: any) => {
     dispatchForDetailId(id: number) {
       dispatch({ type: "global/detail-id", value: id })
     },
-    dispatchForShowMiniPlayer(status: boolean) {
-      dispatch({ type: "global/show-mini-player", value: status })
+    dispatchForShowController(status: boolean) {
+      dispatch({ type: "global/show-controller", value: status })
     },
   }
 }

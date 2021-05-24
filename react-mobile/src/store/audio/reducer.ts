@@ -1,10 +1,9 @@
-import * as types from "../actionTypes"
+import * as types from "../types"
 
 const defaultState = {
   startTime: 0,
   playStatus: null,
   duration: 0,
-  // volume: 0,
   src: undefined,
 }
 

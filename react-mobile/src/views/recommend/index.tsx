@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 // import { withRouter } from "react-router-dom"
 
-import Slider from "@/components/Slider"
+import Scroll from "@/components/Scroll"
 import List from "@/components/List"
 
 import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
-import { beforeCanPlayAction } from "@/store/actionCreator"
+import { beforeCanPlayAction } from "@/store/action"
 import { withLoading } from "@/components/HOC/Loading"
 
 import "./index.less"
@@ -119,19 +119,19 @@ const Recommend = (props: any) => {
   }, [])
 
   const RecommendMain = () => (
-    <Slider mode="normal-scroll-y" config={recommendPageConfRef.current}>
+    <Scroll mode="normal-scroll-y" config={recommendPageConfRef.current}>
       {/* banner滑动存在问题 */}
       <div className="banner-container">
         {bannerArr.length > 0 && (
-          <Slider mode="banner" config={sliderConf.current} width="100%">
+          <Scroll mode="banner" config={sliderConf.current} width="100%">
             {bannerArr.map((banner: any, index: number) => {
               return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
             })}
-          </Slider>
+          </Scroll>
         )}
       </div>
       <div className="icon-wrapper">
-        <Slider mode="normal-scroll-x" config={iconSliderConf.current} height={70} width={50}>
+        <Scroll mode="normal-scroll-x" config={iconSliderConf.current} height={70} width={50}>
           {icons.map((item, index) => {
             return (
               <div className="children-item" key={`icon-${index}`} onClick={() => fun1(index)}>
@@ -140,12 +140,12 @@ const Recommend = (props: any) => {
               </div>
             )
           })}
-        </Slider>
+        </Scroll>
       </div>
       <div className="recommend-wrapper">
         <p className="recommend-wrapper--title">推荐歌单</p>
         {recommendDetails.length > 0 && (
-          <Slider mode="normal-scroll-x" config={recommendConf.current} height={175} width={140}>
+          <Scroll mode="normal-scroll-x" config={recommendConf.current} height={175} width={140}>
             {recommendDetails.map((item: any, index: number) => {
               return (
                 <div className="children-item" key={`recommend-detail-${index}`} onClick={() => pageToPlaylistDetail(item.id)}>
@@ -154,7 +154,7 @@ const Recommend = (props: any) => {
                 </div>
               )
             })}
-          </Slider>
+          </Scroll>
         )}
       </div>
       <div className="new-song-list--wrapper">
@@ -162,7 +162,7 @@ const Recommend = (props: any) => {
         {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
         <div style={{ width: "100%", height: 100 }}></div>
       </div>
-    </Slider>
+    </Scroll>
   )
 
   const RecommendWithLoading = withLoading(RecommendMain)

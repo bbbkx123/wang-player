@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { connect } from "react-redux"
-import { throttle } from "@/utils/tools"
+import { progressChangingAction } from "@/store/playpage/action"
 
 import "./index.less"
 
@@ -15,7 +15,7 @@ const refelctTime = 0.1
 const ProgressBar = (props: any) => {
   const { percent } = props
   const { startTime, EventEmitter } = props
-  const { setStartTime, dispatchForIsProgressChanging } = props
+  const { setStartTime, dispatchForIsProgressChanging, progressChanging } = props
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null)
@@ -48,7 +48,7 @@ const ProgressBar = (props: any) => {
       startX: e.touches[0].clientX,
     })
     setProgressClientWidth(progress.current.clientWidth)
-    setStartTime()
+    // setStartTime()
   }
 
   const progressTouchMove = (e: any) => {
@@ -64,7 +64,8 @@ const ProgressBar = (props: any) => {
     const deltaX = e.touches[0].clientX - touch.startX
     const offsetWidth = Math.min(barWidth === null ? 0 : barWidth, Math.max(0, progressClientWidth + deltaX))
     handleOffset(offsetWidth)
-    EventEmitter.emit("progress-changing", getPrecent())
+    // EventEmitter.emit("progress-changing", getPrecent())
+    progressChanging(getPrecent())
   }
 
   const progressTouchEnd = () => {
@@ -80,9 +81,9 @@ const ProgressBar = (props: any) => {
   }
 
   // 不进行节流会造成拖动卡顿
-  const _progressTouchMove = (e: any) => {
-    throttle(progressTouchMove, 200, 0)(e)
-  }
+  // const _progressTouchMove = (e: any) => {
+  //   throttle(progressTouchMove, 200, 0)(e)
+  // }
 
   const getPrecent = () => {
     let num = progress.current.clientWidth / (barWidth === null ? 0 : barWidth)
@@ -129,16 +130,19 @@ const ProgressBar = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  startTime: state.audio.startTime,
+  // startTime: state.global.startTime,
   EventEmitter: state.global.EventEmitter,
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  setStartTime() {
-    dispatch({ type: "audio/start-time", value: new Date().getTime() })
-  },
+  // setStartTime() {
+  //   dispatch({ type: "audio/start-time", value: new Date().getTime() })
+  // },
   dispatchForIsProgressChanging(status: boolean) {
     dispatch({ type: "play-page/is-progress-changing", value: status })
+  },
+  progressChanging (percent: any) {
+    dispatch(progressChangingAction(percent))
   },
 })
 

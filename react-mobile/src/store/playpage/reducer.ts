@@ -1,4 +1,4 @@
-import * as types from "../actionTypes"
+import * as types from "../types"
 
 const defaultState = {
   lyric: {
@@ -9,6 +9,7 @@ const defaultState = {
   currentLyricLine: 0,
   songId: null,
   isProgressChanging: false,
+  percent: 0,
 }
 
 export default (state: any = defaultState, action: any) => {
@@ -33,6 +34,11 @@ export default (state: any = defaultState, action: any) => {
       return {
         ...state,
         isProgressChanging: value,
+      }
+    case types.PLAY_PAGE__PERCENT:
+      return {
+        ...state,
+        percent: value,
       }
     default:
       return state

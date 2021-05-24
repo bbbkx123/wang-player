@@ -1,9 +1,9 @@
 import EventEmitter from "events"
-import * as types from "../actionTypes"
+import * as types from "../types"
 
 const defaultState = {
   EventEmitter: new EventEmitter(),
-  showMiniPlayer: false,
+  showController: false,
   detailId: null,
   listDetail: null,
   playList: [],
@@ -15,16 +15,18 @@ const defaultState = {
     // modelForClient: [],
     model: [],
   },
-  searchPage: {}
+  searchPage: {},
+  showMiniList: false,
+  audio: null,
 }
 
 export default (state: any = defaultState, action: any) => {
   const {type, value} = action
   switch (type) {
-    case types.GLOBAL__SHOW_MINI_PLAYER:
+    case types.GLOBAL__SHOW_CONTROLLER:
       return {
         ...state,
-        showMiniPlayer: value,
+        showController: value,
       }
     case types.GLOBAL__DETAIL_ID:
       return {
@@ -50,6 +52,16 @@ export default (state: any = defaultState, action: any) => {
       return {
         ...state,
         searchPage: value,
+      }
+    case types.GLOBAL__SHOW_MINI_LIST:
+      return {
+        ...state,
+        showMiniList: value,
+      }
+    case types.GLOBAL__AUDIO:
+      return {
+        ...state,
+        audio: value,
       }
     default:
       return state

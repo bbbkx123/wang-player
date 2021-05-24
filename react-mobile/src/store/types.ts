@@ -21,15 +21,18 @@ export const PLAY_PAGE__LYRIC = "play-page/lyric"
 export const PLAY_PAGE__CURRENT_LYRIC_LINE = "play-page/current-lyric-line"
 export const PLAY_PAGE__SONG_ID = "play-page/song-id"
 export const PLAY_PAGE__IS_PROGRESS_CHANGING = "play-page/is-progress-changing"
+export const PLAY_PAGE__PERCENT = "play-page/percent"
 
 
 /**
  * global
  */
 
-export const GLOBAL__SHOW_MINI_PLAYER = "global/show-mini-player"
+export const GLOBAL__SHOW_CONTROLLER = "global/show-controller"
+export const GLOBAL__SHOW_MINI_LIST = "global/show-mini-list"
 export const GLOBAL__DETAIL_ID = "global/detail-id"
 export const GLOBAL__LIST_DETAIL = "global/list-detail"
 export const GLOBAL__PLAY_LIST = "global/play-list"
 export const GLOBAL__DETAIL_PAGE = "global/detail-page"
 export const GLOBAL__SEARCH_PAGE = "global/search-page"
+export const GLOBAL__AUDIO = "global/audio"

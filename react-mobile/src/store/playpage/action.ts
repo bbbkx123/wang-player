@@ -1,4 +1,5 @@
 import {fetchLyric} from "@/service"
+import {beforeCanPlayAction} from "@/store/action"
 
 export const fetchLyricAction = (id: string | number) => async (dispatch: any, getState: any) => {
   let res = await fetchLyric(id)
@@ -39,4 +40,41 @@ export const getCurrentLineNumAction = (time: number) => (dispatch: any, getStat
 export const getIsProgressChangingAction = () => (dispatch: any, getState: any) => {
   const state = getState()
   return state.playpage.isProgressChanging
+}
+
+export const setCurrentTimeAction = (currentTime: any) => (dispatch: any, getState: any) => {
+  const state = getState()
+  state.global.audio.currentTime = currentTime
+}
+
+
+export const changeSongAction = (toggleType: string) => (dispatch: any, getState: any) => {
+  let index = null
+  const state = getState()
+  const listDetail = state.global.listDetail
+  const {currentSongIndex} = state.playlist
+  // const { listDetail, currentSongIndex } = temp.current
+  if (!state.global.audio.src) return
+  if (toggleType === "NEXT") {
+    index = listDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
+  } else {
+    if (currentSongIndex === 0) {
+      return
+    } else if (currentSongIndex < listDetail.listData.length) {
+      index = currentSongIndex - 1
+    }
+  }
+  dispatch(beforeCanPlayAction(index))
+}
+
+
+// export const handleProgressChange = (percent: number) => (dispatch: any, getState: any) => {
+//   setPercent(percent)
+//   setCurrentTime(duration * percent)
+// }
+
+
+export const progressChangingAction = (percent: number) => (dispatch: any, getState: any) => {
+  dispatch({type: "play-page/percent", value: percent})
+  // setCurrentTimeForDisplay(formatForPlayTime(duration * percent))
 }

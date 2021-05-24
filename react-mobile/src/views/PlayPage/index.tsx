@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import ProgressBar from "@/components/ProgressBar"
-import { beforeCanPlayAction } from "@/store/actionCreator"
-import { fetchLyricAction, getCurrentLineNumAction, getIsProgressChangingAction } from "@/store/playpage/action"
+import { beforeCanPlayAction } from "@/store/action"
+import { fetchLyricAction, getCurrentLineNumAction, getIsProgressChangingAction, setCurrentTimeAction, changeSongAction } from "@/store/playpage/action"
+import {playStatusAction} from "@/store/global/action"
 import { formatForPlayTime } from "@/utils/tools"
 import { useWatch } from "@/utils/hook"
 import List from "@/components/List"
@@ -12,8 +13,8 @@ const INITIAL_TOP = 200
 const MOVE = -50
 
 const PlayPage = (props: any) => {
-  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, isProgressChanging } = props
-  const { play, dispatchForShowMiniPlayer, fetchLyricData, setCurrentLineNum, getIsProgressChanging } = props
+  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId } = props
+  const { play, fetchLyricData, setCurrentLineNum, getIsProgressChanging,togglePlayStatus, setCurrentTime, changeSong } = props
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
@@ -33,12 +34,12 @@ const PlayPage = (props: any) => {
 
   const handleProgressChanging = (percent: number) => {
     setPercent(percent)
-    setCurrentTimeForDisplay(formatForPlayTime(duration * percent))
+    // setCurrentTimeForDisplay()
   }
 
   const handleProgressChange = (percent: number) => {
     setPercent(percent)
-    EventEmitter.emit("set-current-time", duration * percent)
+    setCurrentTime(duration * percent)
   }
 
   const onTimeupdate = (payload: any) => {
@@ -63,15 +64,15 @@ const PlayPage = (props: any) => {
   //  77需要通过查看网站信息 设置允许声音
 
   const togglePlay = () => {
-    EventEmitter.emit("player-toggle-status")
+    togglePlayStatus()
   }
 
   const handleNextSong = () => {
-    EventEmitter.emit("player-toggle-song", "NEXT")
+    changeSong("NEXT")
   }
 
   const handlePrevSong = () => {
-    EventEmitter.emit("player-toggle-song", "PREV")
+    changeSong("PREV")
   }
 
   const rotate = (deg: number) => {
@@ -104,13 +105,11 @@ const PlayPage = (props: any) => {
 
   useEffect(() => {
     degRef.current.deg = 0
-    // 进入播放页面隐藏miniplayer
-    dispatchForShowMiniPlayer(false)
-    EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
+    // EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
     EventEmitter.on("progress-change", handleProgressChange, { passive: false })
     EventEmitter.on("timeupdate", onTimeupdate)
     return () => {
-      EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
+      // EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
       EventEmitter.off("progress-change", handleProgressChange, { passive: false })
       EventEmitter.off("timeupdate", onTimeupdate)
     }
@@ -136,6 +135,12 @@ const PlayPage = (props: any) => {
     }
   }, [showLyric])
 
+
+  useEffect(() => {
+    console.log(formatForPlayTime(duration * percent));
+    
+  }, [percent])
+
   return (
     <div ref={playRef} className="play">
       <div className="play--main-container" onClick={toggleMainView}>
@@ -155,7 +160,8 @@ const PlayPage = (props: any) => {
 
       <div className="edit-container">
         <div className="play--progress">
-          <span className="time left">{currentTimeForDisplay}</span>
+          {/* <span className="time left">{JSON.stringify(formatForPlayTime(duration * percent))}</span> */}
+          <span className="time left">{formatForPlayTime(duration * percent)}</span>
           <div style={{width: "calc(100% - 70px)"}}>
           <ProgressBar percent={percent}></ProgressBar>
           </div>
@@ -182,14 +188,12 @@ const stateToProps = (state: any) => ({
   currentLyricLine: state.playpage.currentLyricLine,
   songId: state.playpage.songId,
   isProgressChanging: state.playpage.isProgressChanging,
+  percent: state.playpage.percent,
 })
 
 const dispatchToProps = (dispatch: any) => ({
   play(songIndex: number) {
     dispatch(beforeCanPlayAction(songIndex))
-  },
-  dispatchForShowMiniPlayer(status: boolean) {
-    dispatch({ type: "global/show-mini-player", value: status })
   },
   fetchLyricData(songId: string | number) {
     dispatch(fetchLyricAction(songId))
@@ -200,6 +204,15 @@ const dispatchToProps = (dispatch: any) => ({
   getIsProgressChanging () {
     return dispatch(getIsProgressChangingAction())
   },
+  togglePlayStatus () {
+    dispatch(playStatusAction())
+  },
+  setCurrentTime (currentTime: any) {
+    dispatch(setCurrentTimeAction(currentTime))
+  },
+  changeSong (type: any) {
+    dispatch(changeSongAction(type))
+  }
 })
 
 export default connect(stateToProps, dispatchToProps)(PlayPage)

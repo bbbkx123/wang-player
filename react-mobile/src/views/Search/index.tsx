@@ -5,10 +5,10 @@ import { connect } from 'react-redux'
 
 import * as api from '@/service'
 import { formatForSearchResult } from '@/utils/tools'
-import { beforeCanPlayAction } from '@/store/actionCreator'
+import { beforeCanPlayAction } from '@/store/action'
 // import {appendPlayListAction} from "@/store/global/action"
 import List from '@/components/List'
-import Slider from '@/components/Slider'
+import Scroll from '@/components/Scroll'
 
 import './index.less'
 
@@ -102,9 +102,9 @@ const Search = (props: any) => {
         <SearchBar placeholder="自动获取光标" ref={ref => (autoFocusInst.current = ref)} onChange={onChange} onSubmit={onSubmit} />
       </div>
       {data.length > 0 && (
-        <Slider mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
+        <Scroll mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
           <List mode="PLAY_LIST" data={data} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
-        </Slider>
+        </Scroll>
       )}
     </div>
   )

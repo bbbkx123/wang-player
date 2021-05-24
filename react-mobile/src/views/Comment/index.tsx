@@ -2,7 +2,7 @@ import * as api from "@/service/index"
 import { useEffect, useRef, useState } from "react"
 
 import List from "@/components/List"
-import Slider from "@/components/Slider"
+import Scroll from "@/components/Scroll"
 
 import "./index.less"
 
@@ -34,9 +34,9 @@ const Comment = (props: any) => {
     <div className="page-container">
       
       {
-        comment && (<Slider mode="normal-scroll-y" config={commentPageConf.current}>
+        comment && (<Scroll mode="normal-scroll-y" config={commentPageConf.current}>
         <List mode="COMMENT_LIST" data={comment.data.comments} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
-      </Slider>)
+      </Scroll>)
       }
     </div>
   )

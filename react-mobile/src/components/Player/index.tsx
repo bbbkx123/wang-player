@@ -1,17 +1,13 @@
 import { useState, useEffect, useRef } from "react"
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
-import { beforeCanPlayAction } from "@/store/actionCreator"
-import { Toast } from "antd-mobile"
+import { beforeCanPlayAction } from "@/store/action"
 import { throttle } from "@/utils/tools"
 
 const Player = (props: any) => {
-  const { history, listDetail, currentSongIndex, EventEmitter, audioSrc, showMiniPlayer, playList } = props
-  const { dispatchForPlayStatus, diapatchForDuration, toggleSong, dispatchForShowMiniPlayer } = props
+  const { history, currentSongIndex, EventEmitter, audioSrc, showController, playList } = props
+  const { dispatchForPlayStatus, diapatchForDuration, toggleSong, dispatchForShowController, dispatchForAudio } = props
   const audioElemRef = useRef<any>(null)
-  // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
-  // 在useEffect(() => {}, [])访问, listDetail是初始值null, 暂时这样实现
-  const temp = useRef<any>({ listDetail, currentSongIndex })
   const [loop] = useState<boolean>(false)
 
   // !问题: buffer加载时, currentTime需要loading效果
@@ -42,71 +38,38 @@ const Player = (props: any) => {
     const { pathname } = history.location
     diapatchForDuration(audioElemRef.current.duration)
     dispatchForPlayStatus(true)
-    if (!showMiniPlayer && pathname !== "/play") dispatchForShowMiniPlayer(true)
-  }
-  const handlePlay = () => {
-    const { paused, src } = audioElemRef.current
-    if (!src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
-    paused ? audioElemRef.current.play() : audioElemRef.current.pause()
-    dispatchForPlayStatus(!audioElemRef.current.paused)
-  }
-
-  const setCurrentTime = (currentTime: any) => {
-    audioElemRef.current.currentTime = currentTime
-  }
-
-  const handleToggleSongs = (toggleType: string) => {
-    let index = null
-    const { listDetail, currentSongIndex } = temp.current
-    if (!audioElemRef.current || !audioElemRef.current.src) return
-    if (toggleType === "NEXT") {
-      index = listDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
-    } else {
-      if (currentSongIndex === 0) {
-        return
-      } else if (currentSongIndex < listDetail.listData.length) {
-        index = currentSongIndex - 1
-      }
-    }
-    toggleSong(index)
+    if (!showController && pathname !== "/play") dispatchForShowController(true)
   }
 
   useEffect(() => {
     audioElemRef.current.volume = 0.5
+    dispatchForAudio(audioElemRef.current)
     return () => {}
   }, [])
 
   // *问题: react-hooks/exhaustive-deps
   // 解决: 如果不需要在useEffect外使用方法, 可以简单的将方法移入useEffect内, 或者禁用
-  useEffect(() => {
-    EventEmitter.on("player-toggle-status", handlePlay)
-    EventEmitter.on("set-current-time", setCurrentTime)
-    EventEmitter.on("player-toggle-song", handleToggleSongs)
-    return () => {
-      EventEmitter.off("player-toggle-status", handlePlay)
-      EventEmitter.off("set-current-time", setCurrentTime)
-      EventEmitter.off("player-toggle-song", handleToggleSongs)
-    }
-  }, [])
 
-  useEffect(() => {
-    temp.current.listDetail = listDetail
-  }, [listDetail])
+  // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
+  // 在useEffect(() => {}, [])访问, listDetail是初始值null, 暂时这样实现
 
-  useEffect(() => {
-    temp.current.currentSongIndex = currentSongIndex
-  }, [currentSongIndex])
+  // useEffect(() => {
+  //   temp.current.listDetail = listDetail
+  // }, [listDetail])
+
+  // useEffect(() => {
+  //   temp.current.currentSongIndex = currentSongIndex
+  // }, [currentSongIndex])
 
   return <audio ref={audioElemRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={_onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
 const stateToProps = (state: any) => {
   return {
     EventEmitter: state.global.EventEmitter,
-    listDetail: state.global.listDetail,
     playList: state.playlist.data,
     audioSrc: state.audio.src,
     currentSongIndex: state.playlist.currentSongIndex,
-    showMiniPlayer: state.global.showMiniPlayer,
+    showController: state.global.showController,
   }
 }
 
@@ -117,12 +80,15 @@ const dispatchToProps = (dispatch: any) => ({
   dispatchForPlayStatus(playStatus: boolean) {
     dispatch({ type: "audio/play-status", value: playStatus })
   },
-  dispatchForShowMiniPlayer(status: boolean) {
-    dispatch({ type: "global/show-mini-player", value: status })
+  dispatchForShowController(status: boolean) {
+    dispatch({ type: "global/show-controller", value: status })
   },
   toggleSong(currentSongIndex: number) {
     dispatch(beforeCanPlayAction(currentSongIndex))
   },
+  dispatchForAudio (audio: any) {
+    dispatch({type: "global/audio", value: audio})
+  }
 })
 
 export default connect(stateToProps, dispatchToProps)(withRouter(Player))
