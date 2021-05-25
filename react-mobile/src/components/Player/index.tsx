@@ -26,12 +26,8 @@ const Player = (props: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    let currentTime = Number(e.target.currentTime.toFixed(2))
+    const currentTime = Number(e.target.currentTime.toFixed(2))
     EventEmitter.emit("timeupdate", { currentTime })
-  }
-
-  const _onTimeUpdate = (e: any) => {
-    throttle(onTimeUpdate, 30, 1)(e)
   }
 
   const onCanPlay = () => {
@@ -42,7 +38,7 @@ const Player = (props: any) => {
   }
 
   useEffect(() => {
-    audioElemRef.current.volume = 0.5
+    audioElemRef.current.volume = 0
     dispatchForAudio(audioElemRef.current)
     return () => {}
   }, [])
@@ -61,7 +57,7 @@ const Player = (props: any) => {
   //   temp.current.currentSongIndex = currentSongIndex
   // }, [currentSongIndex])
 
-  return <audio ref={audioElemRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={_onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
+  return <audio ref={audioElemRef} src={audioSrc} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
 const stateToProps = (state: any) => {
   return {
@@ -88,7 +84,7 @@ const dispatchToProps = (dispatch: any) => ({
   },
   dispatchForAudio (audio: any) {
     dispatch({type: "global/audio", value: audio})
-  }
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(withRouter(Player))

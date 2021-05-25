@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { connect } from "react-redux"
-import { progressChangingAction } from "@/store/playpage/action"
+import {  changeProgressAction } from "@/store/playpage/action"
 
 import "./index.less"
 
@@ -14,8 +14,7 @@ const refelctTime = 0.1
 
 const ProgressBar = (props: any) => {
   const { percent } = props
-  const { startTime, EventEmitter } = props
-  const { setStartTime, dispatchForIsProgressChanging, progressChanging } = props
+  const { dispatchForIsProgressChanging, progressChanging, progressChange } = props
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null)
@@ -28,12 +27,10 @@ const ProgressBar = (props: any) => {
 
   const progressClick = (e: any) => {
     // 解决mouseup和click重发触发的问题
-    // let diff = (new Date().getTime() - startTime) / 1000
-    // if (diff > refelctTime) return
     const rect = progressBar.current.getBoundingClientRect()
     const offsetWidth = e.clientX - rect.left
     const percent = offsetWidth / barWidth
-    EventEmitter.emit("progress-change", percent.toFixed(2))
+    progressChange( percent.toFixed(2))
   }
 
   const handleOffset = (offsetWidth: any) => {
@@ -64,7 +61,6 @@ const ProgressBar = (props: any) => {
     const deltaX = e.touches[0].clientX - touch.startX
     const offsetWidth = Math.min(barWidth === null ? 0 : barWidth, Math.max(0, progressClientWidth + deltaX))
     handleOffset(offsetWidth)
-    // EventEmitter.emit("progress-changing", getPrecent())
     progressChanging(getPrecent())
   }
 
@@ -72,18 +68,13 @@ const ProgressBar = (props: any) => {
     // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
-    dispatchForIsProgressChanging(false)
-    EventEmitter.emit("progress-change", getPrecent())
+    // dispatchForIsProgressChanging(false)
+    progressChange(getPrecent())
     setTouch({
       ...touch,
       initiated: false,
     })
   }
-
-  // 不进行节流会造成拖动卡顿
-  // const _progressTouchMove = (e: any) => {
-  //   throttle(progressTouchMove, 200, 0)(e)
-  // }
 
   const getPrecent = () => {
     let num = progress.current.clientWidth / (barWidth === null ? 0 : barWidth)
@@ -108,8 +99,6 @@ const ProgressBar = (props: any) => {
     // timeupdate事件触发
     if (percent > 0 && !touch.initiated && barWidth !== null) {
       const offsetWidth = percent * barWidth
-      // console.log(`percent: ${percent},barWidth: ${barWidth},offsetWidth: ${offsetWidth}`);
-      
       handleOffset(offsetWidth)
     }
   }, [percent])
@@ -129,20 +118,17 @@ const ProgressBar = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  // startTime: state.global.startTime,
-  EventEmitter: state.global.EventEmitter,
-})
+const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => ({
-  // setStartTime() {
-  //   dispatch({ type: "audio/start-time", value: new Date().getTime() })
-  // },
   dispatchForIsProgressChanging(status: boolean) {
     dispatch({ type: "play-page/is-progress-changing", value: status })
   },
   progressChanging (percent: any) {
-    dispatch(progressChangingAction(percent))
+    dispatch({type: "play-page/percent", value: percent})
+  },
+  progressChange (percent: any) {
+    dispatch(changeProgressAction(percent))
   },
 })
 

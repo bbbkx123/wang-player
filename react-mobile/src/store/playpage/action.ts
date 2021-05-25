@@ -18,7 +18,6 @@ export const fetchLyricAction = (id: string | number) => async (dispatch: any, g
 
 }
 
-
 export const getCurrentLineNumAction = (time: number) => (dispatch: any, getState: any) => {
   const state = getState()
   const {timeList} = state.playpage.lyric
@@ -36,8 +35,7 @@ export const getCurrentLineNumAction = (time: number) => (dispatch: any, getStat
   dispatch({type: "play-page/current-lyric-line", value: line})
 }
 
-
-export const getIsProgressChangingAction = () => (dispatch: any, getState: any) => {
+export const GetterIsProgressChanging = () => (dispatch: any, getState: any) => {
   const state = getState()
   return state.playpage.isProgressChanging
 }
@@ -47,13 +45,11 @@ export const setCurrentTimeAction = (currentTime: any) => (dispatch: any, getSta
   state.global.audio.currentTime = currentTime
 }
 
-
 export const changeSongAction = (toggleType: string) => (dispatch: any, getState: any) => {
   let index = null
   const state = getState()
-  const listDetail = state.global.listDetail
+  const {listDetail} = state.global
   const {currentSongIndex} = state.playlist
-  // const { listDetail, currentSongIndex } = temp.current
   if (!state.global.audio.src) return
   if (toggleType === "NEXT") {
     index = listDetail.listData.lentgh <= currentSongIndex ? 0 : currentSongIndex + 1
@@ -67,14 +63,9 @@ export const changeSongAction = (toggleType: string) => (dispatch: any, getState
   dispatch(beforeCanPlayAction(index))
 }
 
-
-// export const handleProgressChange = (percent: number) => (dispatch: any, getState: any) => {
-//   setPercent(percent)
-//   setCurrentTime(duration * percent)
-// }
-
-
-export const progressChangingAction = (percent: number) => (dispatch: any, getState: any) => {
+export const changeProgressAction = (percent: number) => (dispatch: any, getState: any) => {
+  const state = getState()
+  const {duration} = state.global.audio
   dispatch({type: "play-page/percent", value: percent})
-  // setCurrentTimeForDisplay(formatForPlayTime(duration * percent))
+  dispatch(setCurrentTimeAction(duration * percent))
 }

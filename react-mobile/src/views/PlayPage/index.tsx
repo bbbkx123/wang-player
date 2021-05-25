@@ -2,8 +2,14 @@ import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import ProgressBar from "@/components/ProgressBar"
 import { beforeCanPlayAction } from "@/store/action"
-import { fetchLyricAction, getCurrentLineNumAction, getIsProgressChangingAction, setCurrentTimeAction, changeSongAction } from "@/store/playpage/action"
-import {playStatusAction} from "@/store/global/action"
+import {
+  fetchLyricAction,
+  getCurrentLineNumAction,
+  GetterIsProgressChanging,
+  setCurrentTimeAction,
+  changeSongAction,
+} from "@/store/playpage/action"
+import { playStatusAction } from "@/store/global/action"
 import { formatForPlayTime } from "@/utils/tools"
 import { useWatch } from "@/utils/hook"
 import List from "@/components/List"
@@ -13,8 +19,8 @@ const INITIAL_TOP = 200
 const MOVE = -50
 
 const PlayPage = (props: any) => {
-  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId } = props
-  const { play, fetchLyricData, setCurrentLineNum, getIsProgressChanging,togglePlayStatus, setCurrentTime, changeSong } = props
+  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, percent, isProgressChanging} = props
+  const { play, fetchLyricData, setCurrentLineNum, getter_isProgressChanging, togglePlayStatus, toggleSonge, progressChanging } = props
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
@@ -22,8 +28,6 @@ const PlayPage = (props: any) => {
     deg: null,
     start: true,
   })
-  const [percent, setPercent] = useState<number>(0)
-  const [currentTimeForDisplay, setCurrentTimeForDisplay] = useState<string>('')
   const [showLyric, setShowLyric] = useState<boolean>(false)
 
   /**
@@ -32,22 +36,11 @@ const PlayPage = (props: any) => {
    * 后续发现不存在问题, 待观察
    */
 
-  const handleProgressChanging = (percent: number) => {
-    setPercent(percent)
-    // setCurrentTimeForDisplay()
-  }
-
-  const handleProgressChange = (percent: number) => {
-    setPercent(percent)
-    setCurrentTime(duration * percent)
-  }
-
   const onTimeupdate = (payload: any) => {
     const { currentTime } = payload
     
-    if (!getIsProgressChanging()) {
-      setCurrentTimeForDisplay(formatForPlayTime(currentTime))
-      setPercent(currentTime / duration)
+    if (!getter_isProgressChanging()) {
+      progressChanging(currentTime / duration)
     }
     setCurrentLineNum(currentTime)
 
@@ -68,11 +61,11 @@ const PlayPage = (props: any) => {
   }
 
   const handleNextSong = () => {
-    changeSong("NEXT")
+    toggleSonge("NEXT")
   }
 
   const handlePrevSong = () => {
-    changeSong("PREV")
+    toggleSonge("PREV")
   }
 
   const rotate = (deg: number) => {
@@ -105,12 +98,8 @@ const PlayPage = (props: any) => {
 
   useEffect(() => {
     degRef.current.deg = 0
-    // EventEmitter.on("progress-changing", handleProgressChanging, { passive: false })
-    EventEmitter.on("progress-change", handleProgressChange, { passive: false })
     EventEmitter.on("timeupdate", onTimeupdate)
     return () => {
-      // EventEmitter.off("progress-changing", handleProgressChanging, { passive: false })
-      EventEmitter.off("progress-change", handleProgressChange, { passive: false })
       EventEmitter.off("timeupdate", onTimeupdate)
     }
   }, [])
@@ -135,14 +124,13 @@ const PlayPage = (props: any) => {
     }
   }, [showLyric])
 
-
   useEffect(() => {
-    console.log(formatForPlayTime(duration * percent));
-    
-  }, [percent])
+    console.log(isProgressChanging);
+  }, [isProgressChanging])
 
   return (
     <div ref={playRef} className="play">
+      {JSON.stringify(isProgressChanging)}
       <div className="play--main-container" onClick={toggleMainView}>
         {!showLyric && (
           <div className="play--poster">
@@ -160,16 +148,19 @@ const PlayPage = (props: any) => {
 
       <div className="edit-container">
         <div className="play--progress">
-          {/* <span className="time left">{JSON.stringify(formatForPlayTime(duration * percent))}</span> */}
           <span className="time left">{formatForPlayTime(duration * percent)}</span>
-          <div style={{width: "calc(100% - 70px)"}}>
-          <ProgressBar percent={percent}></ProgressBar>
+          <div style={{ width: "calc(100% - 70px)" }}>
+            <ProgressBar percent={percent}></ProgressBar>
           </div>
           <span className="time right">{formatForPlayTime(duration)}</span>
         </div>
         <div className="play--control">
           <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>
-          <div style={{ fontSize: "48px" }} className={`iconfont ${typeof playStatus === "boolean" && playStatus ? "iconpause-circle" : "iconstart"}`} onClick={togglePlay}></div>
+          <div
+            style={{ fontSize: "48px" }}
+            className={`iconfont ${typeof playStatus === "boolean" && playStatus ? "iconpause-circle" : "iconstart"}`}
+            onClick={togglePlay}
+          ></div>
           <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
         </div>
       </div>
@@ -201,18 +192,21 @@ const dispatchToProps = (dispatch: any) => ({
   setCurrentLineNum(time: number) {
     dispatch(getCurrentLineNumAction(time))
   },
-  getIsProgressChanging () {
-    return dispatch(getIsProgressChangingAction())
+  getter_isProgressChanging() {
+    return dispatch(GetterIsProgressChanging())
   },
-  togglePlayStatus () {
+  togglePlayStatus() {
     dispatch(playStatusAction())
   },
-  setCurrentTime (currentTime: any) {
+  setCurrentTime(currentTime: any) {
     dispatch(setCurrentTimeAction(currentTime))
   },
-  changeSong (type: any) {
+  toggleSonge(type: any) {
     dispatch(changeSongAction(type))
-  }
+  },
+  progressChanging(percent: any) {
+    dispatch({type: "play-page/percent", value: percent})
+  },
 })
 
 export default connect(stateToProps, dispatchToProps)(PlayPage)

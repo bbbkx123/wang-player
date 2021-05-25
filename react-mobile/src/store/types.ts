@@ -23,7 +23,6 @@ export const PLAY_PAGE__SONG_ID = "play-page/song-id"
 export const PLAY_PAGE__IS_PROGRESS_CHANGING = "play-page/is-progress-changing"
 export const PLAY_PAGE__PERCENT = "play-page/percent"
 
-
 /**
  * global
  */

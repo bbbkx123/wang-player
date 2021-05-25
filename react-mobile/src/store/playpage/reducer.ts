@@ -8,8 +8,10 @@ const defaultState = {
   },
   currentLyricLine: 0,
   songId: null,
-  isProgressChanging: false,
+  isProgressChanging: null,
   percent: 0,
+  // deg: 0,
+  // showLyric: false,
 }
 
 export default (state: any = defaultState, action: any) => {
@@ -40,6 +42,16 @@ export default (state: any = defaultState, action: any) => {
         ...state,
         percent: value,
       }
+    // case types.PLAY_PAGE__DEG:
+    //   return {
+    //     ...state,
+    //     deg: value,
+    //   }
+    // case types.PLAY_PAGE__SHOW_LYRIC:
+    //   return {
+    //     ...state,
+    //     showLyric: value,
+      // }
     default:
       return state
   }

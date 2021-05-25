@@ -13,7 +13,6 @@ import './index.less'
 
 const Slider = (props: any) => {
   const { mode, config, children, height, width, pullDown, pullUp, click} = props
-  // const { EventEmitter } = props
 
   const instance = useRef<any>()
   const sliderRef = useRef<any>(null)
@@ -33,7 +32,6 @@ const Slider = (props: any) => {
     instance.current = { ...instance.current, bscroll: new BScroll(sliderRef.current, config.bscroll) }
     let hooks = instance.current.bscroll.scroller.actionsHandler.hooks
     hooks.on('click', (event: any) => {
-      // EventEmitter.emit('hook-click', event)
       click && click()
     })
     if (mode === 'banner') {
@@ -131,9 +129,7 @@ const Slider = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  // EventEmitter: state.global.EventEmitter,
-})
+const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => ({})
 

@@ -1,5 +1,6 @@
-import {Toast} from "antd-mobile"
+import { Toast } from "antd-mobile"
 import { fetchPlayListAction } from "@/store/action"
+import {getCurrentLineNumAction} from "@/store/playpage/action"
 import { page as formatPageData } from "@/utils/tools"
 
 import { fetchPlayListDetail } from "@/service/index"
@@ -64,11 +65,28 @@ export const appendPlayListAction = () => async (dispatch: any, getState: any) =
   return Promise.resolve({ success: true })
 }
 
-
 export const playStatusAction = () => (dispatch: any, getState: any) => {
   const state = getState()
   const audio = state.global.audio
   if (!audio.src) return Toast.fail("没有选择歌曲 (￣o￣) . z Z　", 3, () => {}, false)
   audio.paused ? audio.play() : audio.pause()
-  dispatch({type: "audio/play-status", value: !state.audio.playStatus})
+  dispatch({ type: "audio/play-status", value: !state.audio.playStatus })
 }
+
+// export const onTimeupdateForPlayPageAction = (currentTime: any) => (dispatch: any, getState: any) => {
+//   const state = getState()
+//   const {isProgressChanging, showLyric} = state.playpage
+//   let deg = state.playpage.deg
+//   const {duration} = state.global.audio
+//   if (!isProgressChanging) {
+//     dispatch({type: "play-page/percent", value: currentTime / duration})
+//   }
+//   dispatch(getCurrentLineNumAction(currentTime))
+
+//   if (!showLyric) {
+//     deg = (deg || 0) + 2
+//     if (deg >= 360) deg = 0
+//     dispatch({type:"play-page/deg", value: deg})
+//     return Promise.resolve(deg)
+//   }
+// }
