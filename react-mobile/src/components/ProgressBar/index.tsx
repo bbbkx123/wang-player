@@ -45,7 +45,6 @@ const ProgressBar = (props: any) => {
       startX: e.touches[0].clientX,
     })
     setProgressClientWidth(progress.current.clientWidth)
-    // setStartTime()
   }
 
   const progressTouchMove = (e: any) => {

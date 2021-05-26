@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 
-import { beforeCanPlayAction } from "@/store/action"
-import { initialActionForListDetail, appendPlayListAction } from "@/store/global/action"
+import { beforeCanPlayAction } from "@/store/audio/action"
+import { appendPlayListAction } from "@/store/detail/action"
+import {initialActionForListDetail} from "@/store/detail/action"
 
 import { Toast } from "antd-mobile"
 import List from "@/components/List"
@@ -15,7 +16,7 @@ import "./index.less"
 
 const PlayListDetails = (props: any) => {
   const { listDetail, history, detailId, playListOfListDetail } = props
-  const { play, diapatchForPlayList, initialForListDetail, appendPlayList } = props
+  const { play, setPlayList, initialForListDetail, appendPlayList } = props
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
@@ -67,7 +68,7 @@ const PlayListDetails = (props: any) => {
   const onTouchEnd = (songIndex: number) => {
     const date = new Date().getTime()
     if (date - touchTimeRef.current.date <= 75) {
-      diapatchForPlayList(playListOfListDetail)
+      setPlayList(playListOfListDetail)
       play(songIndex)
     }
     touchTimeRef.current = null
@@ -103,7 +104,7 @@ const PlayListDetails = (props: any) => {
                 <div className="list-detail--info">
                   <div className="list-detail--name">{listDetail.name}</div>
                   <div className="list-detail--creator-info">
-                    <img src={listDetail.avatarUrl}  alt="" />
+                    <img src={listDetail.avatarUrl} alt="" />
                     <div className="list-detail--nickname">{listDetail.nickname}</div>
                   </div>
                 </div>
@@ -138,24 +139,18 @@ const PlayListDetails = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  listDetail: state.global.listDetail,
+  listDetail: state.detail.data,
   playList: state.playlist.data,
-  detailId: state.global.detailId,
-  playListOfListDetail: state.global.playList,
+  detailId: state.detail.id,
+  playListOfListDetail: state.detail.playList,
 })
 
 const dispatchToProps = (dispatch: any) => ({
   play(songIndex: number) {
     dispatch(beforeCanPlayAction(songIndex))
   },
-  diapatchForPlayList(playList: any[]) {
+  setPlayList(playList: any[]) {
     dispatch({ type: "play-list/data", value: playList })
-  },
-  diapatchForListDetail(listDetail: any) {
-    dispatch({ type: "global/list-detail", value: listDetail })
-  },
-  dispatchForPlayStatus(status: boolean) {
-    dispatch({ type: "audio/play-status", value: status })
   },
   appendPlayList() {
     return dispatch(appendPlayListAction())

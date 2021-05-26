@@ -8,7 +8,7 @@ const defaultState = {
   },
   currentLyricLine: 0,
   songId: null,
-  isProgressChanging: null,
+  isProgressChanging: false,
   percent: 0,
   // deg: 0,
   // showLyric: false,

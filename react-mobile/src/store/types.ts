@@ -1,18 +1,17 @@
 /**
  * audio
  */
-export const AUDIO__START_TIME = "audio/start-time"
-export const AUDIO__PLAY_STATUS = "audio/play-status"
+export const AUDIO__INSTANCE = "audio/instance"
 export const AUDIO__DURATION = "audio/duration"
 // export const AUDIO__VOLUME = "audio/volume"
 export const AUDIO__SRC = "audio/src"
+export const AUDIO__PAUSED = "audio/paused"
 
 /**
  * play-list
  */
 export const PLAY_LIST__DATA = "play-list/data"
 export const PLAY_LIST__CURRENT_SONG_INDEX = "play-list/current-song-index"
-
 
 /**
  * play-page
@@ -24,14 +23,28 @@ export const PLAY_PAGE__IS_PROGRESS_CHANGING = "play-page/is-progress-changing"
 export const PLAY_PAGE__PERCENT = "play-page/percent"
 
 /**
+ * details
+ */
+export const DETAIL__ID = "detail/id"
+export const DETAIL__DATA = "detail/data"
+export const DETAIL__PLAY_LIST = "detail/play-list"
+export const DETAIL__PAGE = "detail/page"
+
+/**
  * global
+ *
  */
 
 export const GLOBAL__SHOW_CONTROLLER = "global/show-controller"
 export const GLOBAL__SHOW_MINI_LIST = "global/show-mini-list"
-export const GLOBAL__DETAIL_ID = "global/detail-id"
 export const GLOBAL__LIST_DETAIL = "global/list-detail"
-export const GLOBAL__PLAY_LIST = "global/play-list"
-export const GLOBAL__DETAIL_PAGE = "global/detail-page"
 export const GLOBAL__SEARCH_PAGE = "global/search-page"
-export const GLOBAL__AUDIO = "global/audio"
+
+/**
+ * recommend
+ *
+ */
+
+export const RECOMMEND__BANNER = "views/recommend/banner"
+export const RECOMMEND__PERSONALIZE = "views/recommend/personalize"
+export const RECOMMEND__NEW_SONG_LIST = "views/recommend/new-song-list"

@@ -1,24 +1,19 @@
 import * as types from "../types"
 
 const defaultState = {
-  startTime: 0,
-  playStatus: null,
+  paused: null,
   duration: 0,
   src: undefined,
+  instance: null,
 }
 
 export default (state: any = defaultState, action: any) => {
   const {type, value} = action
   switch (type) {
-    case types.AUDIO__START_TIME:
+    case types.AUDIO__INSTANCE:
       return {
         ...state,
-        startTime: value,
-      }
-    case types.AUDIO__PLAY_STATUS:
-      return {
-        ...state,
-        playStatus: value,
+        instance: value,
       }
     case types.AUDIO__DURATION:
       return {
@@ -34,6 +29,11 @@ export default (state: any = defaultState, action: any) => {
       return {
         ...state,
         src: value,
+      }
+    case types.AUDIO__PAUSED:
+      return {
+        ...state,
+        paused: value,
       }
     default:
       return state

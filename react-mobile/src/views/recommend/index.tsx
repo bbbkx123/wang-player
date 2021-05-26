@@ -8,65 +8,21 @@ import List from "@/components/List"
 import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
-import { beforeCanPlayAction } from "@/store/action"
+import { beforeCanPlayAction } from "@/store/audio/action"
 import { withLoading } from "@/components/HOC/Loading"
 
 import "./index.less"
 
 const Recommend = (props: any) => {
   const { history } = props
-  const { dispatchForDetailId, dispatchForPlayList, play } = props
-  const [bannerArr, setBannerArr] = useState([])
+  const { bannerArr, newSongList, personalize } = props
+  const { setBannerArr, setPersonalize, setNewSongList, play, setPlayList, setDetailId } = props
   const [icons] = useState<any[]>(define.icons)
-  const [recommendDetails, setRecommendDetails] = useState<any[]>([])
-  const [newSongList, setNewSongList] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const iconSliderConf = useRef<any>()
-  const sliderConf = useRef<any>()
-  const recommendConf = useRef<any>()
-  const recommendPageConfRef = useRef<any>()
-  const loadingInstance = useRef<any>()
   const touchTimeRef = useRef<any>()
 
-  sliderConf.current = {
-    bscroll: {
-      scrollX: true,
-      scrollY: false,
-      slide: true,
-      momentum: false,
-      bounce: false,
-      probeType: 3,
-    },
-  }
-
-  iconSliderConf.current = {
-    bscroll: {
-      scrollX: true,
-      scrollY: false,
-      momentum: true,
-      click: true,
-    },
-  }
-
-  recommendConf.current = {
-    bscroll: {
-      scrollX: true,
-      scrollY: false,
-      momentum: true,
-      click: true,
-    },
-  }
-
-  recommendPageConfRef.current = {
-    scrollY: true,
-    scrollX: false,
-    // 锁定方向
-    directionLockThreshold: 0,
-    freeScroll: false,
-  }
-
   const pageToPlaylistDetail = (id: number) => {
-    dispatchForDetailId(id)
+    setDetailId(id)
     history.push({ pathname: "/playlistdetails" })
   }
 
@@ -74,7 +30,7 @@ const Recommend = (props: any) => {
     if (index === 1) {
       pageToPlaylistDetail(129219563)
     } else {
-      dispatchForPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
+      setPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
       play(0)
     }
   }
@@ -87,43 +43,50 @@ const Recommend = (props: any) => {
     const date = new Date().getTime()
     if (date - touchTimeRef.current.date <= 100) {
       // 单曲播放通过模拟歌单播放, 将单曲存入playlist中
-      dispatchForPlayList([newSongList[songIndex]])
+      setPlayList([newSongList[songIndex]])
       play(0)
     }
     touchTimeRef.current = null
   }
 
   useEffect(() => {
-    setLoading(true)
-    Promise.all([api.getBanner(0), api.getPersonalized(6), api.getNewSong(6)]).then(([res1, res2, res3]) => {
-      setBannerArr(res1.data.banners)
-      setRecommendDetails(res2.data.result)
-      const data = res3.data.result.map((item: any) => formatForNewSongList(item))
-      setNewSongList(data)
-      return Promise.resolve()
-    }).then(() => {
-      setTimeout(() => {
-        setLoading(false)
-      }, 1000)
-    })
+    let count = 0
+    if (bannerArr.length === 0) {
+      setLoading(true)
+      api.getBanner(0).then((res: any) => {
+        setBannerArr(res.data.banners)
+        if (++count === 1) setTimeout(() => setLoading(false), 1000)
+      })
+    }
 
-    
+    if (personalize.length === 0) {
+      setLoading(true)
+      api.getPersonalized(6).then((res: any) => {
+        setPersonalize(res.data.result)
+        if (++count === 1) setTimeout(() => setLoading(false), 1000)
+      })
+    }
+
+    if (newSongList.length === 0) {
+      setLoading(true)
+      api.getNewSong(6).then((res: any) => {
+        const data = res.data.result.map((item: any) => formatForNewSongList(item))
+        setNewSongList(data)
+        if (++count === 1) setTimeout(() => setLoading(false), 1000)
+      })
+    }
+
     return () => {
-      sliderConf.current = null
-      iconSliderConf.current = null
-      recommendConf.current = null
-      recommendPageConfRef.current = null
-      loadingInstance.current = null
       touchTimeRef.current = null
     }
   }, [])
 
   const RecommendMain = () => (
-    <Scroll mode="normal-scroll-y" config={recommendPageConfRef.current}>
+    <Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
       {/* banner滑动存在问题 */}
       <div className="banner-container">
         {bannerArr.length > 0 && (
-          <Scroll mode="banner" config={sliderConf.current} width="100%">
+          <Scroll mode="banner" config={{ bscroll: define.sliderConf }} width="100%">
             {bannerArr.map((banner: any, index: number) => {
               return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
             })}
@@ -131,7 +94,7 @@ const Recommend = (props: any) => {
         )}
       </div>
       <div className="icon-wrapper">
-        <Scroll mode="normal-scroll-x" config={iconSliderConf.current} height={70} width={50}>
+        <Scroll mode="normal-scroll-x" config={{ bscroll: define.iconSliderConf }} height={70} width={50}>
           {icons.map((item, index) => {
             return (
               <div className="children-item" key={`icon-${index}`} onClick={() => fun1(index)}>
@@ -144,9 +107,9 @@ const Recommend = (props: any) => {
       </div>
       <div className="recommend-wrapper">
         <p className="recommend-wrapper--title">推荐歌单</p>
-        {recommendDetails.length > 0 && (
-          <Scroll mode="normal-scroll-x" config={recommendConf.current} height={175} width={140}>
-            {recommendDetails.map((item: any, index: number) => {
+        {personalize.length > 0 && (
+          <Scroll mode="normal-scroll-x" config={{ bscroll: define.personalizeConf }} height={175} width={140}>
+            {personalize.map((item: any, index: number) => {
               return (
                 <div className="children-item" key={`recommend-detail-${index}`} onClick={() => pageToPlaylistDetail(item.id)}>
                   <img src={`${item.picUrl}?param=140y140`} alt={item.name} />
@@ -175,18 +138,30 @@ const Recommend = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  // detailId: state.global.detailId,
+  playList: state.playlist.data,
+  bannerArr: state.recommend.banner,
+  personalize: state.recommend.personalize,
+  newSongList: state.recommend.newSongList,
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  dispatchForDetailId(id: number) {
-    dispatch({ type: "global/detail-id", value: id })
+  setDetailId(id: number) {
+    dispatch({ type: "detail/id", value: id })
   },
-  dispatchForPlayList(playlist: any[]) {
+  setPlayList(playlist: any[]) {
     dispatch({ type: "play-list/data", value: playlist })
   },
   play(songIndex: number) {
     dispatch(beforeCanPlayAction(songIndex))
+  },
+  setBannerArr(banner: any[]) {
+    dispatch({ type: "views/recommend/banner", value: banner })
+  },
+  setPersonalize(personalize: any[]) {
+    dispatch({ type: "views/recommend/personalize", value: personalize })
+  },
+  setNewSongList(newSongList: any[]) {
+    dispatch({ type: "views/recommend/new-song-list", value: newSongList })
   },
 })
 

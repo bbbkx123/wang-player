@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import * as api from '@/service'
 import { formatForSearchResult } from '@/utils/tools'
-import { beforeCanPlayAction } from '@/store/action'
+import { beforeCanPlayAction } from '@/store/audio/action'
 // import {appendPlayListAction} from "@/store/global/action"
 import List from '@/components/List'
 import Scroll from '@/components/Scroll'
@@ -111,7 +111,7 @@ const Search = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  listDetail: state.global.listDetail,
+  
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -121,9 +121,6 @@ const dispatchToProps = (dispatch: any) => ({
   play(songIndex: number) {
     dispatch(beforeCanPlayAction(songIndex))
   },
-  // appendPlayList() {
-  //   return dispatch(appendPlayListAction())
-  // },
 })
 
 export default connect(stateToProps, dispatchToProps)(Search)

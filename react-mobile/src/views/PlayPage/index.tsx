@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import ProgressBar from "@/components/ProgressBar"
-import { beforeCanPlayAction } from "@/store/action"
+import { beforeCanPlayAction, changeSongAction } from "@/store/audio/action"
 import {
   fetchLyricAction,
   getCurrentLineNumAction,
-  GetterIsProgressChanging,
+  getter_IsProgressChanging,
   setCurrentTimeAction,
-  changeSongAction,
 } from "@/store/playpage/action"
-import { playStatusAction } from "@/store/global/action"
+import { togglePlayAction } from "@/store/audio/action"
 import { formatForPlayTime } from "@/utils/tools"
 import { useWatch } from "@/utils/hook"
 import List from "@/components/List"
@@ -19,7 +18,7 @@ const INITIAL_TOP = 200
 const MOVE = -50
 
 const PlayPage = (props: any) => {
-  const { EventEmitter, listDetail, playStatus, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, percent, isProgressChanging} = props
+  const { EventEmitter, listDetail, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, percent, isProgressChanging,paused, detailId} = props
   const { play, fetchLyricData, setCurrentLineNum, getter_isProgressChanging, togglePlayStatus, toggleSonge, progressChanging } = props
   const playRef = useRef<any>(null)
   const posterElemRef = useRef<any>()
@@ -104,8 +103,8 @@ const PlayPage = (props: any) => {
     }
   }, [])
 
-  useWatch(listDetail, (prev) => {
-    if (prev && prev.detailId === listDetail.detailId) return
+  useWatch(detailId, (prev) => {
+    if (prev && prev === detailId) return
     const initIndex = 0
     play(initIndex)
   })
@@ -130,7 +129,6 @@ const PlayPage = (props: any) => {
 
   return (
     <div ref={playRef} className="play">
-      {JSON.stringify(isProgressChanging)}
       <div className="play--main-container" onClick={toggleMainView}>
         {!showLyric && (
           <div className="play--poster">
@@ -158,7 +156,7 @@ const PlayPage = (props: any) => {
           <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>
           <div
             style={{ fontSize: "48px" }}
-            className={`iconfont ${typeof playStatus === "boolean" && playStatus ? "iconpause-circle" : "iconstart"}`}
+            className={`iconfont ${typeof paused === "boolean" && !paused ? "iconpause-circle" : "iconstart"}`}
             onClick={togglePlay}
           ></div>
           <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
@@ -170,9 +168,9 @@ const PlayPage = (props: any) => {
 
 const stateToProps = (state: any) => ({
   EventEmitter: state.global.EventEmitter,
-  listDetail: state.global.listDetail,
+  listDetail: state.detail.data,
+  detailId: state.detail.id,
   playList: state.playlist.data,
-  playStatus: state.audio.playStatus,
   currentSongIndex: state.playlist.currentSongIndex,
   duration: state.audio.duration,
   lyric: state.playpage.lyric,
@@ -180,6 +178,7 @@ const stateToProps = (state: any) => ({
   songId: state.playpage.songId,
   isProgressChanging: state.playpage.isProgressChanging,
   percent: state.playpage.percent,
+  paused: state.audio.paused,
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -193,10 +192,10 @@ const dispatchToProps = (dispatch: any) => ({
     dispatch(getCurrentLineNumAction(time))
   },
   getter_isProgressChanging() {
-    return dispatch(GetterIsProgressChanging())
+    return dispatch(getter_IsProgressChanging())
   },
   togglePlayStatus() {
-    dispatch(playStatusAction())
+    dispatch(togglePlayAction())
   },
   setCurrentTime(currentTime: any) {
     dispatch(setCurrentTimeAction(currentTime))

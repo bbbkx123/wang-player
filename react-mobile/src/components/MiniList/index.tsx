@@ -1,4 +1,4 @@
-import {  useRef, } from "react"
+import {  useEffect, useRef, } from "react"
 import { connect } from "react-redux"
 import { CSSTransition } from "react-transition-group"
 
@@ -26,7 +26,7 @@ const MiniList = (props: any) => {
   const onClick = () => {
     dispatchForShowMiniList(false)
   }
-
+  
   return (
     <>
       {showMiniList && <div className="mini-list--mark" onClick={onClick}></div>}
