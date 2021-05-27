@@ -7,16 +7,16 @@ import AudioRedcuer from "./audio/reducer"
 import GlobalReducer from "./global/reducer"
 import PlayPageReducer from "./playpage/reducer"
 // views 用于记录页面数据
-import RecommendReducer from "./views/recommend/reducer"
+import RecommendReducer from "./recommend/reducer"
 
 
 const reducer = combineReducers({
-  playlist: PlayListReducer,
-  audio: AudioRedcuer,
-  global: GlobalReducer,
-  playpage: PlayPageReducer,
-  detail: DetailReducer,
-  recommend: RecommendReducer,
+  "playlist": PlayListReducer,
+  "audio": AudioRedcuer,
+  "global": GlobalReducer,
+  "playpage": PlayPageReducer,
+  "detail": DetailReducer,
+  "recommend": RecommendReducer,
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))

@@ -6,15 +6,13 @@ import "./index.less"
 
 // 进度条按钮宽度
 const progressBarWidth = 16
-// mousedown到mopuseup间隔时间, 用于区分click和mouseup, 超过150ms为mouse事件, 否则为click事件
-const refelctTime = 0.1
 
-// ! 问题: 全面屏手势滑动会进行翻页, 导致touchmove不能正确调用
+// 问题: 全面屏手势滑动会进行翻页, 导致touchmove不能正确调用
 // 测试发现小米手机浏览器存在原生滑动事件, 导致问题, 在微信中可正常使用
 
 const ProgressBar = (props: any) => {
   const { percent } = props
-  const { dispatchForIsProgressChanging, progressChanging, progressChange } = props
+  const { setIsProgressChanging, progressChanging, progressChange } = props
   const progressBar = useRef<any>(null),
     progress = useRef<any>(null),
     progressBtn = useRef<any>(null)
@@ -26,7 +24,6 @@ const ProgressBar = (props: any) => {
   const [barWidth, setBarWidth] = useState<number>(0)
 
   const progressClick = (e: any) => {
-    // 解决mouseup和click重发触发的问题
     const rect = progressBar.current.getBoundingClientRect()
     const offsetWidth = e.clientX - rect.left
     const percent = offsetWidth / barWidth
@@ -39,7 +36,7 @@ const ProgressBar = (props: any) => {
   }
 
   const progressTouchStart = (e: any) => {
-    dispatchForIsProgressChanging(true)
+    setIsProgressChanging(true)
     setTouch({
       initiated: true,
       startX: e.touches[0].clientX,
@@ -67,7 +64,7 @@ const ProgressBar = (props: any) => {
     // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
-    // dispatchForIsProgressChanging(false)
+    setIsProgressChanging(false)
     progressChange(getPrecent())
     setTouch({
       ...touch,
@@ -120,7 +117,7 @@ const ProgressBar = (props: any) => {
 const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => ({
-  dispatchForIsProgressChanging(status: boolean) {
+  setIsProgressChanging(status: boolean) {
     dispatch({ type: "play-page/is-progress-changing", value: status })
   },
   progressChanging (percent: any) {

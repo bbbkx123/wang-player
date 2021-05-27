@@ -46,5 +46,5 @@ export const setCurrentTimeAction = (currentTime: any) => (dispatch: any, getSta
 export const changeProgressAction = (percent: number) => (dispatch: any, getState: any) => {
   const state = getState()
   dispatch({ type: "play-page/percent", value: percent })
-  dispatch(setCurrentTimeAction(state.audio.instance * percent))
+  dispatch(setCurrentTimeAction(state.audio.instance.duration * percent))
 }

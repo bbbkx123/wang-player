@@ -22,6 +22,7 @@ export const initialActionForListDetail = (detailId: any) => async (dispatch: an
   const state = getState()
   let value = await dispatch(fetchPlayListAction(state.detail.page.model[0]))
   dispatch({ type: "detail/play-list", value })
+  return Promise.resolve({success: true})
 }
 
 /**

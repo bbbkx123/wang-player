@@ -48,14 +48,6 @@ const Player = (props: any) => {
   // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
   // 在useEffect(() => {}, [])访问, listDetail是初始值null, 暂时这样实现
 
-  // useEffect(() => {
-  //   temp.current.listDetail = listDetail
-  // }, [listDetail])
-
-  // useEffect(() => {
-  //   temp.current.currentSongIndex = currentSongIndex
-  // }, [currentSongIndex])
-
   return <audio ref={audioElemRef}  autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
 const stateToProps = (state: any) => {

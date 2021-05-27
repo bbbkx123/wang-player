@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
+import { withRouter } from "react-router-dom"
 
 import { beforeCanPlayAction } from "@/store/audio/action"
 import { appendPlayListAction } from "@/store/detail/action"
-import {initialActionForListDetail} from "@/store/detail/action"
+import { initialActionForListDetail } from "@/store/detail/action"
+import { withLoading } from "@/components/HOC/Loading"
 
 import { Toast } from "antd-mobile"
 import List from "@/components/List"
@@ -16,7 +18,8 @@ import "./index.less"
 
 const PlayListDetails = (props: any) => {
   const { listDetail, history, detailId, playListOfListDetail } = props
-  const { play, setPlayList, initialForListDetail, appendPlayList } = props
+  const { play, setPlayList, initialForListDetail, appendPlayList, setDetailId } = props
+  const [loading, setLoading] = useState<boolean>(false)
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
@@ -74,23 +77,29 @@ const PlayListDetails = (props: any) => {
     touchTimeRef.current = null
   }
 
+  const init = async () => {
+    const { id } = history.location.query
+    if (!id) history.push({ pathname: "/" })
+    if (detailId === null || detailId !== id) {
+      setLoading(true)
+      setDetailId(id)
+      await initialForListDetail(id)
+      setTimeout(() => setLoading(false), 1000)
+    }
+  }
+
   // *问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度数值小), 因此在data.playlist获取到后在进行实例
 
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    if (detailId !== null) {
-      initialForListDetail(detailId)
-    } else {
-      history.push({ pathname: "/" })
-    }
-
+    init()
     return () => {
       pullDownWrapperRef.current = null
     }
   }, [])
 
-  const PlayListDetailMain = (
+  const PlayListDetailMain = () => (
     <Scroll mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
       <div className="list-detail">
         {/* {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>} */}
@@ -112,12 +121,10 @@ const PlayListDetails = (props: any) => {
               <div className="edit"></div>
             </div>
           )}
-
           <div className="song-list" id="song-list">
             {playListOfListDetail.length > 0 && <List data={playListOfListDetail} mode="PLAY_LIST" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
           </div>
         </div>
-
         <div className="pullup-tips">
           {beforePullUp && (
             <div className="before-trigger">
@@ -135,7 +142,13 @@ const PlayListDetails = (props: any) => {
     </Scroll>
   )
 
-  return <div className="page-container">{playListOfListDetail.length > 0 && PlayListDetailMain}</div>
+  const ViewMainWithLoading = withLoading(PlayListDetailMain)
+
+  return (
+    <div className="page-container">
+      <ViewMainWithLoading loading={loading} />
+    </div>
+  )
 }
 
 const stateToProps = (state: any) => ({
@@ -156,8 +169,11 @@ const dispatchToProps = (dispatch: any) => ({
     return dispatch(appendPlayListAction())
   },
   initialForListDetail(detailId: any) {
-    dispatch(initialActionForListDetail(detailId))
+    return dispatch(initialActionForListDetail(detailId))
+  },
+  setDetailId(id: number) {
+    dispatch({ type: "detail/id", value: id })
   },
 })
 
-export default connect(stateToProps, dispatchToProps)(PlayListDetails)
+export default connect(stateToProps, dispatchToProps)(withRouter(PlayListDetails))

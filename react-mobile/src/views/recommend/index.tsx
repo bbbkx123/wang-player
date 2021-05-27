@@ -22,13 +22,12 @@ const Recommend = (props: any) => {
   const touchTimeRef = useRef<any>()
 
   const pageToPlaylistDetail = (id: number) => {
-    setDetailId(id)
-    history.push({ pathname: "/playlistdetails" })
+    history.push({ pathname: "/playlistdetails",  query: {id}})
   }
 
   const fun1 = (index: number) => {
     if (index === 1) {
-      pageToPlaylistDetail(129219563)
+      pageToPlaylistDetail(3185023336)
     } else {
       setPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
       play(0)
@@ -145,9 +144,7 @@ const stateToProps = (state: any) => ({
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  setDetailId(id: number) {
-    dispatch({ type: "detail/id", value: id })
-  },
+  
   setPlayList(playlist: any[]) {
     dispatch({ type: "play-list/data", value: playlist })
   },

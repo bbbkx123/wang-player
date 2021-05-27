@@ -1,13 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 import { connect } from "react-redux"
+import { withRouter } from "react-router-dom"
 import ProgressBar from "@/components/ProgressBar"
 import { beforeCanPlayAction, changeSongAction } from "@/store/audio/action"
-import {
-  fetchLyricAction,
-  getCurrentLineNumAction,
-  getter_IsProgressChanging,
-  setCurrentTimeAction,
-} from "@/store/playpage/action"
+import { fetchLyricAction, getCurrentLineNumAction, getter_IsProgressChanging } from "@/store/playpage/action"
 import { togglePlayAction } from "@/store/audio/action"
 import { formatForPlayTime } from "@/utils/tools"
 import { useWatch } from "@/utils/hook"
@@ -18,10 +14,23 @@ const INITIAL_TOP = 200
 const MOVE = -50
 
 const PlayPage = (props: any) => {
-  const { EventEmitter, listDetail, duration, currentSongIndex, playList, lyric, currentLyricLine, songId, percent, isProgressChanging,paused, detailId} = props
+  const {
+    EventEmitter,
+    duration,
+    currentSongIndex,
+    playList,
+    lyric,
+    currentLyricLine,
+    songId,
+    percent,
+    isProgressChanging,
+    paused,
+    detailId,
+    history,
+  } = props
   const { play, fetchLyricData, setCurrentLineNum, getter_isProgressChanging, togglePlayStatus, toggleSonge, progressChanging } = props
   const playRef = useRef<any>(null)
-  const posterElemRef = useRef<any>()
+  const cdWrapperElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
   const degRef = useRef<any>({
     deg: null,
@@ -37,7 +46,7 @@ const PlayPage = (props: any) => {
 
   const onTimeupdate = (payload: any) => {
     const { currentTime } = payload
-    
+
     if (!getter_isProgressChanging()) {
       progressChanging(currentTime / duration)
     }
@@ -68,12 +77,12 @@ const PlayPage = (props: any) => {
   }
 
   const rotate = (deg: number) => {
-    if (posterElemRef.current && posterElemRef.current.style) {
-      posterElemRef.current.style.transform = `rotate(${deg}deg)`
+    if (cdWrapperElemRef.current && cdWrapperElemRef.current.style) {
+      cdWrapperElemRef.current.style.transform = `rotate(${deg}deg)`
     }
   }
 
-  const poster = () => {
+  const image = () => {
     if (playList[currentSongIndex].album.picUrl) {
       return playList[currentSongIndex].album.picUrl + "?param=300y300"
     } else {
@@ -95,7 +104,12 @@ const PlayPage = (props: any) => {
     })
   }
 
+  const pageToComment = () => {
+    history.push({pathname: "/comment"})
+  }
+
   useEffect(() => {
+    if (lyric.lyricList.length === 0) fetchLyricData(songId)
     degRef.current.deg = 0
     EventEmitter.on("timeupdate", onTimeupdate)
     return () => {
@@ -109,31 +123,31 @@ const PlayPage = (props: any) => {
     play(initIndex)
   })
 
-  useEffect(() => {
+  useWatch(songId, (prev) => {
+    if (prev && prev === detailId) return
     fetchLyricData(songId)
-  }, [songId])
+  })
+
+  useEffect(() => scroll(), [currentLyricLine])
 
   useEffect(() => {
-    scroll()
-  }, [currentLyricLine])
-
-  useEffect(() => {
-    if (showLyric) {
-      scroll()
-    }
+    if (showLyric) scroll()
   }, [showLyric])
 
   useEffect(() => {
-    console.log(isProgressChanging);
+    console.log(isProgressChanging)
   }, [isProgressChanging])
 
   return (
     <div ref={playRef} className="play">
       <div className="play--main-container" onClick={toggleMainView}>
         {!showLyric && (
-          <div className="play--poster">
-            <div ref={posterElemRef} className="play--poster-wrapper">
-              {playList[currentSongIndex] && <img src={poster()} alt="" />}
+          <div className="play--main">
+            <div ref={cdWrapperElemRef} className="play--cd-wrapper">
+              {playList[currentSongIndex] && <img src={image()} alt="" />}
+            </div>
+            <div className="play--other-btn" onClick={pageToComment}>
+              <div style={{ fontSize: "24px", width: "30px" }} className="iconfont iconcomment"></div>
             </div>
           </div>
         )}
@@ -143,7 +157,6 @@ const PlayPage = (props: any) => {
           </div>
         )}
       </div>
-
       <div className="edit-container">
         <div className="play--progress">
           <span className="time left">{formatForPlayTime(duration * percent)}</span>
@@ -154,11 +167,7 @@ const PlayPage = (props: any) => {
         </div>
         <div className="play--control">
           <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>
-          <div
-            style={{ fontSize: "48px" }}
-            className={`iconfont ${typeof paused === "boolean" && !paused ? "iconpause-circle" : "iconstart"}`}
-            onClick={togglePlay}
-          ></div>
+          <div style={{ fontSize: "48px" }} className={`iconfont ${typeof paused === "boolean" && !paused ? "iconpause-circle" : "iconstart"}`} onClick={togglePlay}></div>
           <div style={{ fontSize: "32px" }} className="iconfont iconnext" onClick={handleNextSong}></div>
         </div>
       </div>
@@ -168,7 +177,6 @@ const PlayPage = (props: any) => {
 
 const stateToProps = (state: any) => ({
   EventEmitter: state.global.EventEmitter,
-  listDetail: state.detail.data,
   detailId: state.detail.id,
   playList: state.playlist.data,
   currentSongIndex: state.playlist.currentSongIndex,
@@ -197,15 +205,12 @@ const dispatchToProps = (dispatch: any) => ({
   togglePlayStatus() {
     dispatch(togglePlayAction())
   },
-  setCurrentTime(currentTime: any) {
-    dispatch(setCurrentTimeAction(currentTime))
-  },
   toggleSonge(type: any) {
     dispatch(changeSongAction(type))
   },
   progressChanging(percent: any) {
-    dispatch({type: "play-page/percent", value: percent})
+    dispatch({ type: "play-page/percent", value: percent })
   },
 })
 
-export default connect(stateToProps, dispatchToProps)(PlayPage)
+export default connect(stateToProps, dispatchToProps)(withRouter(PlayPage))
