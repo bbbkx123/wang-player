@@ -78,7 +78,7 @@ const PlayListDetails = (props: any) => {
   }
 
   const init = async () => {
-    const { id } = history.location.query
+    const id = history?.location?.query?.id
     if (!id) history.push({ pathname: "/" })
     if (detailId === null || detailId !== id) {
       setLoading(true)
@@ -94,13 +94,18 @@ const PlayListDetails = (props: any) => {
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
     init()
+
+    setTimeout(() => {
+      setLoading(true)
+    }, 5000)
+
     return () => {
       pullDownWrapperRef.current = null
     }
   }, [])
 
   const PlayListDetailMain = () => (
-    <Scroll mode="list-detail" config={instanceRef.current} pullDown={pullingDown} pullUp={pullingUp}>
+    <Scroll mode="list-detail" config={instanceRef.current} pullDown={pullingDown} fetchDataForPullUp={appendPlayList}>
       <div className="list-detail">
         {/* {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>} */}
         <div>
@@ -122,31 +127,20 @@ const PlayListDetails = (props: any) => {
             </div>
           )}
           <div className="song-list" id="song-list">
-            {playListOfListDetail.length > 0 && <List data={playListOfListDetail} mode="PLAY_LIST" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
+            <List data={playListOfListDetail} mode="PLAY_LIST" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
           </div>
-        </div>
-        <div className="pullup-tips">
-          {beforePullUp && (
-            <div className="before-trigger">
-              <span className="pullup-txt">Pull up and load more</span>
-            </div>
-          )}
-          {!beforePullUp && (
-            <div className="after-trigger">
-              <span className="pullup-txt">Loading...</span>
-            </div>
-          )}
         </div>
         <div style={{ width: "100%", height: "50px" }}></div>
       </div>
     </Scroll>
   )
 
-  const ViewMainWithLoading = withLoading(PlayListDetailMain)
+  // const ViewMainWithLoading = withLoading(PlayListDetailMain)
 
   return (
     <div className="page-container">
-      <ViewMainWithLoading loading={loading} />
+      {/* <ViewMainWithLoading loading={loading} /> */}
+      {playListOfListDetail.length > 0 && PlayListDetailMain()}
     </div>
   )
 }
