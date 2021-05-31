@@ -39,7 +39,7 @@ const PlayListStyle = (props: any) => {
       <div className="main">
         <div className="song-name">{item.name}</div>
         <div className="other-info">
-          <span className="info">{`${item.artist} - ${item.album.name}`}</span>
+          <span className="info">{`${item.artists} - ${item.album.name}`}</span>
           <span>{}</span>
         </div>
       </div>
@@ -61,7 +61,7 @@ const NewSongListStyle = (props: any) => {
       </div>
       <div className="main">
         <div className="song-name">{`${item.name}`}
-          <span className="info">{` - ${item.artistsNames}`}</span>
+          <span className="info">{` - ${item.artists}`}</span>
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@ const MiniListStyle = (props: any) => {
       onTouchEnd={() => onTouchEnd(index)}
     >
       <div className="main">
-        <div className="song-name">{`${item.name} - ${item.album.name}`}</div>
+        <div className="song-name">{`${item.name} - ${item.artists}`}</div>
         <div className="edit"></div>
       </div>
     </div>

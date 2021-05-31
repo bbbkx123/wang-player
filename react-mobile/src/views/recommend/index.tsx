@@ -29,7 +29,7 @@ const Recommend = (props: any) => {
     if (index === 1) {
       pageToPlaylistDetail(3185023336)
     } else {
-      setPlayList([{ artist: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
+      setPlayList([{ artists: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
       play(0)
     }
   }

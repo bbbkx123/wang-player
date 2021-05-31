@@ -39,7 +39,7 @@ const MiniController = (props: any) => {
             <div className="mini-controller--song-info">
               <div className="mini-controller--song-name">{playList[currentSongIndex].name}</div>
               <div className="mini-controller--split"> - </div>
-              <div className="mini-controller--artist">{playList[currentSongIndex].artist}</div>
+              <div className="mini-controller--artist">{playList[currentSongIndex].artists}</div>
             </div>
             <div className="mini-controller--btn-group">
               <div className="btn" onClick={play}>

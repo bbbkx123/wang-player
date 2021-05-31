@@ -55,14 +55,11 @@ export const formatForPlayListDetail = (data: any) => {
 
 export const formatForNewSongList = (data: any) => {
   const { picUrl, name, id } = data;
-  const {album, artists} = data.song
-  const {albumName } = album.name
-  const artistsNames = artists.map((item: any) => item.name);
   return {
-    artistsNames: artistsNames.join("/"),
     picUrl,
     name,
-    albumName,
+    artists: data.song.artists.map((item: any) => item.name).join("/"),
+    album: {name: data.song.album.name},
     sid: id,
   };
 }
@@ -71,7 +68,7 @@ export const formatForSearchResult = (data: any) => {
   const { name, id, album, artists } = data;
   const artistsNames = artists.map((item: any) => item.name);
   return {
-    artist: artistsNames.join("/"),
+    artists: artistsNames.join("/"),
     name,
     album: {name: album.name},
     sid: id,
@@ -81,7 +78,7 @@ export const formatForSearchResult = (data: any) => {
 export const formatForSong = (song: any, songId: any) => {
   return {
     name: song.name,
-    artist: song.ar.map((item: any) => item.name).join("/"),
+    artists: song.ar.map((item: any) => item.name).join("/"),
     album: song.al,
     sid: songId,
   };
