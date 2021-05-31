@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 
 type CallBack<T> = (prev: T | undefined) => void;
 type Config = { immediate: boolean };
@@ -58,4 +58,26 @@ const useRefCallback = (fn: Function, dependencies: any[]) => {
 }
 
 
-export { useWatch };
+const useLoading = (fetch: Function) => {
+  let [loading, setLoading] = useState<boolean>(true)
+  const _fetch = useCallback((...args) => {
+    return fetch(...args).then((res: any) => {
+      return Promise.resolve({res, setLoading})
+    }).catch((err: any) => {
+      setLoading(false)
+      return Promise.resolve(err)
+    })
+  }, [fetch])
+  return {loading, fetch: _fetch}
+}
+
+
+const useStoreState = (prop: any) => {
+  const ref = useRef<any>(prop)
+  useEffect(() => {
+    ref.current = prop
+  }, [prop])
+  return ref
+}
+
+export { useWatch, useLoading, useStoreState };

@@ -9,7 +9,7 @@ import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
 import { beforeCanPlayAction } from "@/store/audio/action"
-import { withLoading } from "@/components/HOC/Loading"
+import { useStoreState } from "@/utils/hook"
 
 import "./index.less"
 
@@ -24,6 +24,8 @@ const Recommend = (props: any) => {
   const pageToPlaylistDetail = (id: number) => {
     history.push({ pathname: "/playlistdetails",  query: {id}})
   }
+
+  const a = useStoreState(newSongList)
 
   const fun1 = (index: number) => {
     if (index === 1) {
@@ -75,10 +77,37 @@ const Recommend = (props: any) => {
       })
     }
 
+    setTimeout(() => {
+      console.log(a);
+      setNewSongList([])
+    }, 5000)
+
+
+    setTimeout(() => {
+      console.log(a);
+    },6000)
+
+
     return () => {
       touchTimeRef.current = null
     }
   }, [])
+
+
+  // useEffect(() => {
+  //   _setNewSongList(newSongList)
+  //   console.log('newSongList: ', newSongList);
+    
+  // }, [newSongList])
+
+
+  const useProps = (props: any) => {
+    const [a, setA] = useState(props)
+    useEffect(() => {
+      setA(props)
+    }, [props])
+    return [a]
+  }
 
   const RecommendMain = () => (
     <Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
@@ -127,11 +156,12 @@ const Recommend = (props: any) => {
     </Scroll>
   )
 
-  const RecommendWithLoading = withLoading(RecommendMain)
+  // const RecommendWithLoading = withLoading(RecommendMain)
 
   return (
     <div className="page-container">
-      <RecommendWithLoading loading={loading} />
+      {/* <RecommendWithLoading loading={loading} /> */}
+      <RecommendMain></RecommendMain>
     </div>
   )
 }

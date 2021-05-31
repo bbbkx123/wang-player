@@ -1,7 +1,7 @@
 import * as api from "@/service/index"
 import { useEffect, useRef, useState } from "react"
 import { connect } from "react-redux"
-import { withLoading } from "@/components/HOC/Loading"
+// import { withLoading } from "@/components/HOC/Loading"
 import List from "@/components/List"
 import Scroll from "@/components/Scroll"
 
@@ -36,14 +36,17 @@ const Comment = (props: any) => {
     </Scroll>
   )
 
-  const ScrollViewWithLoading = withLoading(ScrollView)
+  // const ScrollViewWithLoading = withLoading(ScrollView)
 
   useEffect(() => {
     fetchMusicComment()
     return () => {}
   }, [])
 
-  return <div className="page-container">{comment && <ScrollViewWithLoading loading={loading}></ScrollViewWithLoading>}</div>
+  return <div className="page-container">
+    {/* <ScrollViewWithLoading loading={loading}></ScrollViewWithLoading> */}
+    {comment && <ScrollView></ScrollView>}
+  </div>
 }
 
 const stateToProps = (state: any) => ({

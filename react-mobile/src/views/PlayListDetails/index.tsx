@@ -5,7 +5,9 @@ import { withRouter } from "react-router-dom"
 import { beforeCanPlayAction } from "@/store/audio/action"
 import { appendPlayListAction } from "@/store/detail/action"
 import { initialActionForListDetail } from "@/store/detail/action"
-import { withLoading } from "@/components/HOC/Loading"
+import Loading from "@/components/Loading"
+import {useLoading} from "@/utils/hook"
+import { fetchPlayListDetail } from "@/service/index"
 
 import { Toast } from "antd-mobile"
 import List from "@/components/List"
@@ -19,13 +21,15 @@ import "./index.less"
 const PlayListDetails = (props: any) => {
   const { listDetail, history, detailId, playListOfListDetail } = props
   const { play, setPlayList, initialForListDetail, appendPlayList, setDetailId } = props
-  const [loading, setLoading] = useState<boolean>(false)
+  // const [loading, setLoading] = useState<boolean>(false)
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
 
   // const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
   const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
+
+  const {loading, fetch} = useLoading(fetchPlayListDetail)
 
   instanceRef.current = {
     bscroll: {
@@ -77,27 +81,20 @@ const PlayListDetails = (props: any) => {
     touchTimeRef.current = null
   }
 
-  const init = async () => {
-    const id = history?.location?.query?.id
-    if (!id) history.push({ pathname: "/" })
-    if (detailId === null || detailId !== id) {
-      setLoading(true)
-      setDetailId(id)
-      await initialForListDetail(id)
-      setTimeout(() => setLoading(false), 1000)
-    }
-  }
-
   // *问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度数值小), 因此在data.playlist获取到后在进行实例
 
   useEffect(() => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    init()
-
-    setTimeout(() => {
-      setLoading(true)
-    }, 5000)
+    const id = history?.location?.query?.id
+    if (!id) history.push({ pathname: "/" })
+    if (detailId === null || detailId !== id) {
+      setDetailId(id)
+      fetch(id).then((res: any) => {
+        const {setLoading} = res
+        // setLoading(false)
+      })
+    }
 
     return () => {
       pullDownWrapperRef.current = null
@@ -140,7 +137,9 @@ const PlayListDetails = (props: any) => {
   return (
     <div className="page-container">
       {/* <ViewMainWithLoading loading={loading} /> */}
-      {playListOfListDetail.length > 0 && PlayListDetailMain()}
+      {JSON.stringify(loading)}
+      {loading && <Loading></Loading>}
+      { !loading && playListOfListDetail.length > 0 && PlayListDetailMain()}
     </div>
   )
 }
