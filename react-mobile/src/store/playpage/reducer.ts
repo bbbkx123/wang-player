@@ -14,7 +14,7 @@ const defaultState = {
   // showLyric: false,
 }
 
-export default (state: any = defaultState, action: any) => {
+const reducer = (state: any = defaultState, action: any) => {
   const {type, value} = action
   switch (type) {
     case types.PLAY_PAGE__LYRIC:
@@ -56,3 +56,5 @@ export default (state: any = defaultState, action: any) => {
       return state
   }
 }
+
+export default reducer

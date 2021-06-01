@@ -107,7 +107,7 @@ const Slider = (props: any) => {
         console.log("children clean?")
       }
     }
-  }, [children])
+  }, [children]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     return () => {

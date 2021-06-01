@@ -55,9 +55,9 @@ const Layouts = (props: any) => {
   // 更新旧location
   oldLocation = location
 
-  const fun1 = () => {
-    dispatchForShowController(true)
-  }
+  // const fun1 = () => {
+  //   dispatchForShowController(true)
+  // }
 
   const dom = (
     <>

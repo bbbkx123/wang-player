@@ -19,8 +19,8 @@ const List = (props: any) => {
             return <CommentListStyle {...config}></CommentListStyle>
           } else if (mode === "LYRIC") {
             return <LyricListStyle current={current} {...config}></LyricListStyle>
-          }
-          return 
+          } 
+          return null
         })}
     </>
   )
@@ -86,7 +86,7 @@ const MiniListStyle = (props: any) => {
 
 
 const CommentListStyle = (props: any) => {
-  const {item, index, onTouchStart, onTouchEnd} = props
+  const {item} = props
   return (
     <div className="comment-item-container">
         <div className="avatar-container">
@@ -110,7 +110,7 @@ const CommentListStyle = (props: any) => {
 
 
 const LyricListStyle = (props: any) => {
-  const {item, index, onTouchStart, onTouchEnd, current} = props
+  const {item, index, current} = props
   return (
     <div key={`lyric${index}`} className={`${current === index ? "active" : ""} lyric-item-container`}>
       {item}

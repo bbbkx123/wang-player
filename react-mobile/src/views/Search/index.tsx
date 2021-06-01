@@ -16,7 +16,7 @@ const Search = (props: any) => {
   const { diapatchForPlayList, play } = props
 
   const [data, setData] = useState<any[]>([])
-  const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
+  const [, setBeforePullUp] = useState<boolean>(true)
   const [value, setValue] = useState<any>()
   const autoFocusInst = useRef<any>()
   const touchTimeRef = useRef<any>()

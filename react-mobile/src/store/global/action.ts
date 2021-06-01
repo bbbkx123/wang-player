@@ -1,7 +1,6 @@
 import { fetchSongsDetail } from "@/service/index"
 import { formatForSong } from "@/utils/tools"
 
-// import { getCurrentLineNumAction } from "@/store/playpage/action"
 import { page as formatPageData } from "@/utils/tools"
 
 /**

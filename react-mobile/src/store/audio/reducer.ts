@@ -7,7 +7,7 @@ const defaultState = {
   instance: null,
 }
 
-export default (state: any = defaultState, action: any) => {
+const reducer = (state: any = defaultState, action: any) => {
   const {type, value} = action
   switch (type) {
     case types.AUDIO__INSTANCE:
@@ -39,3 +39,5 @@ export default (state: any = defaultState, action: any) => {
       return state
   }
 }
+
+export default reducer

@@ -9,7 +9,7 @@ import "./index.less"
 
 const Comment = (props: any) => {
   const { songId } = props
-  const [loading, setLoading] = useState<boolean>(false)
+  const [, setLoading] = useState<boolean>(false)
   const [comment, setComment] = useState<any>()
   const commentPageConf = useRef<any>({
     scrollY: true,
@@ -41,7 +41,7 @@ const Comment = (props: any) => {
   useEffect(() => {
     fetchMusicComment()
     return () => {}
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div className="page-container">
     {/* <ScrollViewWithLoading loading={loading}></ScrollViewWithLoading> */}

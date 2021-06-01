@@ -40,7 +40,7 @@ const Player = (props: any) => {
     audioElemRef.current.volume = 0
     setInstance(audioElemRef.current)
     return () => {}
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // *问题: react-hooks/exhaustive-deps
   // 解决: 如果不需要在useEffect外使用方法, 可以简单的将方法移入useEffect内, 或者禁用

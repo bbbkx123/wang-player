@@ -9,23 +9,22 @@ import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
 import { beforeCanPlayAction } from "@/store/audio/action"
-import { useStoreState } from "@/utils/hook"
+import { useLoading } from "@/utils/hook"
+import Loading from "@/components/Loading"
 
 import "./index.less"
 
 const Recommend = (props: any) => {
   const { history } = props
   const { bannerArr, newSongList, personalize } = props
-  const { setBannerArr, setPersonalize, setNewSongList, play, setPlayList, setDetailId } = props
+  const { setBannerArr, setPersonalize, setNewSongList, play, setPlayList } = props
   const [icons] = useState<any[]>(define.icons)
-  const [loading, setLoading] = useState<boolean>(false)
+  
   const touchTimeRef = useRef<any>()
 
   const pageToPlaylistDetail = (id: number) => {
-    history.push({ pathname: "/playlistdetails",  query: {id}})
+    history.push({ pathname: "/playlistdetails", query: { id } })
   }
-
-  const a = useStoreState(newSongList)
 
   const fun1 = (index: number) => {
     if (index === 1) {
@@ -50,73 +49,33 @@ const Recommend = (props: any) => {
     touchTimeRef.current = null
   }
 
+  const [loading, init] = useLoading(() => {
+    return Promise.all([api.getBanner(0), api.getPersonalized(6), api.getNewSong(6)]).then(([res1, res2, res3]) => {
+      const data = res3.data.result.map((item: any) => formatForNewSongList(item))
+      setBannerArr(res1.data.banners)
+      setPersonalize(res2.data.result)
+      setNewSongList(data)
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(true), 1000)
+      })
+    })
+  })
+
   useEffect(() => {
-    let count = 0
-    if (bannerArr.length === 0) {
-      setLoading(true)
-      api.getBanner(0).then((res: any) => {
-        setBannerArr(res.data.banners)
-        if (++count === 1) setTimeout(() => setLoading(false), 1000)
-      })
-    }
-
-    if (personalize.length === 0) {
-      setLoading(true)
-      api.getPersonalized(6).then((res: any) => {
-        setPersonalize(res.data.result)
-        if (++count === 1) setTimeout(() => setLoading(false), 1000)
-      })
-    }
-
-    if (newSongList.length === 0) {
-      setLoading(true)
-      api.getNewSong(6).then((res: any) => {
-        const data = res.data.result.map((item: any) => formatForNewSongList(item))
-        setNewSongList(data)
-        if (++count === 1) setTimeout(() => setLoading(false), 1000)
-      })
-    }
-
-    setTimeout(() => {
-      console.log(a);
-      setNewSongList([])
-    }, 5000)
-
-
-    setTimeout(() => {
-      console.log(a);
-    },6000)
-
-
+    init()
     return () => {
       touchTimeRef.current = null
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-
-  // useEffect(() => {
-  //   _setNewSongList(newSongList)
-  //   console.log('newSongList: ', newSongList);
-    
-  // }, [newSongList])
-
-
-  const useProps = (props: any) => {
-    const [a, setA] = useState(props)
-    useEffect(() => {
-      setA(props)
-    }, [props])
-    return [a]
-  }
-
-  const RecommendMain = () => (
+  const RecommendMain = (
     <Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
       {/* banner滑动存在问题 */}
       <div className="banner-container">
         {bannerArr.length > 0 && (
           <Scroll mode="banner" config={{ bscroll: define.sliderConf }} width="100%">
             {bannerArr.map((banner: any, index: number) => {
-              return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} />
+              return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} alt=""/>
             })}
           </Scroll>
         )}
@@ -156,12 +115,9 @@ const Recommend = (props: any) => {
     </Scroll>
   )
 
-  // const RecommendWithLoading = withLoading(RecommendMain)
-
   return (
     <div className="page-container">
-      {/* <RecommendWithLoading loading={loading} /> */}
-      <RecommendMain></RecommendMain>
+      {loading ? <Loading></Loading> :RecommendMain }
     </div>
   )
 }
@@ -174,7 +130,6 @@ const stateToProps = (state: any) => ({
 })
 
 const dispatchToProps = (dispatch: any) => ({
-  
   setPlayList(playlist: any[]) {
     dispatch({ type: "play-list/data", value: playlist })
   },

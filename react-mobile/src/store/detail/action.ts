@@ -1,28 +1,20 @@
 import { fetchPlayListAction } from "@/store/global/action"
 import { detailPageAction } from "@/store/global/action"
 
-import { fetchPlayListDetail } from "@/service/index"
-import { formatForPlayListDetail } from "@/utils/tools"
+import * as api from "@/service/index"
+import { formatForPlayListDetail, formatForSong } from "@/utils/tools"
 
-/**
- * 获取歌单信息
- * @param detailId 歌单id
- * @returns
- */
-export const fetchPlayListDetailAction = (detailId: string) => async (dispatch: any, getState: any) => {
-  const response = await fetchPlayListDetail(detailId)
-  dispatch({ type: "detail/data", value: formatForPlayListDetail(response.data) })
-  const { detail } = getState()
-  return Promise.resolve(detail.data.listData)
-}
 
 export const initialActionForListDetail = (detailId: any) => async (dispatch: any, getState: any) => {
-  await dispatch(fetchPlayListDetailAction(detailId))
+  const listDetail = await api.fetchPlayListDetail(detailId)
+  dispatch({ type: "detail/data", value: formatForPlayListDetail(listDetail.data) })
   dispatch(detailPageAction())
   const state = getState()
-  let value = await dispatch(fetchPlayListAction(state.detail.page.model[0]))
+  const ids = state.detail.page.model[0].join(",")
+  const response1 = await api.fetchSongsDetail(ids)
+  let value = response1.data.songs.map((item: any, index: number) => formatForSong(item, state.detail.page.model[0][index]))
   dispatch({ type: "detail/play-list", value })
-  return Promise.resolve({success: true})
+  return Promise.resolve()
 }
 
 /**

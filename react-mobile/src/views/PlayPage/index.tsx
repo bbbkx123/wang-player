@@ -115,7 +115,7 @@ const PlayPage = (props: any) => {
     return () => {
       EventEmitter.off("timeupdate", onTimeupdate)
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useWatch(detailId, (prev) => {
     if (prev && prev === detailId) return
@@ -128,11 +128,11 @@ const PlayPage = (props: any) => {
     fetchLyricData(songId)
   })
 
-  useEffect(() => scroll(), [currentLyricLine])
+  useEffect(() => scroll(), [currentLyricLine]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (showLyric) scroll()
-  }, [showLyric])
+  }, [showLyric]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     console.log(isProgressChanging)

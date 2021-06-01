@@ -36,48 +36,49 @@ function useWatch<T>(
       }
       prev.current = dep;
     }
-  }, [dep]);
+  }, [dep]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return () => {
     stop.current = true;
   };
 }
 
-const useRefCallback = (fn: Function, dependencies: any[]) => {
-  const ref = useRef<any>(fn)
-  // 每次调用的时候，fn 都是一个全新的函数，函数中的变量有自己的作用域
-  // 当依赖改变的时候，传入的 fn 中的依赖值也会更新，这时更新 ref 的指向为新传入的 fn
-  useEffect(() => {
-    ref.current = fn  
-  }, [fn, ...dependencies])
+// const useRefCallback = (fn: Function, dependencies: any[]) => {
+//   const ref = useRef<any>(fn)
+//   // 每次调用的时候，fn 都是一个全新的函数，函数中的变量有自己的作用域
+//   // 当依赖改变的时候，传入的 fn 中的依赖值也会更新，这时更新 ref 的指向为新传入的 fn
+//   useEffect(() => {
+//     ref.current = fn  
+//   }, [fn, ...dependencies])
 
-  return useCallback(() => {
-    const fn = ref.current
-    return fn()
-  }, [ref])
-}
+//   return useCallback(() => {
+//     const fn = ref.current
+//     return fn()
+//   }, [ref])
+// }
 
 
-const useLoading = (fetch: Function) => {
+const useLoading = (fetch: Function): [boolean, Function] => {
   let [loading, setLoading] = useState<boolean>(true)
   const _fetch = useCallback((...args) => {
     return fetch(...args).then((res: any) => {
-      return Promise.resolve({res, setLoading})
+      setLoading(false)
+      return Promise.resolve(res)
     }).catch((err: any) => {
       setLoading(false)
       return Promise.resolve(err)
     })
   }, [fetch])
-  return {loading, fetch: _fetch}
+  return [loading, _fetch]
 }
 
 
-const useStoreState = (prop: any) => {
+const useReactiveProp = (prop: any) => {
   const ref = useRef<any>(prop)
   useEffect(() => {
     ref.current = prop
   }, [prop])
-  return ref
+  return ref.current
 }
 
-export { useWatch, useLoading, useStoreState };
+export { useWatch, useLoading, useReactiveProp };

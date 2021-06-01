@@ -97,7 +97,7 @@ const ProgressBar = (props: any) => {
       const offsetWidth = percent * barWidth
       handleOffset(offsetWidth)
     }
-  }, [percent])
+  }, [percent]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="progress-bar__container" ref={progressBar} onClick={progressClick}>
