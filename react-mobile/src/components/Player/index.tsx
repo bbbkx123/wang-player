@@ -4,8 +4,8 @@ import { connect } from "react-redux"
 import { beforeCanPlayAction } from "@/store/audio/action"
 
 const Player = (props: any) => {
-  const { history, currentSongIndex, EventEmitter, showController, playList } = props
-  const { setDuration, toggleSong, setShowController, setInstance, setPaused } = props
+  const { history, currentSongIndex, showController, playList } = props
+  const { setDuration, toggleSong, setShowController, setInstance, setPaused, dispatchForTimeupdate } = props
   const audioElemRef = useRef<any>(null)
   const [loop] = useState<boolean>(false)
 
@@ -25,8 +25,7 @@ const Player = (props: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    const currentTime = Number(e.target.currentTime.toFixed(2))
-    EventEmitter.emit("timeupdate", { currentTime })
+    dispatchForTimeupdate({ currentTime: e.target.currentTime.toFixed(2) })
   }
 
   const onCanPlay = () => {
@@ -48,11 +47,10 @@ const Player = (props: any) => {
   // *问题: 直接访问listDetail为null, 暂时将listDetail存入ref
   // 在useEffect(() => {}, [])访问, listDetail是初始值null, 暂时这样实现
 
-  return <audio ref={audioElemRef}  autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
+  return <audio ref={audioElemRef} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
 const stateToProps = (state: any) => {
   return {
-    EventEmitter: state.global.EventEmitter,
     playList: state.playlist.data,
     currentSongIndex: state.playlist.currentSongIndex,
     showController: state.global.showController,
@@ -69,11 +67,14 @@ const dispatchToProps = (dispatch: any) => ({
   toggleSong(currentSongIndex: number) {
     dispatch(beforeCanPlayAction(currentSongIndex))
   },
-  setInstance (audio: any) {
-    dispatch({type: "audio/instance", value: audio})
+  setInstance(audio: any) {
+    dispatch({ type: "audio/instance", value: audio })
   },
-  setPaused (status: boolean) {
-    dispatch({type: "audio/paused", value: status})
+  setPaused(status: boolean) {
+    dispatch({ type: "audio/paused", value: status })
+  },
+  dispatchForTimeupdate(data: any) {
+    dispatch({ type: "audio/time-update", value: { ...data } })
   },
 })
 

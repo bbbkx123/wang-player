@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { connect } from "react-redux"
+// import { connect } from "react-redux"
 import { Toast } from "antd-mobile"
 
 import BScroll from "@better-scroll/core"
@@ -151,8 +151,9 @@ const Slider = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({})
+// const stateToProps = (state: any) => ({})
 
-const dispatchToProps = (dispatch: any) => ({})
+// const dispatchToProps = (dispatch: any) => ({})
+// connect(stateToProps, dispatchToProps)(Slider)
 
-export default connect(stateToProps, dispatchToProps)(Slider)
+export default Slider

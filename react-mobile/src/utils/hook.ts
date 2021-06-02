@@ -78,7 +78,7 @@ const useReactiveProp = (prop: any) => {
   useEffect(() => {
     ref.current = prop
   }, [prop])
-  return ref.current
+  return ref
 }
 
 export { useWatch, useLoading, useReactiveProp };

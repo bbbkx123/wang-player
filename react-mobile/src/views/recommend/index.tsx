@@ -19,7 +19,7 @@ const Recommend = (props: any) => {
   const { bannerArr, newSongList, personalize } = props
   const { setBannerArr, setPersonalize, setNewSongList, play, setPlayList } = props
   const [icons] = useState<any[]>(define.icons)
-  
+
   const touchTimeRef = useRef<any>()
 
   const pageToPlaylistDetail = (id: number) => {
@@ -63,9 +63,6 @@ const Recommend = (props: any) => {
 
   useEffect(() => {
     init()
-    return () => {
-      touchTimeRef.current = null
-    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const RecommendMain = (
@@ -75,7 +72,7 @@ const Recommend = (props: any) => {
         {bannerArr.length > 0 && (
           <Scroll mode="banner" config={{ bscroll: define.sliderConf }} width="100%">
             {bannerArr.map((banner: any, index: number) => {
-              return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} alt=""/>
+              return <img style={{ width: "100%", height: 140 }} src={`${banner.imageUrl}?param=375y140`} key={`banner-${index}`} alt="" />
             })}
           </Scroll>
         )}
@@ -117,7 +114,8 @@ const Recommend = (props: any) => {
 
   return (
     <div className="page-container">
-      {loading ? <Loading></Loading> :RecommendMain }
+      {loading && <Loading></Loading>}
+      {RecommendMain}
     </div>
   )
 }

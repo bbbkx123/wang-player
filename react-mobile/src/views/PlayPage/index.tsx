@@ -3,10 +3,10 @@ import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
 import ProgressBar from "@/components/ProgressBar"
 import { beforeCanPlayAction, changeSongAction } from "@/store/audio/action"
-import { fetchLyricAction, getCurrentLineNumAction, getter_IsProgressChanging } from "@/store/playpage/action"
+import { fetchLyricAction, getCurrentLineNumAction } from "@/store/playpage/action"
 import { togglePlayAction } from "@/store/audio/action"
 import { formatForPlayTime } from "@/utils/tools"
-import { useWatch } from "@/utils/hook"
+import { useWatch, useReactiveProp } from "@/utils/hook"
 import List from "@/components/List"
 import "./index.less"
 
@@ -15,7 +15,6 @@ const MOVE = -50
 
 const PlayPage = (props: any) => {
   const {
-    EventEmitter,
     duration,
     currentSongIndex,
     playList,
@@ -23,12 +22,13 @@ const PlayPage = (props: any) => {
     currentLyricLine,
     songId,
     percent,
-    isProgressChanging,
+    _isProgressChanging,
     paused,
     detailId,
     history,
+    timeupdate,
   } = props
-  const { play, fetchLyricData, setCurrentLineNum, getter_isProgressChanging, togglePlayStatus, toggleSonge, progressChanging } = props
+  const { play, fetchLyricData, setCurrentLineNum, togglePlayStatus, toggleSonge, progressChanging } = props
   const playRef = useRef<any>(null)
   const cdWrapperElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
@@ -44,10 +44,11 @@ const PlayPage = (props: any) => {
    * 后续发现不存在问题, 待观察
    */
 
-  const onTimeupdate = (payload: any) => {
-    const { currentTime } = payload
+  const isProgressChanging = useReactiveProp(_isProgressChanging)
 
-    if (!getter_isProgressChanging()) {
+  const onTimeupdate = (currentTime: any) => {
+    // const { currentTime } = payload
+    if (!isProgressChanging.current) {
       progressChanging(currentTime / duration)
     }
     setCurrentLineNum(currentTime)
@@ -111,11 +112,12 @@ const PlayPage = (props: any) => {
   useEffect(() => {
     if (lyric.lyricList.length === 0) fetchLyricData(songId)
     degRef.current.deg = 0
-    EventEmitter.on("timeupdate", onTimeupdate)
-    return () => {
-      EventEmitter.off("timeupdate", onTimeupdate)
-    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+
+  useEffect(() => {
+    onTimeupdate(timeupdate.currentTime)
+  }, [timeupdate]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useWatch(detailId, (prev) => {
     if (prev && prev === detailId) return
@@ -133,10 +135,6 @@ const PlayPage = (props: any) => {
   useEffect(() => {
     if (showLyric) scroll()
   }, [showLyric]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    console.log(isProgressChanging)
-  }, [isProgressChanging])
 
   return (
     <div ref={playRef} className="play">
@@ -176,7 +174,6 @@ const PlayPage = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  EventEmitter: state.global.EventEmitter,
   detailId: state.detail.id,
   playList: state.playlist.data,
   currentSongIndex: state.playlist.currentSongIndex,
@@ -184,9 +181,10 @@ const stateToProps = (state: any) => ({
   lyric: state.playpage.lyric,
   currentLyricLine: state.playpage.currentLyricLine,
   songId: state.playpage.songId,
-  isProgressChanging: state.playpage.isProgressChanging,
+  _isProgressChanging: state.playpage.isProgressChanging,
   percent: state.playpage.percent,
   paused: state.audio.paused,
+  timeupdate: state.audio.timeupdate,
 })
 
 const dispatchToProps = (dispatch: any) => ({
@@ -198,9 +196,6 @@ const dispatchToProps = (dispatch: any) => ({
   },
   setCurrentLineNum(time: number) {
     dispatch(getCurrentLineNumAction(time))
-  },
-  getter_isProgressChanging() {
-    return dispatch(getter_IsProgressChanging())
   },
   togglePlayStatus() {
     dispatch(togglePlayAction())

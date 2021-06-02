@@ -18,9 +18,6 @@ const PlayListDetails = (props: any) => {
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
-  // const [beforePullDown, setBeforePullDown] = useState<boolean>(true)
-  // const [beforePullUp, setBeforePullUp] = useState<boolean>(true)
-
   const [loading, init] = useLoading(initialForListDetail)
 
   instanceRef.current = {
@@ -107,7 +104,12 @@ const PlayListDetails = (props: any) => {
     </Scroll>
   )
 
-  return <div className="page-container">{loading ? <Loading></Loading> : PlayListDetailMain}</div>
+  return (
+    <div className="page-container">
+      {loading && <Loading></Loading>}
+      {PlayListDetailMain}
+    </div>
+  )
 }
 
 const stateToProps = (state: any) => ({

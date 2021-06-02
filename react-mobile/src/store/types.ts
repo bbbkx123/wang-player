@@ -3,7 +3,7 @@
  */
 export const AUDIO__INSTANCE = "audio/instance"
 export const AUDIO__DURATION = "audio/duration"
-// export const AUDIO__VOLUME = "audio/volume"
+export const AUDIO__TIME_UPDATE = "audio/time-update"
 export const AUDIO__SRC = "audio/src"
 export const AUDIO__PAUSED = "audio/paused"
 

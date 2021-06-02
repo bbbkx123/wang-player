@@ -1,8 +1,6 @@
-import EventEmitter from "events"
 import * as types from "../types"
 
 const defaultState = {
-  EventEmitter: new EventEmitter(),
   showController: false,
   searchPage: {},
   showMiniList: false,

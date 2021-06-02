@@ -34,20 +34,3 @@ export const detailPageAction =
   return Promise.resolve(value)
 }
 
-// export const onTimeupdateForPlayPageAction = (currentTime: any) => (dispatch: any, getState: any) => {
-//   const state = getState()
-//   const {isProgressChanging, showLyric} = state.playpage
-//   let deg = state.playpage.deg
-//   const {duration} = state.global.audio
-//   if (!isProgressChanging) {
-//     dispatch({type: "play-page/percent", value: currentTime / duration})
-//   }
-//   dispatch(getCurrentLineNumAction(currentTime))
-
-//   if (!showLyric) {
-//     deg = (deg || 0) + 2
-//     if (deg >= 360) deg = 0
-//     dispatch({type:"play-page/deg", value: deg})
-//     return Promise.resolve(deg)
-//   }
-// }
