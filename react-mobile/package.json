@@ -20,6 +20,7 @@
     "axios": "^0.21.1",
     "babel-plugin-import": "^1.13.3",
     "customize-cra": "^1.0.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "less": "^4.1.1",
     "less-loader": "5.0.0",
     "react": "^17.0.1",
@@ -45,7 +46,11 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn"
+    }
   },
   "browserslist": {
     "production": [

@@ -18,6 +18,7 @@ module.exports = override(
     style: true,
   }),
 
+  // 注意
   addWebpackAlias({
     "@": path.resolve(__dirname, "./src")
   }),

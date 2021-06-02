@@ -67,7 +67,6 @@ const Recommend = (props: any) => {
 
   const RecommendMain = (
     <Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
-      {/* banner滑动存在问题 */}
       <div className="banner-container">
         {bannerArr.length > 0 && (
           <Scroll mode="banner" config={{ bscroll: define.sliderConf }} width="100%">
@@ -121,7 +120,6 @@ const Recommend = (props: any) => {
 }
 
 const stateToProps = (state: any) => ({
-  playList: state.playlist.data,
   bannerArr: state.recommend.banner,
   personalize: state.recommend.personalize,
   newSongList: state.recommend.newSongList,

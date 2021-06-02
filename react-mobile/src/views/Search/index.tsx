@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import * as api from '@/service'
 import { formatForSearchResult } from '@/utils/tools'
-import { beforeCanPlayAction } from '@/store/audio/action'
+import action from '@/store/action'
 // import {appendPlayListAction} from "@/store/global/action"
 import List from '@/components/List'
 import Scroll from '@/components/Scroll'
@@ -48,26 +48,25 @@ const Search = (props: any) => {
   // 问题: 待优化
   const pullingUp = async (instance: any) => {
     setBeforePullUp(false)
-    getSearchResult(value).then((res: any) => {
-      const { songs } = res.data.result
-      let data = songs.map((item: any) => formatForSearchResult(item))
-      setData((prev: any[]) => prev.concat(data))
-      instance.finishPullUp()
-      instance.refresh()
-      setBeforePullUp(true)
-    })
+    const res = await getSearchResult(value)
+    const { songs } = res.data.result
+    let data = songs.map((item: any) => formatForSearchResult(item))
+    setData((prev: any[]) => prev.concat(data))
+    instance.finishPullUp()
+    instance.refresh()
+    setBeforePullUp(true)
+    
   }
 
   const onChange = (value: any) => {
     setValue(value)
   }
 
-  const onSubmit = (value: any) => {
-    getSearchResult(value).then((res: any) => {
-      const { songs } = res.data.result
-      let data = songs.map((item: any) => formatForSearchResult(item))
-      setData(data)
-    })
+  const onSubmit = async (value: any) => {
+    let res = await getSearchResult(value)
+    const { songs } = res.data.result
+    let data = songs.map((item: any) => formatForSearchResult(item))
+    setData(data)
   }
 
   const onTouchStart = () => {
@@ -110,16 +109,14 @@ const Search = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  
-})
+const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => ({
   diapatchForPlayList(playList: any[]) {
     dispatch({ type: 'play-list/data', value: playList })
   },
   play(songIndex: number) {
-    dispatch(beforeCanPlayAction(songIndex))
+    dispatch(action.beforeCanPlayAction(songIndex))
   },
 })
 
