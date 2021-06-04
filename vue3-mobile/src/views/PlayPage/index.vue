@@ -1,13 +1,24 @@
 <template>
-  <div class="play-page">PlayPage</div>
+  <div v-if="show" class="play-page">PlayPage</div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { defineComponent, onMounted, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    return {}
+    const show = ref(true)
+    const router = useRouter()
+
+    onBeforeRouteLeave((to, from, next) => {
+      show.value = false
+      next()
+    })
+
+    return {
+      show,
+    }
   },
 })
 </script>

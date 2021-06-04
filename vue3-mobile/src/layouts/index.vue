@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
-import { onBeforeRouteUpdate, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import NavBar from "vant/es/nav-bar";
 import "vant/es/nav-bar/style";
@@ -30,18 +30,12 @@ export default defineComponent({
     const router = useRouter();
     const store = useStore()
 
-    onBeforeRouteUpdate((to, from, next) => {
-      debugger;
-      const toDepth = to.path.split("/").length;
-      const fromDepth = from.path.split("/").length;
-      transitionName.value = toDepth < fromDepth ? "slide-right" : "slide-left";
-      next();
-    });
-
     const onClickLeft = reactive(() => {
-      router.push({ name: "PlayListDetails" });
+      transitionName.value = "slide-right"
+      router.push("/");
     });
     const onClickRight = reactive(() => {
+      transitionName.value = "slide-left"
       router.push({ name: "PlayPage" });
     });
 
@@ -58,30 +52,83 @@ export default defineComponent({
 <style lang="less">
 @style-background-color: black;
 @style-color: #fff;
+@time: 500ms;
 
 .layouts {
-  // position: relative;
-  // height: 100%;
-  // background-color: @style-background-color;
-  // color: @style-color;
-  // .router-view {
-  //   height: calc(100% - 45px);
-  //   padding: 0 10px;
-  //   // background-color: black;
-  //   overflow: hidden;
-  // }
+  position: relative;
+  height: 100%;
+  background-color: @style-background-color;
+  color: @style-color;
+  .router-view {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 45px);
+    padding: 0 10px;
+    // background-color: black;
+    overflow: hidden;
+  }
 }
 
-.slide-left-enter,
-.slide-right-leave-active {
+
+.slide-left-enter-from {
+  z-index: 10;
   opacity: 0;
-  -webkit-transform: translate(30px, 0);
-  transform: translate(30px, 0);
+  transform: translateX(100%);
 }
-.slide-left-leave-active,
-.slide-right-enter {
+
+.slide-left-enter-active {
+  transition: all @time;
+}
+
+.slide-left-enter-to {
+  z-index: 10;
+  opacity: 1;
+  transform: translateX(0%);
+}
+
+.slide-left-leave-from {
+  z-index: 0;
+  opacity: 1;
+}
+
+.slide-left-leave-active {
+  transition: all @time;
+}
+
+.slide-left-leave-to {
+  z-index: 0;
   opacity: 0;
-  -webkit-transform: translate(-30px, 0);
-  transform: translate(-30px, 0);
+}
+
+
+
+.slide-right-leave-from {
+  z-index: 10;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-right-leave-active {
+  transition: all @time;
+}
+
+.slide-right-leave-to {
+  z-index: 10;
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.slide-right-enter-from {
+  z-index: 0;
+  opacity: 0;
+}
+
+.slide-right-enter-active {
+  transition: all @time;
+}
+
+.slide-right-enter-to {
+  z-index: 0;
+  opacity: 1;
 }
 </style>
