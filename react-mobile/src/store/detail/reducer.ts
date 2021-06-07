@@ -12,6 +12,11 @@ const defaultState = {
     // modelForClient: [],
     model: [],
   },
+  pageSize: 10,
+  pageNo: 0,
+  songsTotal: null,
+  pageTotal: null,
+  pageModel: [],
 }
 
 const reducer = (state: any = defaultState, action: any) => {

@@ -58,18 +58,24 @@ function useWatch<T>(
 // }
 
 
-const useLoading = (fetch: Function): [boolean, Function] => {
-  let [loading, setLoading] = useState<boolean>(true)
-  const _fetch = useCallback((...args) => {
-    return fetch(...args).then((res: any) => {
+const useAsync = (fetch: Function): any => {
+  const [loading, setLoading] = useState<boolean | null>(null)
+  const [data, setData] = useState<any>(null)
+  const [error, setError] = useState<any>(null)
+  const execute = useCallback( async (...args) => {
+    setLoading(true)
+    setData(null)
+    setError(null)
+    try {
+      const res = await fetch(...args)
+      setData(res)
       setLoading(false)
-      return Promise.resolve(res)
-    }).catch((err: any) => {
+    } catch (err) {
+      setError(err)
       setLoading(false)
-      return Promise.resolve(err)
-    })
+    }
   }, [fetch])
-  return [loading, _fetch]
+  return {loading, execute, data, error}
 }
 
 
@@ -81,4 +87,22 @@ const useReactiveProp = (prop: any) => {
   return ref
 }
 
-export { useWatch, useLoading, useReactiveProp };
+// export const detailPageAction =
+//   (page: any = { size: 10 }) =>
+//   (dispatch: any, getState: any) => {
+//     const state1 = getState()
+//     const { listData } = state1.detail.data
+//     const { size } = page
+//     const temp = {
+//       model: formatPageData(listData, size),
+//       songsTotal: listData.length,
+//       pageTotal: Math.ceil(listData.length / size),
+//     }
+//     dispatch({ type: "detail/page", value: { ...state1.detail.page, ...page, ...temp } })
+//   }
+
+const usePageForDetail = () => {
+
+}
+
+export { useWatch, useAsync, useReactiveProp };

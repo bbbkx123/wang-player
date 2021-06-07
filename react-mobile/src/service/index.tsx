@@ -33,21 +33,21 @@ export const fetchSongUrl = (id: string) => get("/song/url", { params: { id } })
  * @param {Number} type 资源类型
  *
  */
-export const getBanner = (type: number) => get("/banner", { params: { type } })
+export const fetchBanner = (type: number) => get("/banner", { params: { type } })
 
 /**
  * 推荐歌单
  * @param {Number} limit 取出数量
  *
  */
-export const getPersonalized = (limit: number) => get("/personalized", { params: { limit } })
+export const fetchPersonalization = (limit: number) => get("/personalized", { params: { limit } })
 
 /**
  * 推荐新音乐
  * @param {Number} limit 取出数量
  *
  */
-export const getNewSong = (limit: number) => get("/personalized/newsong", { params: { limit } })
+export const fetchNewSong = (limit: number) => get("/personalized/newsong", { params: { limit } })
 
 /**
  * 搜索

@@ -2,7 +2,7 @@ import * as types from "@/store/types"
 
 const defaultState = {
   banner: [],
-  personalize: [],
+  personalization: [],
   newSongList: [],
 }
 
@@ -14,10 +14,10 @@ const reducer = (state: any = defaultState, action: any) => {
         ...state,
         banner: value,
       }
-    case types.RECOMMEND__PERSONALIZE:
+    case types.RECOMMEND__PERSONALIZATION:
       return {
         ...state,
-        personalize: value,
+        personalization: value,
       }
     case types.RECOMMEND__NEW_SONG_LIST:
       return {

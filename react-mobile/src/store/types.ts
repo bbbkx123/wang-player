@@ -29,6 +29,11 @@ export const DETAIL__ID = "detail/id"
 export const DETAIL__DATA = "detail/data"
 export const DETAIL__PLAY_LIST = "detail/play-list"
 export const DETAIL__PAGE = "detail/page"
+export const DETAIL__PAGE_SIZE = "detail/page"
+export const DETAIL__PAGE_NO = ""
+export const DETAIL__SONGS_TOTAL = ""
+export const DETAIL__PAGE_TOTAL = ""
+export const DETAIL__PAGE_MODEL = ""
 
 /**
  * global
@@ -46,5 +51,5 @@ export const GLOBAL__SEARCH_PAGE = "global/search-page"
  */
 
 export const RECOMMEND__BANNER = "views/recommend/banner"
-export const RECOMMEND__PERSONALIZE = "views/recommend/personalize"
+export const RECOMMEND__PERSONALIZATION = "views/recommend/personalization"
 export const RECOMMEND__NEW_SONG_LIST = "views/recommend/new-song-list"

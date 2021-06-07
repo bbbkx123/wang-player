@@ -27,9 +27,9 @@ export default defineComponent({
 
     onBeforeMount(() => {
       Promise.all([
-        api.getBanner(0),
-        api.getPersonalized(6),
-        api.getNewSong(6),
+        api.fetchBanner(0),
+        api.fetchPersonalization(6),
+        api.fetchNewSong(6),
       ]).then(([res1, res2, res3]) => {
         // const data = res3.data.result.map((item: any) => formatForNewSongList(item))
         // setBannerArr(res1.data.banners)

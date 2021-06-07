@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
 import actionCreator from "@/store/action"
-import { useLoading } from "@/utils/hook"
+import { useAsync, useReactiveProp } from "@/utils/hook"
+import {formatForPlayListDetail} from "@/utils/tools"
+import * as api from "@/service"
 import Loading from "@/components/Loading"
 import List from "@/components/List"
 import Scroll from "@/components/Scroll"
@@ -12,13 +14,41 @@ import "./index.less"
 // 问题: pullup后, 返回上个页面, 再次进入页面长度异常(很长)
 // 猜想为pullup对transformY设置存在问题
 
+// export const initialActionForListDetail = (detailId: any) => async (dispatch: any, getState: any) => {
+//   // const listDetail = await api.fetchPlayListDetail(detailId)
+//   // dispatch({ type: "detail/data", value:  })
+//   dispatch(detailPageAction())
+//   const state = getState()
+//   const ids = state.detail.page.model[0].join(",")
+//   const response1 = await api.fetchSongsDetail(ids)
+//   let value = response1.data.songs.map((item: any, index: number) => formatForSong(item, state.detail.page.model[0][index]))
+//   dispatch({ type: "detail/play-list", value })
+//   return Promise.resolve()
+// }
+
+const usePlayListsDetail = (detailId: any, dispatch: any) => {
+  const { loading, data, execute, error } = useAsync(useCallback(async () => await api.fetchPlayListDetail(detailId), []))
+  useEffect(() => execute(), [execute])
+  useEffect(() => dispatch(formatForPlayListDetail(data.data)), [data])
+  return {
+    playListDetails: data,
+    playListDetailsLoading: loading,
+    playListDetailsError: error,
+  }
+}
+
+// const useSongDetail = (prop_page: any) => {
+//   const page = useReactiveProp(prop_page)
+//   const { loading, data, execute, error } = useAsync(useCallback(async () => await api.fetchSongsDetail(detailId), []))
+// }
+
 const PlayListDetails = (props: any) => {
-  const { listDetail, history, detailId, playList } = props
+  const { listDetail, history, detailId, playList, page } = props
   const { play, setPlayList, initialForListDetail, appendPlayList, setDetailId } = props
   const pullDownWrapperRef = useRef<any>()
   const instanceRef = useRef<any>(null)
   const touchTimeRef = useRef<any>()
-  const [loading, init] = useLoading(initialForListDetail)
+  const init = useAsync(initialForListDetail)
 
   instanceRef.current = {
     bscroll: {
@@ -65,7 +95,7 @@ const PlayListDetails = (props: any) => {
     if (!id) history.push({ pathname: "/" })
     if (detailId === null || detailId !== id) {
       setDetailId(id)
-      init(id)
+      init.execute(id)
     }
 
     return () => {
@@ -106,7 +136,7 @@ const PlayListDetails = (props: any) => {
 
   return (
     <div className="page-container">
-      {loading && <Loading></Loading>}
+      {init.loading && <Loading></Loading>}
       {PlayListDetailMain}
     </div>
   )
@@ -116,6 +146,7 @@ const stateToProps = (state: any) => ({
   listDetail: state.detail.data,
   detailId: state.detail.id,
   playList: state.detail.playList,
+  page: state.detail.page,
 })
 
 const dispatchToProps = (dispatch: any) => ({
