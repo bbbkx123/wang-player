@@ -27,12 +27,11 @@ const getSceneConfig = (location: any) => {
 const Layouts = (props: any) => {
   const { history, location } = props
 
-  const { setDetailId, dispatchForShowController } = props
+  const { dispatchForShowController } = props
 
   const goBack = () => {
     const { pathname } = history.location
     if (pathname === "/") {
-      setDetailId(null)
       return
     } else if (pathname === "/play") {
       dispatchForShowController(true)
@@ -94,9 +93,6 @@ const stateToProps = (state: any) => ({})
 
 const dispatchToProps = (dispatch: any) => {
   return {
-    setDetailId(id: number) {
-      dispatch({ type: "detail/id", value: id })
-    },
     dispatchForShowController(status: boolean) {
       dispatch({ type: "global/show-controller", value: status })
     },

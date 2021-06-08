@@ -1,53 +1,62 @@
-import { useState, useEffect, useRef, useCallback } from "react"
-import { connect } from "react-redux"
+import { useState, useEffect, useCallback } from "react"
+import { useSelector, useDispatch, useStore } from "react-redux"
 
 import Scroll from "@/components/Scroll"
 import List from "@/components/List"
+import Loading from "@/components/Loading"
 
 import * as api from "@/service"
 import * as define from "./define"
 import { formatForNewSongList } from "@/utils/tools"
 import { beforeCanPlayAction } from "@/store/audio/action"
-import { useAsync } from "@/utils/hook"
-import Loading from "@/components/Loading"
+import { useAsync, useTouchEvent } from "@/utils/hook"
 
 import "./index.less"
 
-const useBanners = (dispatch: Function) => {
+const useBanners = (dispatch: Function, state: any) => {
   const { loading, execute, data, error } = useAsync(useCallback(async () => await api.fetchBanner(0), []))
-  useEffect(() => execute(), [execute])
+  useEffect(() => {
+    if (state.recommend.banners.length <= 0) execute()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const banners = data?.data?.banners
-    if (Array.isArray(banners) && banners.length > 0) dispatch(banners)
-  }, [data])
+    if (Array.isArray(banners) && banners.length > 0) dispatch({ type: "views/recommend/banners", value: banners })
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
-    _banners: data,
+    banners: data,
     bannersLoading: loading,
     bannersError: error,
   }
 }
 
-const usePersonalization = (dispatch: Function) => {
+const usePersonalization = (dispatch: Function, state: any) => {
   const { loading, execute, data, error } = useAsync(useCallback(async () => await api.fetchPersonalization(6), []))
-  useEffect(() => execute(), [execute])
+  useEffect(() => {
+    if (state.recommend.personalization.length <= 0) execute()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const personalization = data?.data?.result
-    if (Array.isArray(personalization) && personalization.length > 0) dispatch(personalization)
-  }, [data])
+    if (Array.isArray(personalization) && personalization.length > 0) dispatch({ type: "views/recommend/personalization", value: personalization })
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
-    _personalization: data,
+    personalization: data,
     personalizationLoading: loading,
     personalizationError: error,
   }
 }
 
-const useNewSong = (dispatch: Function) => {
+const useNewSong = (dispatch: Function, state: any) => {
   const { loading, execute, data, error } = useAsync(useCallback(async () => await api.fetchNewSong(6), []))
-  useEffect(() => execute(), [execute])
+  useEffect(() => {
+    if (state.recommend.newSongList.length <= 0) execute()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const newSong = data?.data?.result
-    if (Array.isArray(newSong) && newSong.length > 0) dispatch(newSong.map((item: any) => formatForNewSongList(item)))
-  }, [data])
+    if (Array.isArray(newSong) && newSong.length > 0) {
+      let list = newSong.map((item: any) => formatForNewSongList(item))
+      dispatch({ type: "views/recommend/new-song-list", value: list })
+    }
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
     newSong: data,
     newSongLoading: loading,
@@ -57,19 +66,29 @@ const useNewSong = (dispatch: Function) => {
 
 const Recommend = (props: any) => {
   const { history } = props
-  const { banners, newSongList, personalization } = props
-  const { setBanners, setPersonalization, setNewSongList, play, setPlayList } = props
   const [icons] = useState<any[]>(define.icons)
   const [loading, setLoading] = useState<boolean>(false)
-  const touchTimeRef = useRef<any>()
-  const { bannersLoading } = useBanners(setBanners)
-  const { personalizationLoading } = usePersonalization(setPersonalization)
-  const { newSongLoading } = useNewSong(setNewSongList)
+
+  const dispatch = useDispatch()
+  const store = useStore()
+  const banners = useSelector((state: any) => state.recommend.banners)
+  const personalization = useSelector((state: any) => state.recommend.personalization)
+  const newSongList = useSelector((state: any) => state.recommend.newSongList)
+  const { bannersLoading } = useBanners(dispatch, store.getState())
+  const { personalizationLoading } = usePersonalization(dispatch, store.getState())
+  const { newSongLoading } = useNewSong(dispatch, store.getState())
+
+  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
+    dispatch({ type: "play-list/data", value: [newSongList[songIndex]] })
+    dispatch(beforeCanPlayAction(0))
+  })
 
   useEffect(() => {
     const isBoolean = [bannersLoading, personalizationLoading, newSongLoading].every((item: any) => typeof item === "boolean")
+    // 问题: loading会闪一下
+    // 原因: 首次加载, isBoolean为false后再变为true, setLoading快速改变; 如果!isBoolean时setLoading(true)会造成后续回到recommend页面一直处于loading
     if (!isBoolean) {
-      setLoading(true)
+      setLoading(false)
     } else {
       const loadingResult = bannersLoading || personalizationLoading || newSongLoading
       if (!loadingResult) {
@@ -81,30 +100,19 @@ const Recommend = (props: any) => {
   }, [bannersLoading, personalizationLoading, newSongLoading])
 
   const pageToPlaylistDetail = (id: number) => {
-    history.push({ pathname: "/playlistdetails", query: { id } })
+    history.push({ pathname: "/playlistdetails", query: {id} })
   }
 
   const fun1 = (index: number) => {
+    // 纯音乐 453208524    like 129219563   英文 3185023336
     if (index === 1) {
       pageToPlaylistDetail(3185023336)
     } else {
-      setPlayList([{ artists: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }])
-      play(0)
+      const playList = [{ artists: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }]
+      const songIndex = 0
+      dispatch({ type: "play-list/data", value: playList })
+      dispatch(beforeCanPlayAction(songIndex))
     }
-  }
-
-  const onTouchStart = () => {
-    touchTimeRef.current = { date: new Date().getTime() }
-  }
-
-  const onTouchEnd = (songIndex: number) => {
-    const date = new Date().getTime()
-    if (date - touchTimeRef.current.date <= 100) {
-      // 单曲播放通过模拟歌单播放, 将单曲存入playlist中
-      setPlayList([newSongList[songIndex]])
-      play(0)
-    }
-    touchTimeRef.current = null
   }
 
   return (
@@ -157,28 +165,4 @@ const Recommend = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  banners: state.recommend.banner,
-  personalization: state.recommend.personalization,
-  newSongList: state.recommend.newSongList,
-})
-
-const dispatchToProps = (dispatch: any) => ({
-  setPlayList(playlist: any[]) {
-    dispatch({ type: "play-list/data", value: playlist })
-  },
-  play(songIndex: number) {
-    dispatch(beforeCanPlayAction(songIndex))
-  },
-  setBanners(banner: any[]) {
-    dispatch({ type: "views/recommend/banner", value: banner })
-  },
-  setPersonalization(personalization: any[]) {
-    dispatch({ type: "views/recommend/personalization", value: personalization })
-  },
-  setNewSongList(newSongList: any[]) {
-    dispatch({ type: "views/recommend/new-song-list", value: newSongList })
-  },
-})
-
-export default connect(stateToProps, dispatchToProps)(Recommend)
+export default Recommend

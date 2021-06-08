@@ -5,7 +5,7 @@ const defaultState = {
   duration: 0,
   src: undefined,
   instance: null,
-  timeupdate: null,
+  currentTime: null,
 }
 
 const reducer = (state: any = defaultState, action: any) => {
@@ -36,10 +36,10 @@ const reducer = (state: any = defaultState, action: any) => {
         ...state,
         paused: value,
       }
-    case types.AUDIO__TIME_UPDATE:
+    case types.AUDIO__CURRRENT_TIME:
       return {
         ...state,
-        timeupdate: value,
+        currentTime: value,
       }
     default:
       return state

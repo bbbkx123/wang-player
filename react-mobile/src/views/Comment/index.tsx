@@ -1,16 +1,27 @@
 import * as api from "@/service/index"
-import { useEffect, useRef, useState } from "react"
-import { connect } from "react-redux"
+import { useCallback, useEffect, useRef } from "react"
+import { useSelector } from "react-redux"
+import { useAsync } from "@/utils/hook"
 // import { withLoading } from "@/components/HOC/Loading"
 import List from "@/components/List"
 import Scroll from "@/components/Scroll"
+import Loading from "@/components/Loading"
 
 import "./index.less"
 
+const useComment = (songId: any) => {
+  const { loading, data, error, execute } = useAsync(useCallback(async () => await api.fetchMusicComment(songId, 20, 0), [songId]))
+  useEffect(() => execute(), [execute])
+  return {
+    comment: data,
+    commentLoading: loading,
+    commentError: error,
+  }
+}
+
 const Comment = (props: any) => {
-  const { songId } = props
-  const [, setLoading] = useState<boolean>(false)
-  const [comment, setComment] = useState<any>()
+  const songId = useSelector((state: any) => state.playpage.songId)
+  const {comment, commentLoading} = useComment(songId)
   const commentPageConf = useRef<any>({
     scrollY: true,
     scrollX: false,
@@ -18,39 +29,21 @@ const Comment = (props: any) => {
     directionLockThreshold: 0,
     freeScroll: false,
   })
-
-  const fetchMusicComment = async () => {
-    setLoading(true)
-    let comment = await api.fetchMusicComment(songId, 20, 0)
-    setComment(comment)
-    setLoading(false)
-  }
-
+  
   const onTouchStart = () => {}
 
   const onTouchEnd = () => {}
 
-  const ScrollView = () => (
-    <Scroll mode="normal-scroll-y" config={commentPageConf.current}>
-      <List mode="COMMENT_LIST" data={comment.data.comments} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
-    </Scroll>
+  return (
+    <div className="page-container">
+      {commentLoading && <Loading></Loading>}
+      {comment && (
+        <Scroll mode="normal-scroll-y" config={commentPageConf.current}>
+          <List mode="COMMENT_LIST" data={comment.data.comments} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>
+        </Scroll>
+      )}
+    </div>
   )
-
-  // const ScrollViewWithLoading = withLoading(ScrollView)
-
-  useEffect(() => {
-    fetchMusicComment()
-    return () => {}
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  return <div className="page-container">
-    {/* <ScrollViewWithLoading loading={loading}></ScrollViewWithLoading> */}
-    {comment && <ScrollView></ScrollView>}
-  </div>
 }
 
-const stateToProps = (state: any) => ({
-  songId: state.playpage.songId,
-})
-
-export default connect(stateToProps)(Comment)
+export default Comment

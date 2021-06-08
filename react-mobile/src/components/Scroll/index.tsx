@@ -103,9 +103,6 @@ const Slider = (props: any) => {
       }
       instance.current = { excuting: true }
       initial()
-      return () => {
-        console.log("children clean?")
-      }
     }
   }, [children]) // eslint-disable-line react-hooks/exhaustive-deps
 

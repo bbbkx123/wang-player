@@ -25,7 +25,7 @@ const Player = (props: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    dispatchForTimeupdate({ currentTime: e.target.currentTime.toFixed(2) })
+    dispatchForTimeupdate(Math.floor(e.target.currentTime * 100) / 100)
   }
 
   const onCanPlay = () => {
@@ -73,8 +73,8 @@ const dispatchToProps = (dispatch: any) => ({
   setPaused(status: boolean) {
     dispatch({ type: "audio/paused", value: status })
   },
-  dispatchForTimeupdate(data: any) {
-    dispatch({ type: "audio/time-update", value: { ...data } })
+  dispatchForTimeupdate(currentTime: number) {
+    dispatch({ type: "audio/current-time", value: currentTime })
   },
 })
 

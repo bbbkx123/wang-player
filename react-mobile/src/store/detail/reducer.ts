@@ -4,14 +4,6 @@ const defaultState = {
   id: null,
   data: null,
   playList: [],
-  page: {
-    size: 10,
-    pageNo: 0,
-    songsTotal: null,
-    pageTotal: null,
-    // modelForClient: [],
-    model: [],
-  },
   pageSize: 10,
   pageNo: 0,
   songsTotal: null,
@@ -20,7 +12,7 @@ const defaultState = {
 }
 
 const reducer = (state: any = defaultState, action: any) => {
-  const {type, value} = action
+  const { type, value } = action
   switch (type) {
     case types.DETAIL__ID:
       return {
@@ -37,10 +29,20 @@ const reducer = (state: any = defaultState, action: any) => {
         ...state,
         playList: value,
       }
-    case types.DETAIL__PAGE:
+    case types.DETAIL__SONGS_TOTAL:
       return {
         ...state,
-        page: value,
+        songsTotal: value,
+      }
+    case types.DETAIL__PAGE_TOTAL:
+      return {
+        ...state,
+        pageTotal: value,
+      }
+    case types.DETAIL__PAGE_MODEL:
+      return {
+        ...state,
+        pageModel: value,
       }
     default:
       return state

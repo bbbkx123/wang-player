@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react"
-import { connect } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { withRouter } from "react-router-dom"
 import ProgressBar from "@/components/ProgressBar"
-import { beforeCanPlayAction, changeSongAction } from "@/store/audio/action"
+import { changeSongAction } from "@/store/audio/action"
 import { fetchLyricAction, getCurrentLineNumAction } from "@/store/playpage/action"
 import { togglePlayAction } from "@/store/audio/action"
 import { formatForPlayTime } from "@/utils/tools"
-import { useWatch, useReactiveProp } from "@/utils/hook"
+import { useReactiveSelector } from "@/utils/hook"
 import List from "@/components/List"
 import "./index.less"
 
@@ -14,22 +14,8 @@ const INITIAL_TOP = 200
 const MOVE = -50
 
 const PlayPage = (props: any) => {
-  const {
-    duration,
-    currentSongIndex,
-    playList,
-    lyric,
-    currentLyricLine,
-    songId,
-    percent,
-    _isProgressChanging,
-    paused,
-    detailId,
-    history,
-    timeupdate,
-  } = props
-  const { play, fetchLyricData, setCurrentLineNum, togglePlayStatus, toggleSonge, progressChanging } = props
-  const playRef = useRef<any>(null)
+  const { history } = props
+  const ref = useRef<any>(null)
   const cdWrapperElemRef = useRef<any>()
   const lyricElemRef = useRef<any>()
   const degRef = useRef<any>({
@@ -38,27 +24,23 @@ const PlayPage = (props: any) => {
   })
   const [showLyric, setShowLyric] = useState<boolean>(false)
 
+  const dispatch = useDispatch()
+  const playList = useSelector((state: any) => state.playlist.data)
+  const currentSongIndex = useSelector((state: any) => state.playlist.currentSongIndex)
+  const duration = useSelector((state: any) => state.audio.duration)
+  const lyric = useSelector((state: any) => state.playpage.lyric)
+  const currentLyricLine = useSelector((state: any) => state.playpage.currentLyricLine)
+  const songId = useSelector((state: any) => state.playpage.songId)
+  const percent = useSelector((state: any) => state.playpage.percent)
+  const paused = useSelector((state: any) => state.audio.paused)
+  const currentTime = useSelector((state: any) => state.audio.currentTime)
+  const isProgressChanging = useReactiveSelector((state: any) => state.playpage.isProgressChanging)
+
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
    * 解决: 独立使用useEffect, useEffect(()=>{}, [currentTime, duration])可以获取到
    * 后续发现不存在问题, 待观察
    */
-
-  const isProgressChanging = useReactiveProp(_isProgressChanging)
-
-  const onTimeupdate = (currentTime: any) => {
-    // const { currentTime } = payload
-    if (!isProgressChanging.current) {
-      progressChanging(currentTime / duration)
-    }
-    setCurrentLineNum(currentTime)
-
-    if (degRef.current.start) {
-      degRef.current.deg = (degRef.current.deg || 0) + 2
-      if (degRef.current.deg >= 360) degRef.current.deg = 0
-      rotate(degRef.current.deg)
-    }
-  }
 
   // 初始audio实例
   // 1. 通过audio.current.src直接设置无效, 在标签中设置src可以生效 src={xxx}
@@ -66,15 +48,15 @@ const PlayPage = (props: any) => {
   //  77需要通过查看网站信息 设置允许声音
 
   const togglePlay = () => {
-    togglePlayStatus()
+    dispatch(togglePlayAction())
   }
 
   const handleNextSong = () => {
-    toggleSonge("NEXT")
+    dispatch(changeSongAction("NEXT"))
   }
 
   const handlePrevSong = () => {
-    toggleSonge("PREV")
+    dispatch(changeSongAction("PREV"))
   }
 
   const rotate = (deg: number) => {
@@ -106,29 +88,40 @@ const PlayPage = (props: any) => {
   }
 
   const pageToComment = () => {
-    history.push({pathname: "/comment"})
+    history.push({ pathname: "/comment" })
   }
 
   useEffect(() => {
-    if (lyric.lyricList.length === 0) fetchLyricData(songId)
+    if (lyric.lyricList.length === 0) dispatch(fetchLyricAction(songId))
     degRef.current.deg = 0
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (!isProgressChanging.current) {
+      const percent = Math.floor((currentTime / duration) * 10000) / 10000
+      // console.log(percent, currentTime, duration);
+      dispatch({ type: "play-page/percent", value: percent })
+    }
+    dispatch(getCurrentLineNumAction(currentTime))
+
+    if (degRef.current.start) {
+      degRef.current.deg = (degRef.current.deg || 0) + 2
+      if (degRef.current.deg >= 360) degRef.current.deg = 0
+      rotate(degRef.current.deg)
+    }
+  }, [currentTime]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // useWatch(detailId, (prev) => {
+  //   if (prev && prev === detailId) return
+  //   const initIndex = 0
+  //   dispatch(beforeCanPlayAction(initIndex))
+  // })
 
   useEffect(() => {
-    onTimeupdate(timeupdate.currentTime)
-  }, [timeupdate]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useWatch(detailId, (prev) => {
-    if (prev && prev === detailId) return
-    const initIndex = 0
-    play(initIndex)
-  })
-
-  useWatch(songId, (prev) => {
-    if (prev && prev === detailId) return
-    fetchLyricData(songId)
-  })
+    if (!songId || songId === ref.current) return
+    ref.current = songId
+    dispatch(fetchLyricAction(songId))
+  }, [songId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => scroll(), [currentLyricLine]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -137,9 +130,9 @@ const PlayPage = (props: any) => {
   }, [showLyric]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div ref={playRef} className="play">
+    <div className="play">
       <div className="play--main-container" onClick={toggleMainView}>
-        {!showLyric && (
+        {!showLyric ? (
           <div className="play--main">
             <div ref={cdWrapperElemRef} className="play--cd-wrapper">
               {playList[currentSongIndex] && <img src={image()} alt="" />}
@@ -148,8 +141,7 @@ const PlayPage = (props: any) => {
               <div style={{ fontSize: "24px", width: "30px" }} className="iconfont iconcomment"></div>
             </div>
           </div>
-        )}
-        {showLyric && (
+        ) : (
           <div className="play--lyric" ref={(ref) => (lyricElemRef.current = ref)}>
             {lyric && lyric.lyricList.length > 0 && <List mode="LYRIC" data={lyric.lyricList} current={currentLyricLine}></List>}
           </div>
@@ -173,39 +165,4 @@ const PlayPage = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  detailId: state.detail.id,
-  playList: state.playlist.data,
-  currentSongIndex: state.playlist.currentSongIndex,
-  duration: state.audio.duration,
-  lyric: state.playpage.lyric,
-  currentLyricLine: state.playpage.currentLyricLine,
-  songId: state.playpage.songId,
-  _isProgressChanging: state.playpage.isProgressChanging,
-  percent: state.playpage.percent,
-  paused: state.audio.paused,
-  timeupdate: state.audio.timeupdate,
-})
-
-const dispatchToProps = (dispatch: any) => ({
-  play(songIndex: number) {
-    dispatch(beforeCanPlayAction(songIndex))
-  },
-  fetchLyricData(songId: string | number) {
-    dispatch(fetchLyricAction(songId))
-  },
-  setCurrentLineNum(time: number) {
-    dispatch(getCurrentLineNumAction(time))
-  },
-  togglePlayStatus() {
-    dispatch(togglePlayAction())
-  },
-  toggleSonge(type: any) {
-    dispatch(changeSongAction(type))
-  },
-  progressChanging(percent: any) {
-    dispatch({ type: "play-page/percent", value: percent })
-  },
-})
-
-export default connect(stateToProps, dispatchToProps)(withRouter(PlayPage))
+export default withRouter(PlayPage)

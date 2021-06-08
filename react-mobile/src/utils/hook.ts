@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
+import { useSelector } from 'react-redux';
 
 type CallBack<T> = (prev: T | undefined) => void;
 type Config = { immediate: boolean };
@@ -78,31 +79,26 @@ const useAsync = (fetch: Function): any => {
   return {loading, execute, data, error}
 }
 
-
-const useReactiveProp = (prop: any) => {
-  const ref = useRef<any>(prop)
+const useReactiveSelector = (selector: any) => {
+  const ref = useRef<any>()
+  const prop = useSelector(selector)
   useEffect(() => {
     ref.current = prop
   }, [prop])
   return ref
 }
 
-// export const detailPageAction =
-//   (page: any = { size: 10 }) =>
-//   (dispatch: any, getState: any) => {
-//     const state1 = getState()
-//     const { listData } = state1.detail.data
-//     const { size } = page
-//     const temp = {
-//       model: formatPageData(listData, size),
-//       songsTotal: listData.length,
-//       pageTotal: Math.ceil(listData.length / size),
-//     }
-//     dispatch({ type: "detail/page", value: { ...state1.detail.page, ...page, ...temp } })
-//   }
-
-const usePageForDetail = () => {
-
+const useTouchEvent = (callback: Function) => {
+  const ref = useRef<any>()
+  return {
+    onTouchStart () {
+      ref.current = { date: new Date().getTime() }
+    },
+    onTouchEnd () {
+      if (new Date().getTime() - ref.current.date <= 75) callback && callback(...arguments)
+      ref.current = null
+    },
+  }
 }
 
-export { useWatch, useAsync, useReactiveProp };
+export { useWatch, useAsync, useReactiveSelector, useTouchEvent };
