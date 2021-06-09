@@ -1,21 +1,26 @@
 import { useState, useEffect, useRef } from "react"
 import { withRouter } from "react-router-dom"
-import { connect } from "react-redux"
-import { beforeCanPlayAction } from "@/store/audio/action"
+import { useSelector, useDispatch } from "react-redux"
+import action from "@/store/action"
 
 const Player = (props: any) => {
-  const { history, currentSongIndex, showController, playList } = props
-  const { setDuration, toggleSong, setShowController, setInstance, setPaused, dispatchForTimeupdate } = props
+  const { history} = props
+
+  const dispatch = useDispatch()
+  const playList = useSelector((state: any) => state.playlist.data)
+  const currentSongIndex = useSelector((state: any) => state.playlist.currentSongIndex)
+  const showController = useSelector((state: any) => state.global.showController)
+
   const audioElemRef = useRef<any>(null)
   const [loop] = useState<boolean>(false)
 
   // !问题: buffer加载时, currentTime需要loading效果
   const onEnded = () => {
     audioElemRef.current.pause()
-    setPaused(true)
+    dispatch({ type: "audio/paused", value: true })
     if (playList.length > 0) {
       if (currentSongIndex < playList.length - 1) {
-        toggleSong(currentSongIndex + 1)
+        dispatch(action.beforeCanPlayAction(currentSongIndex + 1))
       } else if (currentSongIndex === playList.length - 1) {
         // if (this.isLoopPlayList) {
         //     this.songChangeIndex = 0
@@ -25,19 +30,19 @@ const Player = (props: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    dispatchForTimeupdate(Math.floor(e.target.currentTime * 100) / 100)
+    dispatch({ type: "audio/current-time", value: Math.floor(e.target.currentTime * 100) / 100 })
   }
 
   const onCanPlay = () => {
     const { pathname } = history.location
-    setDuration(audioElemRef.current.duration)
-    setPaused(false)
-    if (!showController && pathname !== "/play") setShowController(true)
+    dispatch({ type: "audio/duration", value: audioElemRef.current.duration })
+    dispatch({ type: "audio/paused", value: false })
+    if (!showController && pathname !== "/play") dispatch({ type: "global/show-controller", value: true })
   }
 
   useEffect(() => {
     audioElemRef.current.volume = 0
-    setInstance(audioElemRef.current)
+    dispatch({ type: "audio/instance", value: audioElemRef.current })
     return () => {}
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -49,33 +54,5 @@ const Player = (props: any) => {
 
   return <audio ref={audioElemRef} autoPlay={true} onEnded={onEnded} onTimeUpdate={onTimeUpdate} onCanPlay={onCanPlay} loop={loop}></audio>
 }
-const stateToProps = (state: any) => {
-  return {
-    playList: state.playlist.data,
-    currentSongIndex: state.playlist.currentSongIndex,
-    showController: state.global.showController,
-  }
-}
 
-const dispatchToProps = (dispatch: any) => ({
-  setDuration(duration: any) {
-    dispatch({ type: "audio/duration", value: duration })
-  },
-  setShowController(status: boolean) {
-    dispatch({ type: "global/show-controller", value: status })
-  },
-  toggleSong(currentSongIndex: number) {
-    dispatch(beforeCanPlayAction(currentSongIndex))
-  },
-  setInstance(audio: any) {
-    dispatch({ type: "audio/instance", value: audio })
-  },
-  setPaused(status: boolean) {
-    dispatch({ type: "audio/paused", value: status })
-  },
-  dispatchForTimeupdate(currentTime: number) {
-    dispatch({ type: "audio/current-time", value: currentTime })
-  },
-})
-
-export default connect(stateToProps, dispatchToProps)(withRouter(Player))
+export default withRouter(Player)

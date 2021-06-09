@@ -2,10 +2,9 @@ import { Toast } from "antd-mobile"
 import { fetchSongUrl } from "@/service/index"
 
 export const beforeCanPlayAction = (songIndex: number) => async (dispatch: any, getState: any) => {
-  dispatch({ type: "play-list/current-song-index", value: songIndex })
   const state = getState()
-  const { playlist, audio } = state
-  const { sid } = playlist.data[songIndex]
+  const { sid } = state.playlist.data[songIndex]
+  dispatch({ type: "play-list/current-song-index", value: songIndex })
   dispatch({ type: "play-page/song-id", value: sid })
   const song = await fetchSongUrl(sid)
   const { url } = song.data.data[0]
@@ -13,7 +12,7 @@ export const beforeCanPlayAction = (songIndex: number) => async (dispatch: any, 
     Toast.fail("歌曲暂不支持播放 (￣o￣) . z Z　", 3, () => {}, false)
     return
   } else {
-    audio.instance.src = url
+    state.audio.instance.src = url
     dispatch({ type: "audio/src", value: url })
   }
 }

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { connect } from "react-redux"
-import {  changeProgressAction } from "@/store/playpage/action"
+import { useDispatch, useStore } from "react-redux"
 
 import "./index.less"
 
@@ -12,10 +11,12 @@ const progressBarWidth = 16
 
 const ProgressBar = (props: any) => {
   const { percent } = props
-  const { setIsProgressChanging, progressChanging, progressChange } = props
-  const progressBar = useRef<any>(null),
-    progress = useRef<any>(null),
-    progressBtn = useRef<any>(null)
+  const dispatch = useDispatch()
+  const store = useStore()
+  const state = store.getState()
+  const progressBar = useRef<any>(null)
+  const progress = useRef<any>(null)
+  const progressBtn = useRef<any>(null)
   const [touch, setTouch] = useState({
     initiated: false,
     startX: 0,
@@ -23,11 +24,16 @@ const ProgressBar = (props: any) => {
   const [progressClientWidth, setProgressClientWidth] = useState<number>(0)
   const [barWidth, setBarWidth] = useState<number>(0)
 
+  const changeProgress = (percent: number) => {
+    dispatch({ type: "play-page/percent", value: percent })
+    state.audio.instance.currentTime = state.audio.instance.duration * percent
+  }
+
   const progressClick = (e: any) => {
     const rect = progressBar.current.getBoundingClientRect()
     const offsetWidth = e.clientX - rect.left
     const percent = offsetWidth / barWidth
-    progressChange( percent.toFixed(2))
+    changeProgress(Math.floor(percent * 100) / 100)
   }
 
   const handleOffset = (offsetWidth: any) => {
@@ -36,7 +42,7 @@ const ProgressBar = (props: any) => {
   }
 
   const progressTouchStart = (e: any) => {
-    setIsProgressChanging(true)
+    dispatch({ type: "play-page/is-progress-changing", value: true })
     setTouch({
       initiated: true,
       startX: e.touches[0].clientX,
@@ -57,15 +63,15 @@ const ProgressBar = (props: any) => {
     const deltaX = e.touches[0].clientX - touch.startX
     const offsetWidth = Math.min(barWidth === null ? 0 : barWidth, Math.max(0, progressClientWidth + deltaX))
     handleOffset(offsetWidth)
-    progressChanging(getPrecent())
+    dispatch({ type: "play-page/percent", value: getPrecent() })
   }
 
   const progressTouchEnd = () => {
     // *问题: 从$refs获取样式数据会取到更新之前的数据
     // 在move事件上启用节流后, 可以避免使用定时器
     // 先抛出事件, 再将initiated修改为false
-    setIsProgressChanging(false)
-    progressChange(getPrecent())
+    dispatch({ type: "play-page/is-progress-changing", value: false })
+    changeProgress(getPrecent())
     setTouch({
       ...touch,
       initiated: false,
@@ -74,7 +80,7 @@ const ProgressBar = (props: any) => {
 
   const getPrecent = () => {
     let num = progress.current.clientWidth / (barWidth === null ? 0 : barWidth)
-    return num.toFixed(4)
+    return Math.floor(num * 10000) / 10000
   }
 
   useEffect(() => {
@@ -114,18 +120,4 @@ const ProgressBar = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({})
-
-const dispatchToProps = (dispatch: any) => ({
-  setIsProgressChanging(status: boolean) {
-    dispatch({ type: "play-page/is-progress-changing", value: status })
-  },
-  progressChanging (percent: any) {
-    dispatch({type: "play-page/percent", value: percent})
-  },
-  progressChange (percent: any) {
-    dispatch(changeProgressAction(percent))
-  },
-})
-
-export default connect(stateToProps, dispatchToProps)(ProgressBar)
+export default ProgressBar

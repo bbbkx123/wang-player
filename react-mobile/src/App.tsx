@@ -1,4 +1,4 @@
-import Layouts from "@/layouts";
+import Layouts from "@/views/Layouts";
 import "./App.less";
 import "./style/index.less";
 import "./assets/fonts/iconfont.css";

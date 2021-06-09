@@ -75,12 +75,12 @@ export const formatForSearchResult = (data: any) => {
   };
 }
 
-export const formatForSong = (song: any, songId: any) => {
+export const formatForSong = (song: any) => {
   return {
     name: song.name,
     artists: song.ar.map((item: any) => item.name).join("/"),
     album: song.al,
-    sid: songId,
+    sid: song.id,
   };
 }
 

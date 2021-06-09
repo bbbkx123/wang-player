@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, shallowReactive } from "vue";
+import { defineComponent, reactive, ref, shallowReactive, watch } from "vue";
 import Toast from "vant/es/toast";
 import "vant/es/toast/style";
 import BScroll from "@better-scroll/core";
@@ -40,30 +40,17 @@ import PullUp from "@better-scroll/pull-up";
 import Slide from "@better-scroll/slide";
 
 export default defineComponent({
-  setup(props: any, {slots}) {
-    
-    // const {
-    //   mode,
-    //   config,
-    //   children,
-    //   height,
-    //   width,
-    //   click,
-    //   pullDown,
-    //   fetchDataForPullUp,
-    // } = props;
-    const scroll: any = slots.default
-    
-    let children = scroll()
-    children = children[0].children
-    // console.log(children);
-    // debugger
+  setup(props: any, { slots }) {
+    const scroll: any = slots.default;
+    let _children = scroll();
+    _children = _children[0].children;
+    const children = reactive(_children)
     const instance = ref<any>({ excuting: false });
     const sliderRef = ref<any>({});
     const sliderGroupRef = ref<any>({});
     const sliderWrapperElemRef = ref<any>({});
     const currentPageIndex = ref<number>(0);
-    const dots = ref<any[]>([])
+    const dots = ref<any[]>([]);
     const beforePullUp = ref<boolean>(true);
 
     const initial = () => {
@@ -88,7 +75,11 @@ export default defineComponent({
       }
 
       // 问题: 没有进行事件解绑
-      if (props.mode === "list-detail" && props.pullDown && props.fetchDataForPullUp) {
+      if (
+        props.mode === "list-detail" &&
+        props.pullDown &&
+        props.fetchDataForPullUp
+      ) {
         bscroll.on("pullingDown", () => props.pullDown(bscroll));
 
         bscroll.on("pullingUp", async () => {
@@ -106,38 +97,45 @@ export default defineComponent({
       }
     };
 
-
     const setSliderWidth = () => {
-    let elRefSlider = sliderRef.value
-    let elRefSliderGroup = sliderGroupRef.value
-    let children = elRefSliderGroup.children
-    let sliderWidth = elRefSlider.clientWidth
+      let elRefSlider = sliderRef.value;
+      let elRefSliderGroup = sliderGroupRef.value;
+      let children = elRefSliderGroup.children;
+      let sliderWidth = elRefSlider.clientWidth;
 
-    const marginLeft = 10
-    if (props.mode === "banner") {
-      dots.value = Array.from({ length: 10 }).map((item) => true)
-    }
-    for (let i = 0, len = children.length; i < len; i++) {
-      let child = children[i]
-      child.props.class += "slider-item"
-      if (props.mode === "normal-scroll-x") {
-        // 添加margin-left: 5px, 用于隔开
-        child.props.class += "margin"
-        child.props.style.width = typeof props.width === "number" ? `${props.width}px` : props.width
+      const marginLeft = 10;
+      if (props.mode === "banner") {
+        dots.value = Array.from({ length: 10 }).map((item) => true);
       }
-    }
-    if (props.mode === "banner") {
-      elRefSliderGroup.style.width = `${sliderWidth * children.length}px`
-    } else if (props.mode === "normal-scroll-x") {
-      const childClientWidth = children[0].children[0].clientWidth
-      elRefSliderGroup.style.width = `${(childClientWidth + marginLeft) * children.length}px`
-    }
-  }
+      for (let i = 0, len = children.length; i < len; i++) {
+        let child = children[i];
+        child.props.class += "slider-item";
+        if (props.mode === "normal-scroll-x") {
+          // 添加margin-left: 5px, 用于隔开
+          child.props.class += "margin";
+          child.props.style.width =
+            typeof props.width === "number" ? `${props.width}px` : props.width;
+        }
+      }
+      if (props.mode === "banner") {
+        elRefSliderGroup.style.width = `${sliderWidth * children.length}px`;
+      } else if (props.mode === "normal-scroll-x") {
+        const childClientWidth = children[0].children[0].clientWidth;
+        elRefSliderGroup.style.width = `${
+          (childClientWidth + marginLeft) * children.length
+        }px`;
+      }
+    };
 
-  const setSliderHeight = () => {
-    sliderRef.value.style.height = sliderWrapperElemRef.value.clientHeight + "px"
-  }
+    const setSliderHeight = () => {
+      sliderRef.value.style.height =
+        sliderWrapperElemRef.value.clientHeight + "px";
+    };
 
+    watch(children, (newVallue, oldValue) => {
+      debugger
+      initial()
+    })
 
     return {
       sliderRef,

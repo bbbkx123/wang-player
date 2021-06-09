@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector, useDispatch, useStore } from "react-redux"
 import { withRouter } from "react-router-dom"
 import actionCreator from "@/store/action"
 import { useAsync, useTouchEvent } from "@/utils/hook"
@@ -8,13 +8,19 @@ import * as api from "@/service"
 import Loading from "@/components/Loading"
 import List from "@/components/List"
 import Scroll from "@/components/Scroll"
+import { instanceRef } from "./define"
 
 import "./index.less"
 
 // 问题: pullup后, 返回上个页面, 再次进入页面长度异常(很长)
 // 猜想为pullup对transformY设置存在问题
 
-const action = async (detailId: any, dispatch: Function) => {
+const getSongs = async (ids: string) => {
+  const res = await api.fetchSongsDetail(ids)
+  return res.data.songs.map((item: any) => formatForSong(item))
+}
+
+const action = async (detailId: any, dispatch: any) => {
   try {
     const listDetail: any = await api.fetchPlayListDetail(detailId)
     const data = formatForPlayListDetail(listDetail.data)
@@ -24,17 +30,17 @@ const action = async (detailId: any, dispatch: Function) => {
     dispatch({ type: "detail/songs-total", value: data.listData.length })
     dispatch({ type: "detail/page-total", value: Math.ceil(data.listData.length / 10) })
     const ids = pageModel[0].join(",")
-    const response1 = await api.fetchSongsDetail(ids)
-    let value = response1.data.songs.map((item: any, index: number) => formatForSong(item, pageModel[0][index]))
+    let value = await getSongs(ids)
     dispatch({ type: "detail/play-list", value })
-    return new Promise((resolve, reject) => setTimeout(() => resolve(true), 1000))
+    return new Promise(resolve => setTimeout(() => resolve(true), 1000))
   } catch (err) {
     console.log(err)
     return Promise.reject(err)
   }
 }
 
-const useInitial = (dispatch: Function, history: any) => {
+// 初始化hook, 用于详情页
+const useInitial = (history: any, dispatch: any) => {
   const id = history?.location?.query?.id
   const detailId = useSelector((state: any) => state.detail.id)
   const { loading, execute } = useAsync(useCallback(action, []))
@@ -42,10 +48,10 @@ const useInitial = (dispatch: Function, history: any) => {
   useEffect(() => {
     if (!!id && detailId !== id) {
       dispatch({ type: "detail/id", value: id })
-      execute(id, dispatch)
+      execute(id, dispatch )
     }
   }, [detailId]) // eslint-disable-line react-hooks/exhaustive-deps
-  
+
   useEffect(() => {
     if (!id) history.push({ pathname: "/" })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -54,39 +60,32 @@ const useInitial = (dispatch: Function, history: any) => {
   }
 }
 
-const instanceRef = {
-  bscroll: {
-    scrollY: true,
-    scrollX: false,
-    // 锁定方向
-    directionLockThreshold: 0,
-    freeScroll: false,
-    pullDownRefresh: {
-      threshold: 100,
-      stop: 50,
-    },
-    pullUpLoad: {
-      threshold: -125,
-      stop: 50,
-    },
-  },
+const handleAppendPlayList = async (state: any, dispatch: any) => {
+  const { pageNo, pageTotal } = state.detail
+  if (pageNo + 2 > pageTotal) {
+    return Promise.resolve({ success: false, msg: "没有选择歌曲 (￣o￣) . z Z　" })
+  }
+  dispatch({ type: "detail/page-no", value: pageNo + 1 })
+  const ids = state.detail.pageModel[pageNo + 1].join(",")
+  const value = await getSongs(ids)
+  dispatch({ type: "detail/play-list", value: state.detail.playList.concat(value) })
+  return Promise.resolve({ success: true })
 }
 
 const PlayListDetails = (props: any) => {
   const { history } = props
+  const store = useStore()
+  const state = store.getState()
   const dispatch = useDispatch()
   const listDetail = useSelector((state: any) => state.detail.data)
   const playList = useSelector((state: any) => state.detail.playList)
-  const { loading } = useInitial(dispatch, history)
-  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: any) => {
+  const { loading } = useInitial(history, dispatch)
+  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: any, songId: any) => {
     dispatch({ type: "play-list/data", value: playList })
     dispatch(actionCreator.beforeCanPlayAction(songIndex))
   })
 
-  const pullingDown = (instance: any) => {
-    console.log("pull-down")
-    instance.finishPullDown()
-  }
+  const onReload = () => {}
 
   // 问题: list高度大于BScroll容器高度, 却不能拉到底部(视觉上像已经拉到底部的感觉)
   // 解决: 该effect会触发**两次**(data为undefined和data有值的时候), BScroll进行实例时, data.playlist未获取到, 造成实例时BScroll容器高度是没有list数据的高度(高度数值小), 因此在data.playlist获取到后在进行实例
@@ -95,7 +94,7 @@ const PlayListDetails = (props: any) => {
     <div className="page-container">
       {loading && <Loading></Loading>}
       {playList.length > 0 && (
-        <Scroll mode="list-detail" config={instanceRef} pullDown={pullingDown} fetchDataForPullUp={() => dispatch(actionCreator.appendPlayListAction())}>
+        <Scroll mode="list-detail" config={instanceRef} onReload={onReload} fetchDataForPullUp={() => handleAppendPlayList(state, dispatch)}>
           <div className="list-detail">
             {/* {!beforePullDown && <div style={{ color: "red" }}>pulldown!</div>} */}
             <div>

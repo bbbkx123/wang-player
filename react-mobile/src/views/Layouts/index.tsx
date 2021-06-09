@@ -1,6 +1,6 @@
 import React from "react"
 import { withRouter, Switch, Route } from "react-router-dom"
-import { connect } from "react-redux"
+import { useDispatch } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 import { NavBar, Icon } from "antd-mobile"
@@ -26,15 +26,13 @@ const getSceneConfig = (location: any) => {
 
 const Layouts = (props: any) => {
   const { history, location } = props
-
-  const { dispatchForShowController } = props
-
+  const dispatch = useDispatch()
   const goBack = () => {
     const { pathname } = history.location
     if (pathname === "/") {
       return
     } else if (pathname === "/play") {
-      dispatchForShowController(true)
+      dispatch({ type: "global/show-controller", value: true })
     }
     history.goBack()
   }
@@ -43,7 +41,7 @@ const Layouts = (props: any) => {
     history.push("/search")
   }
 
-  // 注意: 过渡实现逻辑
+  // 问题: 理解过渡实现逻辑
   let classNames = ""
   if (history.action === "PUSH") {
     classNames = "forward-" + getSceneConfig(location)?.enter
@@ -57,8 +55,8 @@ const Layouts = (props: any) => {
   // const fun1 = () => {
   //   dispatchForShowController(true)
   // }
-
-  const dom = (
+  
+  return (
     <>
       <div className="layouts">
         {/* <button onClick={fun1}>mini-player</button> */}
@@ -85,18 +83,6 @@ const Layouts = (props: any) => {
       <Player></Player>
     </>
   )
-
-  return dom
 }
 
-const stateToProps = (state: any) => ({})
-
-const dispatchToProps = (dispatch: any) => {
-  return {
-    dispatchForShowController(status: boolean) {
-      dispatch({ type: "global/show-controller", value: status })
-    },
-  }
-}
-
-export default connect(stateToProps, dispatchToProps)(withRouter(Layouts))
+export default withRouter(Layouts)

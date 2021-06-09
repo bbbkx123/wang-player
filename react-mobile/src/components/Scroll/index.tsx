@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react"
-// import { connect } from "react-redux"
 import { Toast } from "antd-mobile"
 
 import BScroll from "@better-scroll/core"
@@ -13,7 +12,7 @@ import "./index.less"
 // banner banner模式
 
 const Slider = (props: any) => {
-  const { mode, config, children, height, width, pullDown, fetchDataForPullUp, click } = props
+  const { mode, config, children, height, width, onReload, fetchDataForPullUp, click } = props
 
   const instance = useRef<any>()
   const sliderRef = useRef<any>(null)
@@ -42,8 +41,12 @@ const Slider = (props: any) => {
     }
 
     // 问题: 没有进行事件解绑
-    if (mode === "list-detail" && pullDown && fetchDataForPullUp) {
-      bscroll.on("pullingDown", () => pullDown(bscroll))
+    if (mode === "list-detail" && onReload && fetchDataForPullUp) {
+      bscroll.on("pullingDown", async () => {
+        await onReload()
+        bscroll.finishPullDown()
+        console.log("pull-down")
+      })
 
       bscroll.on("pullingUp", async () => {
         setBeforePullUp(false)
@@ -68,7 +71,7 @@ const Slider = (props: any) => {
 
     const marginLeft = 10
     if (mode === "banner") {
-      setDots(Array.from({ length: 10 }).map((item) => true))
+      setDots(Array.from({ length: 10 }).map(() => true))
     }
     for (let i = 0, len = children.length; i < len; i++) {
       let child = children[i]
@@ -147,10 +150,5 @@ const Slider = (props: any) => {
     </div>
   )
 }
-
-// const stateToProps = (state: any) => ({})
-
-// const dispatchToProps = (dispatch: any) => ({})
-// connect(stateToProps, dispatchToProps)(Slider)
 
 export default Slider

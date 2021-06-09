@@ -1,4 +1,4 @@
-import { connect } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { CSSTransition } from "react-transition-group"
 
 import List from "@/components/List"
@@ -15,15 +15,16 @@ const miniListConf = {
 }
 
 const MiniList = (props: any) => {
-  const { playList, showMiniList } = props
-  const { dispatchForShowMiniList } = props
+  const dispatch = useDispatch()
+  const playList = useSelector((state: any) => state.playlist.data)
+  const showMiniList = useSelector((state: any) => state.global.showMiniList)
 
   const onTouchStart = () => {}
 
   const onTouchEnd = () => {}
 
   const onClick = () => {
-    dispatchForShowMiniList(false)
+    dispatch({ type: "global/show-mini-list", value: false })
   }
 
   return (
@@ -43,15 +44,4 @@ const MiniList = (props: any) => {
   )
 }
 
-const stateToProps = (state: any) => ({
-  playList: state.playlist.data,
-  showMiniList: state.global.showMiniList,
-})
-
-const dispatchToProps = (dispatch: any) => ({
-  dispatchForShowMiniList(status: boolean) {
-    dispatch({ type: "global/show-mini-list", value: status })
-  },
-})
-
-export default connect(stateToProps, dispatchToProps)(MiniList)
+export default MiniList

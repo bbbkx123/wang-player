@@ -32,9 +32,3 @@ export const getCurrentLineNumAction = (time: number) => (dispatch: any, getStat
   }
   dispatch({ type: "play-page/current-lyric-line", value: line })
 }
-
-export const changeProgressAction = (percent: number) => (dispatch: any, getState: any) => {
-  const state = getState()
-  dispatch({ type: "play-page/percent", value: percent })
-  state.audio.instance.currentTime = state.audio.instance.duration * percent
-}
