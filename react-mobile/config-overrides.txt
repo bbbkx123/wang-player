@@ -27,7 +27,7 @@ module.exports = override(
   }),
 
   // 注意
-  addWebpackAlias({
+  addWebpackAlias({ 
     "@": path.resolve(__dirname, "./src")
   }),
 
