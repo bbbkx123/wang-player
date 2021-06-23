@@ -23,9 +23,9 @@ const useBanners = (dispatch: Function, state: any) => {
     if (Array.isArray(banners) && banners.length > 0) dispatch({ type: "views/recommend/banners", value: banners })
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
-    banners: data,
-    bannersLoading: loading,
-    bannersError: error,
+    data,
+    loading,
+    error,
   }
 }
 
@@ -39,9 +39,9 @@ const usePersonalization = (dispatch: Function, state: any) => {
     if (Array.isArray(personalization) && personalization.length > 0) dispatch({ type: "views/recommend/personalization", value: personalization })
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
-    personalization: data,
-    personalizationLoading: loading,
-    personalizationError: error,
+    data,
+    loading,
+    error,
   }
 }
 
@@ -58,9 +58,9 @@ const useNewSong = (dispatch: Function, state: any) => {
     }
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   return {
-    newSong: data,
-    newSongLoading: loading,
-    newSongError: error,
+    data,
+    loading,
+    error,
   }
 }
 
@@ -74,9 +74,9 @@ const Recommend = (props: any) => {
   const banners = useSelector((state: any) => state.recommend.banners)
   const personalization = useSelector((state: any) => state.recommend.personalization)
   const newSongList = useSelector((state: any) => state.recommend.newSongList)
-  const { bannersLoading } = useBanners(dispatch, store.getState())
-  const { personalizationLoading } = usePersonalization(dispatch, store.getState())
-  const { newSongLoading } = useNewSong(dispatch, store.getState())
+  const { loading: bannersLoading } = useBanners(dispatch, store.getState())
+  const { loading: personalizationLoading } = usePersonalization(dispatch, store.getState())
+  const { loading: newSongLoading } = useNewSong(dispatch, store.getState())
 
   const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
     dispatch({ type: "play-list/data", value: [newSongList[songIndex]] })

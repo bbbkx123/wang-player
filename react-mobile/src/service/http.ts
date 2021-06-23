@@ -4,6 +4,7 @@ import config from "./config"
 let axios = Axios.create({
   baseURL: config.baseUrl,
   timeout: 10000,
+  // headers: { Authorization: "Bear mytoken" },
   transformRequest: [
     function (data) {
       return data

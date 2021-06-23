@@ -1,20 +1,18 @@
 import * as types from "../types"
 
-const defaultState = {
+const defaultState: PlayPageState = {
   lyric: {
     timeList: [],
     lyricList: [],
     tLyricList: [],
   },
   currentLyricLine: 0,
-  songId: null,
+  songId: '',
   isProgressChanging: false,
   percent: 0,
-  // deg: 0,
-  // showLyric: false,
 }
 
-const reducer = (state: any = defaultState, action: any) => {
+const reducer = (state: PlayPageState = defaultState, action: any) => {
   const {type, value} = action
   switch (type) {
     case types.PLAY_PAGE__LYRIC:

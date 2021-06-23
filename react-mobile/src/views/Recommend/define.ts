@@ -36,7 +36,9 @@ export const icons = [
 export const sliderConf = {
   scrollX: true,
   scrollY: false,
-  slide: true,
+  slide: {
+    interval: 5000,
+  },
   momentum: false,
   bounce: false,
   probeType: 3,
@@ -55,7 +57,6 @@ export const personalizeConf = {
   momentum: true,
   click: true,
 }
-
 
 export const recommendPageConf = {
   scrollY: true,

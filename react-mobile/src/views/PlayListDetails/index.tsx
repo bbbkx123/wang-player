@@ -17,13 +17,13 @@ import "./index.less"
 
 const getSongs = async (ids: string) => {
   const res = await api.fetchSongsDetail(ids)
-  return res.data.songs.map((item: any) => formatForSong(item))
+  return res.data.songs.map(formatForSong)
 }
 
-const action = async (detailId: any, dispatch: any) => {
+const action = async (detailId: string, dispatch: Function) => {
   try {
-    const listDetail: any = await api.fetchPlayListDetail(detailId)
-    const data = formatForPlayListDetail(listDetail.data)
+    const res: Pick<any, 'data'> = await api.fetchPlayListDetail(detailId)
+    const data = formatForPlayListDetail(res.data)
     dispatch({ type: "detail/data", value: data })
     const pageModel = formatPageData(data.listData, 10)
     dispatch({ type: "detail/page-model", value: formatPageData(data.listData, 10) })
@@ -40,9 +40,9 @@ const action = async (detailId: any, dispatch: any) => {
 }
 
 // 初始化hook, 用于详情页
-const useInitial = (history: any, dispatch: any) => {
+const useInitial = (history: any, dispatch: Function) => {
   const id = history?.location?.query?.id
-  const detailId = useSelector((state: any) => state.detail.id)
+  const detailId = useSelector((state: StoreState) => state.detail.id)
   const { loading, execute } = useAsync(useCallback(action, []))
   // 加载数据
   useEffect(() => {
@@ -60,7 +60,7 @@ const useInitial = (history: any, dispatch: any) => {
   }
 }
 
-const handleAppendPlayList = async (state: any, dispatch: any) => {
+const handleAppendPlayList = async (state: any, dispatch: Function) => {
   const { pageNo, pageTotal } = state.detail
   if (pageNo + 2 > pageTotal) {
     return Promise.resolve({ success: false, msg: "没有选择歌曲 (￣o￣) . z Z　" })
@@ -77,10 +77,10 @@ const PlayListDetails = (props: any) => {
   const store = useStore()
   const state = store.getState()
   const dispatch = useDispatch()
-  const listDetail = useSelector((state: any) => state.detail.data)
-  const playList = useSelector((state: any) => state.detail.playList)
+  const listDetail = useSelector((state: StoreState) => state.detail.data)
+  const playList = useSelector((state: StoreState) => state.detail.playList)
   const { loading } = useInitial(history, dispatch)
-  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: any, songId: any) => {
+  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
     dispatch({ type: "play-list/data", value: playList })
     dispatch(actionCreator.beforeCanPlayAction(songIndex))
   })

@@ -1,3 +1,9 @@
+type FetchSong = {
+  name: string;
+  al: any;
+  ar: any[];
+  id: string;
+}
 
 /**
  * 节流
@@ -75,12 +81,13 @@ export const formatForSearchResult = (data: any) => {
   };
 }
 
-export const formatForSong = (song: any) => {
+export const formatForSong = (song: FetchSong) => {
+  const {name, ar, al, id} = song
   return {
-    name: song.name,
-    artists: song.ar.map((item: any) => item.name).join("/"),
-    album: song.al,
-    sid: song.id,
+    name,
+    artists: ar.map((item: any) => item.name).join("/"),
+    album: al,
+    sid: id,
   };
 }
 

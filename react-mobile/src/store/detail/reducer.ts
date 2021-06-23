@@ -1,17 +1,17 @@
 import * as types from "../types"
 
-const defaultState = {
+const defaultState: DetailState = {
   id: null,
   data: null,
   playList: [],
   pageSize: 10,
   pageNo: 0,
-  songsTotal: null,
-  pageTotal: null,
+  songsTotal: 0,
+  pageTotal: 0,
   pageModel: [],
 }
 
-const reducer = (state: any = defaultState, action: any) => {
+const reducer = (state: DetailState = defaultState, action: any) => {
   const { type, value } = action
   switch (type) {
     case types.DETAIL__ID:

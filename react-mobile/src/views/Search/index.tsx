@@ -1,31 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
-import { SearchBar } from 'antd-mobile'
-import { useDispatch } from 'react-redux'
-import {useTouchEvent} from "@/utils/hook"
+import { useEffect, useRef, useState } from "react"
+import { SearchBar } from "antd-mobile"
+import { useDispatch } from "react-redux"
+import { useTouchEvent } from "@/utils/hook"
 
-import * as api from '@/service'
-import { formatForSearchResult } from '@/utils/tools'
-import action from '@/store/action'
-import List from '@/components/List'
-import Scroll from '@/components/Scroll'
+import * as api from "@/service"
+import { formatForSearchResult } from "@/utils/tools"
+import action from "@/store/action"
+import List from "@/components/List"
+import Scroll from "@/components/Scroll"
 
-import {instanceRef} from "./define"
+import { instanceRef } from "./define"
 
-import './index.less'
+import "./index.less"
 
 const Search = () => {
   const dispatch = useDispatch()
-
   const [data, setData] = useState<any[]>([])
-  const [, setBeforePullUp] = useState<boolean>(true)
   const [value, setValue] = useState<any>()
   const autoFocusInst = useRef<any>()
-  const {onTouchStart, onTouchEnd} = useTouchEvent((songIndex: number) => {
-    dispatch({ type: 'play-list/data', value: [data[songIndex]] })
-      dispatch(action.beforeCanPlayAction(0))
+  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
+    dispatch({ type: "play-list/data", value: [data[songIndex]] })
+    dispatch(action.beforeCanPlayAction(0))
   })
-
-  
 
   const onReload = () => {}
 
@@ -35,7 +31,7 @@ const Search = () => {
     const { songs } = res.data.result
     let data = songs.map((item: any) => formatForSearchResult(item))
     setData((prev: any[]) => prev.concat(data))
-    return Promise.resolve({success: true})
+    return Promise.resolve({ success: true })
   }
 
   const onChange = (value: any) => {
@@ -61,8 +57,8 @@ const Search = () => {
   return (
     <div className="search--page page-container">
       <div className="search--input-container">
-      {/*  */}
-        <SearchBar placeholder="自动获取光标" ref={ref => (autoFocusInst.current = ref)} onChange={onChange} onSubmit={onSubmit} />
+        {/*  */}
+        <SearchBar placeholder="自动获取光标" ref={(ref) => (autoFocusInst.current = ref)} onChange={onChange} onSubmit={onSubmit} />
       </div>
       {data.length > 0 && (
         <Scroll mode="list-detail" config={instanceRef} onReload={onReload} fetchDataForPullUp={handlePullingUp}>
@@ -72,6 +68,5 @@ const Search = () => {
     </div>
   )
 }
-
 
 export default Search
