@@ -103,9 +103,9 @@ const Recommend = (props: any) => {
     history.push({ pathname: "/playlistdetails", query: {id} })
   }
 
-  const fun1 = (index: number) => {
+  const testTouch = (index: number) => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
-    if (index === 1) {
+    if (index === 1) {  
       pageToPlaylistDetail(3185023336)
     } else {
       const playList = [{ artists: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }]
@@ -132,7 +132,7 @@ const Recommend = (props: any) => {
           <Scroll mode="normal-scroll-x" config={{ bscroll: define.iconSliderConf }} height={70} width={50}>
             {icons.map((item, index) => {
               return (
-                <div className="children-item" key={`icon-${index}`} onClick={() => fun1(index)}>
+                <div className="children-item" key={`icon-${index}`} onClick={() => testTouch(index)}>
                   <img style={{ height: 50, width: 50 }} src={process.env.PUBLIC_URL + "/image/" + item.name + ".png"} alt="" />
                   <span>{item.name}</span>
                 </div>
