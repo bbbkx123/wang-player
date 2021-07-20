@@ -4,8 +4,14 @@ import { fetchSongUrl } from "@/service/index"
 export const beforeCanPlayAction = (songIndex: number) => async (dispatch: any, getState: any) => {
   const state = getState()
   const { sid } = state.playlist.data[songIndex]
+  const { showController } = state.global
   dispatch({ type: "play-list/current-song-index", value: songIndex })
   dispatch({ type: "play-page/song-id", value: sid })
+
+  if (!showController && window.location.pathname !== "/play") {
+    dispatch({ type: "global/show-controller", value: true })
+  }
+
   const song = await fetchSongUrl(sid)
   const { url } = song.data.data[0]
   if (typeof url !== "string") {

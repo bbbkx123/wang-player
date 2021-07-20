@@ -102,10 +102,10 @@ const useTouchEvent = (callback: Function) => {
 }
 
 
-const useSearchParams = () => {
-  const [searchkey, setSearchkey] = useState()
+// const useSearchParams = () => {
+//   const [searchkey, setSearchkey] = useState()
 
   
-}
+// }
 
 export { useWatch, useAsync, useReactiveSelector, useTouchEvent };

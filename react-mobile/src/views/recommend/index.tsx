@@ -86,7 +86,10 @@ const Recommend = (props: any) => {
   useEffect(() => {
     const isBoolean = [bannersLoading, personalizationLoading, newSongLoading].every((item: any) => typeof item === "boolean")
     // 问题: loading会闪一下
-    // 原因: 首次加载, isBoolean为false后再变为true, setLoading快速改变; 如果!isBoolean时setLoading(true)会造成后续回到recommend页面一直处于loading
+    /*
+      原因: 首次加载, isBoolean为false后再变为true, setLoading快速改变; 
+      如果!isBoolean时setLoading(true)会造成后续回到recommend页面一直处于loading
+    */ 
     if (!isBoolean) {
       setLoading(false)
     } else {
@@ -118,7 +121,8 @@ const Recommend = (props: any) => {
   return (
     <div className="page-container">
       {loading && <Loading></Loading>}
-      <Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
+      {
+        !loading && (<Scroll mode="normal-scroll-y" config={{ bscroll: define.recommendPageConf }}>
         <div className="banner-container">
           {banners.length > 0 && (
             <Scroll mode="banner" config={{ bscroll: define.sliderConf }} width="100%">
@@ -160,7 +164,8 @@ const Recommend = (props: any) => {
           {newSongList.length > 0 && <List data={newSongList} mode="NEW_SONG" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}></List>}
           <div style={{ width: "100%", height: 100 }}></div>
         </div>
-      </Scroll>
+      </Scroll>)
+      }
     </div>
   )
 }

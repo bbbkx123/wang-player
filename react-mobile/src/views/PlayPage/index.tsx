@@ -23,6 +23,8 @@ const PlayPage = (props: any) => {
     start: true,
   })
   const [showLyric, setShowLyric] = useState<boolean>(false)
+  const [displayCurrentTime, setDisplayCurrentTime] = useState<string>('')
+  const [displayDuration, setDisplayDuration] = useState<string>('')
 
   const dispatch = useDispatch()
   const playList = useSelector((state: any) => state.playlist.data)
@@ -35,6 +37,8 @@ const PlayPage = (props: any) => {
   const paused = useSelector((state: any) => state.audio.paused)
   const currentTime = useSelector((state: any) => state.audio.currentTime)
   const isProgressChanging = useReactiveSelector((state: any) => state.playpage.isProgressChanging)
+
+  const testLog = useSelector((state: any) => state.test.log)
 
   /**
    * 问题: 在useEffect(()=>{}, [])中, timeupdate回调中无法读取 currentTime 和 duration, 暂时使用useEffect来更新percent
@@ -87,7 +91,8 @@ const PlayPage = (props: any) => {
     })
   }
 
-  const pageToComment = () => {
+  const pageToComment = (e: any) => {
+    e.stopPropagation()
     history.push({ pathname: "/comment" })
   }
 
@@ -111,12 +116,6 @@ const PlayPage = (props: any) => {
     }
   }, [currentTime]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useWatch(detailId, (prev) => {
-  //   if (prev && prev === detailId) return
-  //   const initIndex = 0
-  //   dispatch(beforeCanPlayAction(initIndex))
-  // })
-
   useEffect(() => {
     if (!songId || songId === ref.current) return
     ref.current = songId
@@ -128,6 +127,14 @@ const PlayPage = (props: any) => {
   useEffect(() => {
     if (showLyric) scroll()
   }, [showLyric]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setDisplayCurrentTime(formatForPlayTime(duration * percent))
+  }, [duration, currentTime]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setDisplayDuration(formatForPlayTime(duration))
+  }, [duration]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="play">
@@ -149,11 +156,11 @@ const PlayPage = (props: any) => {
       </div>
       <div className="edit-container">
         <div className="play--progress">
-          <span className="time left">{formatForPlayTime(duration * percent)}</span>
+          <span className="time left">{displayCurrentTime}</span>
           <div style={{ width: "calc(100% - 70px)" }}>
             <ProgressBar percent={percent}></ProgressBar>
           </div>
-          <span className="time right">{formatForPlayTime(duration)}</span>
+          <span className="time right">{displayDuration}</span>
         </div>
         <div className="play--control">
           <div style={{ fontSize: "32px" }} className="iconfont iconprev" onClick={handlePrevSong}></div>

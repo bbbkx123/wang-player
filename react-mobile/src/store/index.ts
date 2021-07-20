@@ -8,6 +8,10 @@ import GlobalReducer from "./global/reducer"
 import PlayPageReducer from "./playpage/reducer"
 // views 用于记录页面数据
 import RecommendReducer from "./recommend/reducer"
+import CommentReducer from "./comment/reducer"
+
+// 用于记录日志
+import TestLog from "./testlog/reducer"
 
 
 const reducer = combineReducers({
@@ -17,6 +21,8 @@ const reducer = combineReducers({
   "playpage": PlayPageReducer,
   "detail": DetailReducer,
   "recommend": RecommendReducer,
+  "comment": CommentReducer,
+  "test": TestLog,
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))

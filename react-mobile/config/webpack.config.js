@@ -27,8 +27,8 @@ const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpack
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter")
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
-const smp = new SpeedMeasurePlugin()
+// const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
+// const smp = new SpeedMeasurePlugin()
 
 const postcssNormalize = require("postcss-normalize")
 
@@ -151,11 +151,15 @@ module.exports = function (webpackEnv) {
     return loaders
   }
 
-  return smp.wrap({
+  // smp.wrap()
+  return {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     // Stop compilation early in production
     bail: isEnvProduction,
-    devtool: isEnvProduction ? (shouldUseSourceMap ? "source-map" : false) : isEnvDevelopment && "cheap-module-source-map",
+
+    // (shouldUseSourceMap ? "source-map" : false)  2021-07-19
+
+    devtool: isEnvProduction ?  'none' : isEnvDevelopment && "cheap-module-source-map",
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry:
@@ -726,5 +730,5 @@ module.exports = function (webpackEnv) {
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,
-  })
+  }
 }

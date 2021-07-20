@@ -10,6 +10,7 @@ const Player = (props: any) => {
   const playList = useSelector((state: any) => state.playlist.data)
   const currentSongIndex = useSelector((state: any) => state.playlist.currentSongIndex)
   const showController = useSelector((state: any) => state.global.showController)
+  const testLog = useSelector((state: any) => state.test.log)
 
   const audioElemRef = useRef<any>(null)
   const [loop] = useState<boolean>(false)
@@ -30,18 +31,24 @@ const Player = (props: any) => {
   }
 
   const onTimeUpdate = (e: any) => {
-    dispatch({ type: "audio/current-time", value: Math.floor(e.target.currentTime * 100) / 100 })
+    let _currentTime = Math.floor(e.target.currentTime * 100) / 100
+    
+    // testLog.push(`onTimeUpdate ----- currentTime ：${_currentTime}`)
+    // dispatch({type: 'test/log', value: [...testLog]})
+
+    // 最初放在onCanplay，线上环境onCanplay执行audio.duration为0
+    dispatch({ type: "audio/duration", value: audioElemRef.current.duration })
+    dispatch({ type: "audio/current-time", value: _currentTime })
   }
 
   const onCanPlay = () => {
     const { pathname } = history.location
-    dispatch({ type: "audio/duration", value: audioElemRef.current.duration })
     dispatch({ type: "audio/paused", value: false })
-    if (!showController && pathname !== "/play") dispatch({ type: "global/show-controller", value: true })
+    // if (!showController && pathname !== "/play") dispatch({ type: "global/show-controller", value: true })
   }
 
   useEffect(() => {
-    audioElemRef.current.volume = 0
+    audioElemRef.current.volume = 0.5
     dispatch({ type: "audio/instance", value: audioElemRef.current })
     return () => {}
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

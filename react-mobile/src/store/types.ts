@@ -52,3 +52,18 @@ export const GLOBAL__SEARCH_PAGE = "global/search-page"
 export const RECOMMEND__BANNERS = "views/recommend/banners"
 export const RECOMMEND__PERSONALIZATION = "views/recommend/personalization"
 export const RECOMMEND__NEW_SONG_LIST = "views/recommend/new-song-list"
+
+/**
+ * comment
+ *
+ */
+
+ export const COMMENT__DATA = "views/comment/data"
+
+
+/**
+ * test
+ *
+ */
+
+ export const TEST__LOG = "test/log"
