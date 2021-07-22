@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react"
 import { useSelector, useDispatch, useStore } from "react-redux"
 import { withRouter } from "react-router-dom"
 import actionCreator from "@/store/action"
-import { useAsync, useTouchEvent } from "@/utils/hook"
+import { useAsync, useTouchEvent, useWatch } from "@/utils/hook"
 import { formatForPlayListDetail, page as formatPageData, formatForSong } from "@/utils/tools"
 import * as api from "@/service"
 import Loading from "@/components/Loading"
@@ -52,8 +52,14 @@ const useInitial = (history: any, dispatch: Function) => {
     }
   }, [detailId]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // useWatch(detailId, (prev) => {
+  //   if (prev !== detailId && detailId) {
+  //     execute(detailId, dispatch )
+  //   }
+  // }, {immediate: true})
+
   useEffect(() => {
-    if (!id) history.push({ pathname: "/" })
+    if (!id && !detailId) history.push({ pathname: "/" })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   return {
     loading,
@@ -68,7 +74,9 @@ const handleAppendPlayList = async (state: any, dispatch: Function) => {
   dispatch({ type: "detail/page-no", value: pageNo + 1 })
   const ids = state.detail.pageModel[pageNo + 1].join(",")
   const value = await getSongs(ids)
-  dispatch({ type: "detail/play-list", value: state.detail.playList.concat(value) })
+  const list = state.detail.playList.concat(value)
+  dispatch({ type: "detail/play-list", value: [...list]})
+  dispatch({ type: "play-list/data", value: [...list]})
   return Promise.resolve({ success: true })
 }
 
@@ -79,9 +87,13 @@ const PlayListDetails = (props: any) => {
   const dispatch = useDispatch()
   const listDetail = useSelector((state: StoreState) => state.detail.data)
   const playList = useSelector((state: StoreState) => state.detail.playList)
+  const showController = useSelector((state: any) => state.global.showController)
   const { loading } = useInitial(history, dispatch)
   const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
     dispatch({ type: "play-list/data", value: playList })
+    if (!showController && window.location.pathname !== "/play") {
+      dispatch({ type: "global/show-controller", value: true })
+    }
     dispatch(actionCreator.beforeCanPlayAction(songIndex))
   })
 

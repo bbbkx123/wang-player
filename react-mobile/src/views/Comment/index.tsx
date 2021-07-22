@@ -28,10 +28,6 @@ const useComment = (songId: string, state: any, dispatch: Function)  => {
     }
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  setTimeout(() => {
-    dispatch({type: "play-page/song-id", value: 1861640172})
-  }, 5000)
-
   return {
     data,
     loading,

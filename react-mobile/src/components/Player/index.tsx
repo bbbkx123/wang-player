@@ -21,6 +21,9 @@ const Player = (props: any) => {
     dispatch({ type: "audio/paused", value: true })
     if (playList.length > 0) {
       if (currentSongIndex < playList.length - 1) {
+        if (!showController && window.location.pathname !== "/play") {
+          dispatch({ type: "global/show-controller", value: true })
+        }
         dispatch(action.beforeCanPlayAction(currentSongIndex + 1))
       } else if (currentSongIndex === playList.length - 1) {
         // if (this.isLoopPlayList) {

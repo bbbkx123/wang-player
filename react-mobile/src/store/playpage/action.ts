@@ -2,8 +2,17 @@ import { fetchLyric } from "@/service"
 
 export const fetchLyricAction = (id: string | number) => async (dispatch: any, getState: any) => {
   let res = await fetchLyric(id)
+  if (!res.data.hasOwnProperty('lrc')) {
+    dispatch({ type: "play-page/lyric", value: { timeList: [], lyricList: [], tLyricList: [] } })
+    return 
+  }
   let { lyric } = res.data.lrc
   let timeList: any = lyric.match(/\[\d{2}:\d{2}\.\d{2,}\]/gm)
+  // 存在没有时间戳的情况（例如id=22270186）
+  if (timeList === null) {
+    dispatch({ type: "play-page/lyric", value: { timeList: [], lyricList: [], tLyricList: [] } })
+    return 
+  }
   const lyricList = lyric
     .replace(/\[\d{2}:\d{2}\.\d{2,}\]/gm, "")
     .replace(/\n/gm, ";")

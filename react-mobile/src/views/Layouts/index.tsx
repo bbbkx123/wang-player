@@ -25,9 +25,9 @@ const getSceneConfig = (location: any) => {
 }
 
 const Layouts = (props: any) => {
-  const { history, location } = props
+  const { history, location } = props 
   const dispatch = useDispatch()
-  const goBack = () => {
+  const goBack = (e: any) => {
     const { pathname } = history.location
     if (pathname === "/") {
       return

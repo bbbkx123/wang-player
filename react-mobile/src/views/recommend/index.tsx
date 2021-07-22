@@ -74,12 +74,17 @@ const Recommend = (props: any) => {
   const banners = useSelector((state: any) => state.recommend.banners)
   const personalization = useSelector((state: any) => state.recommend.personalization)
   const newSongList = useSelector((state: any) => state.recommend.newSongList)
+  const showController = useSelector((state: any) => state.global.showController)
+  
   const { loading: bannersLoading } = useBanners(dispatch, store.getState())
   const { loading: personalizationLoading } = usePersonalization(dispatch, store.getState())
   const { loading: newSongLoading } = useNewSong(dispatch, store.getState())
 
   const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
     dispatch({ type: "play-list/data", value: [newSongList[songIndex]] })
+    if (!showController && window.location.pathname !== "/play") {
+      dispatch({ type: "global/show-controller", value: true })
+    }
     dispatch(beforeCanPlayAction(0))
   })
 
@@ -114,6 +119,9 @@ const Recommend = (props: any) => {
       const playList = [{ artists: "Ellis/Laura Brehm", name: "Start Over", album: { name: "Start Over" }, sid: 573027032 }]
       const songIndex = 0
       dispatch({ type: "play-list/data", value: playList })
+      if (!showController && window.location.pathname !== "/play") {
+        dispatch({ type: "global/show-controller", value: true })
+      }
       dispatch(beforeCanPlayAction(songIndex))
     }
   }

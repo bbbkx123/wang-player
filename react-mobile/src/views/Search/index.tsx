@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { SearchBar } from "antd-mobile"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useTouchEvent } from "@/utils/hook"
 
 import * as api from "@/service"
@@ -18,8 +18,12 @@ const Search = () => {
   const [data, setData] = useState<any[]>([])
   const [value, setValue] = useState<any>()
   const autoFocusInst = useRef<any>()
+  const showController = useSelector((state: any) => state.global.showController)
   const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
     dispatch({ type: "play-list/data", value: [data[songIndex]] })
+    if (!showController && window.location.pathname !== "/play") {
+      dispatch({ type: "global/show-controller", value: true })
+    }
     dispatch(action.beforeCanPlayAction(0))
   })
 
