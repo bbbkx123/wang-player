@@ -7,6 +7,7 @@ import { NavBar, Icon } from "antd-mobile"
 import Player from "@/components/Player"
 import MiniController from "@/components/MiniController"
 import MiniList from "@/components/MiniList"
+import Loading from "@/components/Loading"
 
 import RouterConfig from "@/router"
 
@@ -25,7 +26,7 @@ const getSceneConfig = (location: any) => {
 }
 
 const Layouts = (props: any) => {
-  const { history, location } = props 
+  const { history, location } = props
   const dispatch = useDispatch()
   const goBack = (e: any) => {
     const { pathname } = history.location
@@ -55,7 +56,7 @@ const Layouts = (props: any) => {
   // const fun1 = () => {
   //   dispatchForShowController(true)
   // }
-  
+
   return (
     <>
       <div className="layouts">
@@ -70,11 +71,13 @@ const Layouts = (props: any) => {
         <TransitionGroup childFactory={(child) => React.cloneElement(child, { classNames })} className="router-view">
           <CSSTransition timeout={500} key={location.pathname} unMountOnExit>
             {/* 注意  location移除会存在问题*/}
-            <Switch location={location}>
-              {RouterConfig.map((config: any, index: number) => (
-                <Route key={index} {...config}></Route>
-              ))}
-            </Switch>
+            <React.Suspense fallback={<Loading />}>
+              <Switch location={location}>
+                {RouterConfig.map((config: any, index: number) => (
+                  <Route key={index} {...config}></Route>
+                ))}
+              </Switch>
+            </React.Suspense>
           </CSSTransition>
         </TransitionGroup>
         <MiniController></MiniController>

@@ -174,5 +174,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "html-webpack-externals-plugin": "^3.8.0"
   }
 }

@@ -26,6 +26,7 @@ const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin")
 const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin")
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter")
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 // const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
 // const smp = new SpeedMeasurePlugin()
@@ -158,7 +159,6 @@ module.exports = function (webpackEnv) {
     bail: isEnvProduction,
 
     // (shouldUseSourceMap ? "source-map" : false)  2021-07-19
-
     devtool: isEnvProduction ?  'none' : isEnvDevelopment && "cheap-module-source-map",
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
@@ -398,7 +398,7 @@ module.exports = function (webpackEnv) {
                   [
                     require.resolve("babel-plugin-import"),
                     {
-                      libraryName: "antd",
+                      libraryName: "antd-mobile",
                       style: "css",
                       // libraryDirectory: 'es',
                     },
@@ -573,7 +573,7 @@ module.exports = function (webpackEnv) {
                 },
               }
             : undefined
-        )
+        ),
       ),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
@@ -714,6 +714,41 @@ module.exports = function (webpackEnv) {
           },
         },
       }),
+      // new HtmlWebpackExternalsPlugin({
+      //   externals: [{
+      //     module: 'react',
+      //     entry: 'https://unpkg.com/react@17/umd/react.production.min.js',
+      //     global: 'React'
+      //   }, {
+      //     module: 'react-dom',
+      //     entry: 'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
+      //     global: 'ReactDOM'
+      //   }, 
+      //   {
+      //     module: '@better-scroll/core',
+      //     entry: 'https://unpkg.com/better-scroll@latest/dist/better-scroll.min.js',
+      //     global: 'BScrollCore'
+      //   }, 
+      //   // {
+      //   //   module: '@better-scroll/slide',
+      //   //   entry: 'https://unpkg.com/@better-scroll/core@slide/dist/core.min.js',
+      //   //   global: 'BScrollSlide'
+      //   // }, {
+      //   //   module: '@better-scroll/pull-up',
+      //   //   entry: 'https://unpkg.com/@better-scroll/core@pull-up/dist/core.min.js',
+      //   //   global: 'BScrollPullUp'
+      //   // }, {
+      //   //   module: '@better-scroll/pull-down',
+      //   //   entry: 'https://unpkg.com/@better-scroll/core@pull-down/dist/core.min.js',
+      //   //   global: 'BScrollPullDown'
+      //   // }, 
+      //   // {
+      //   //   module: 'antd-mobile',
+      //   //   entry: 'https://cdnjs.cloudflare.com/ajax/libs/antd-mobile/2.3.4/antd-mobile.min.js',
+      //   //   global: 'AntdMobile'
+      //   // }
+      // ]
+      // })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.
@@ -730,5 +765,11 @@ module.exports = function (webpackEnv) {
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,
+    externals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      '@better-scroll/core': 'BScroll',
+      'antd-mobile': 'antd-mobile'
+    },
   }
 }

@@ -5,17 +5,7 @@
     <!-- %PUBLIC_URL%/ -->
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
-    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
-    <script>
-      if ('addEventListener' in document) {
-        document.addEventListener('DOMContentLoaded', function() {
-          FastClick.attach(document.body);
-        }, false);
-      }
-      if(!window.Promise) {
-        document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
-      }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd-mobile/2.3.4/antd-mobile.css" integrity="sha512-PFCBngNmKGjeS4zVsnJlKI4D9OTa4hI7T/BMDuLvhlb4RuLct0/l/mDRvYTuEQpIeWU5YKB8+M24QgiemIxSlQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
@@ -55,5 +45,21 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@better-scroll/core@latest/dist/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd-mobile/2.3.4/antd-mobile.min.js" integrity="sha512-WqC2xpM4UGh8qmhosNghTQs5/nHqA0iA/F5ufQesi944kAL0juNj5NvXpR82dAMWoSoIoCQ8mzZtFYwdAxx3LA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+    <script>
+      if ('addEventListener' in document) {
+        document.addEventListener('DOMContentLoaded', function() {
+          FastClick.attach(document.body);
+        }, false);
+      }
+      if(!window.Promise) {
+        document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+      }
+    </script>
   </body>
+  
 </html>

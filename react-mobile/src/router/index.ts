@@ -1,14 +1,16 @@
-import PlayPage from "@/views/PlayPage"
-import Recommend from "@/views/Recommend"
-import PlayListDetails from "@/views/PlayListDetails"
-import Comment from "@/views/Comment"
-import Search from "@/views/Search"
+import {lazy} from "react"
+
+// import PlayPage from "@/views/PlayPage"
+// import Recommend from "@/views/Recommend"
+// import PlayListDetails from "@/views/PlayListDetails"
+// import Comment from "@/views/Comment"
+// import Search from "@/views/Search"
 
 
 const RouterConfig: any[] = [
   {
     path: "/play",
-    component: PlayPage,
+    component: lazy(() => import("@/views/PlayPage")),
     exact: false,
     sceneConfig: {
       enter: "from-bottom",
@@ -17,7 +19,7 @@ const RouterConfig: any[] = [
   },
   {
     path: "/",
-    component: Recommend,
+    component: lazy(() => import("@/views/Recommend")),
     exact: true,
     sceneConfig: {
       enter: "from-bottom",
@@ -26,7 +28,7 @@ const RouterConfig: any[] = [
   },
   {
     path: "/playlistdetails",
-    component: PlayListDetails,
+    component: lazy(() => import("@/views/PlayListDetails")),
     exact: false,
     sceneConfig: {
       enter: "from-right",
@@ -35,7 +37,7 @@ const RouterConfig: any[] = [
   },
   {
     path: "/search",
-    component: Search,
+    component: lazy(() => import("@/views/Search")),
     exact: false,
     sceneConfig: {
       enter: "from-right",
@@ -44,7 +46,7 @@ const RouterConfig: any[] = [
   },
   {
     path: "/comment",
-    component: Comment,
+    component: lazy(() => import("@/views/Comment")),
     exact: false,
     sceneConfig: {
       enter: "from-bottom",
