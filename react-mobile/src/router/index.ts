@@ -1,12 +1,5 @@
 import {lazy} from "react"
 
-// import PlayPage from "@/views/PlayPage"
-// import Recommend from "@/views/Recommend"
-// import PlayListDetails from "@/views/PlayListDetails"
-// import Comment from "@/views/Comment"
-// import Search from "@/views/Search"
-
-
 const RouterConfig: any[] = [
   {
     path: "/play",
@@ -47,6 +40,15 @@ const RouterConfig: any[] = [
   {
     path: "/comment",
     component: lazy(() => import("@/views/Comment")),
+    exact: false,
+    sceneConfig: {
+      enter: "from-bottom",
+      exit: "to-bottom",
+    },
+  },
+  {
+    path: "/moredetails",
+    component: lazy(() => import("@/views/MoreDetails/inedx")),
     exact: false,
     sceneConfig: {
       enter: "from-bottom",

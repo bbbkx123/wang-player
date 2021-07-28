@@ -1,0 +1,22 @@
+.more-details {
+  
+}
+
+.more-details--item {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: calc((100% - 3 * 100px) /2);
+  margin-bottom: 5px;
+  width: 100px;
+  height: 160px;
+  .text {
+    display: inline-block;
+    margin-top: 5px;
+    white-space: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+.more-details--item.no-margin {
+  margin-right: 0;
+}

@@ -26,7 +26,7 @@ axios.interceptors.response.use((res) => {
   return Promise.reject(err)
 })
 
-export const get = (url: string, params: any) => {
+export const get = (url: string, params?: any) => {
   return axios.get(url, params).then(res => {
     if (res.status === 200) {
       if (res.data.code === 200) {

@@ -53,15 +53,9 @@ const Layouts = (props: any) => {
   // 更新旧location
   oldLocation = location
 
-  // const fun1 = () => {
-  //   dispatchForShowController(true)
-  // }
-
   return (
     <>
       <div className="layouts">
-        {/* <button onClick={fun1}>mini-player</button> */}
-        {/* <Icon key="1" type="ellipsis" /> */}
         <NavBar
           mode="dark"
           icon={<Icon type="left" />}

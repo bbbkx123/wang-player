@@ -82,3 +82,20 @@ export const fetchMusicComment = (id:string, limit?:number, offset?:number, befo
  * @returns 
  */
 export const fetchLyric = (id: string | number) => get("/lyric", {params: {id}})
+
+/**
+ * 获取歌单分类
+ * 
+ * @returns 
+ */
+ export const fetchCatlist = () => get("/playlist/catlist")
+
+/**
+ * 获取歌单（更多歌单）
+ * @param cat   tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部"
+ * @param limit 取出歌单数量 , 默认为 50
+ * @param offset  偏移数量 , 用于分页 , 如 :( 评论页数 -1)*50, 其中 50 为 limit 的值
+ * @returns 
+ */
+export const fetchMorePlayListDetail = (cat: string, limit: number, offset: number) => get("/top/playlist", {params: {cat, limit, offset}})
+

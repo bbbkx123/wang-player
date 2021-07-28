@@ -111,6 +111,10 @@ const Recommend = (props: any) => {
     history.push({ pathname: "/playlistdetails", query: {id} })
   }
 
+  const pageToMorePlaylistDetail = () => {
+    history.push({ pathname: "/moredetails"})
+  }
+
   const testTouch = (index: number) => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
     if (index === 1) {  
@@ -153,7 +157,10 @@ const Recommend = (props: any) => {
           </Scroll>
         </div>
         <div className="recommend-wrapper">
-          <p className="recommend-wrapper--title">推荐歌单</p>
+          <p className="recommend-wrapper--title">
+            <span className="text">推荐歌单</span>
+            <span onClick={pageToMorePlaylistDetail} className="text" style={{fontSize: '12px', lineHeight: '18px'}}>更多歌单</span>
+          </p>
           {personalization.length > 0 && (
             <Scroll mode="normal-scroll-x" config={{ bscroll: define.personalizeConf }} height={175} width={140}>
               {personalization.map((item: any, index: number) => {

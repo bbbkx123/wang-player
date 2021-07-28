@@ -1,6 +1,8 @@
 import { useSelector, useDispatch } from "react-redux"
 import { CSSTransition } from "react-transition-group"
 
+import actionCreator from "@/store/action"
+import {useTouchEvent} from "@/utils/hook"
 import List from "@/components/List"
 import Scroll from "@/components/Scroll"
 
@@ -19,9 +21,9 @@ const MiniList = (props: any) => {
   const playList = useSelector((state: any) => state.playlist.data)
   const showMiniList = useSelector((state: any) => state.global.showMiniList)
 
-  const onTouchStart = () => {}
-
-  const onTouchEnd = () => {}
+  const { onTouchStart, onTouchEnd } = useTouchEvent((songIndex: number) => {
+    dispatch(actionCreator.beforeCanPlayAction(songIndex))
+  })
 
   const onClick = () => {
     dispatch({ type: "global/show-mini-list", value: false })
