@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch, useStore } from "react-redux";
+import {Toast} from "antd-mobile"
 
 import Scroll from "@/components/Scroll";
 import List from "@/components/List";
@@ -106,6 +107,8 @@ const Recommend = (props: any) => {
     dispatch(beforeCanPlayAction(0));
   });
 
+  
+
   useEffect(() => {
     const isBoolean = [
       bannersLoading,
@@ -134,15 +137,16 @@ const Recommend = (props: any) => {
     history.push({ pathname: "/playlistdetails", query: { id } });
   };
 
-  const pageToMorePlaylistDetail = () => {
+  const toMoreDetail = useCallback(() => {
     history.push({ pathname: "/moredetails" });
-  };
+  }, [])
 
   const testTouch = (index: number) => {
     // 纯音乐 453208524    like 129219563   英文 3185023336
     if (index === 1) {
-      pageToPlaylistDetail(3185023336);
-    } else {
+      // pageToPlaylistDetail(3185023336);
+      history.push({ pathname: "/moredetails" });
+    } else if (index === 0) {
       const playList = [
         {
           artists: "Ellis/Laura Brehm",
@@ -157,6 +161,8 @@ const Recommend = (props: any) => {
         dispatch({ type: "global/show-controller", value: true });
       }
       dispatch(beforeCanPlayAction(songIndex));
+    } else {
+      Toast.offline('功能还未实现(；°○° )', 1);
     }
   };
 
@@ -219,7 +225,7 @@ const Recommend = (props: any) => {
             <p className="recommend-wrapper--title">
               <span className="text">推荐歌单</span>
               <span
-                onClick={pageToMorePlaylistDetail}
+                onTouchStart={toMoreDetail}
                 className="text"
                 style={{ fontSize: "12px", lineHeight: "18px" }}
               >

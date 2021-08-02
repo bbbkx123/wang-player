@@ -55,7 +55,7 @@ let MoreDetails = (props: any) => {
                     <div
                       className={`more-details--item ${(index + 1) % 3 === 0 ? 'no-margin' : ''}` }
                       key={`details-${index}`}
-                      onClick={() => pageToPlaylistDetail(detail.id)}
+                      onTouchStart={() => pageToPlaylistDetail(detail.id)}
                     >
                       <img
                         style={{width:'100px', height: '100px'}}

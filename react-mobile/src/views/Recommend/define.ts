@@ -1,16 +1,17 @@
 export const icons = [
   {
-    name: "每日",
-    to: "listdetail",
+    name: "私人FM",
+    to: "",
   },
   {
     name: "歌单",
     to: "",
   },
   {
-    name: "私人FM",
-    to: "",
+    name: "每日",
+    to: "listdetail",
   },
+  
   {
     name: "排行榜",
     to: "",
