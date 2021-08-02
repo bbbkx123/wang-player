@@ -4,3 +4,12 @@
 
 推荐使用```yarn```
 
+## 安装
+```
+yarn install
+```
+
+## 运行
+```
+yarn start
+```
