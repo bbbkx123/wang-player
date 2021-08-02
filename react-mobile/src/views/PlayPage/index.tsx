@@ -97,7 +97,7 @@ const PlayPage = (props: any) => {
   }
 
   useEffect(() => {
-    if (lyric.lyricList.length === 0) dispatch(fetchLyricAction(songId))
+    // if (lyric.lyricList.length === 0) dispatch(fetchLyricAction(songId))
     degRef.current.deg = 0
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -117,7 +117,7 @@ const PlayPage = (props: any) => {
   }, [currentTime]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!songId || songId === ref.current) return
+    // if (!songId || songId === ref.current) return
     ref.current = songId
     dispatch(fetchLyricAction(songId))
   }, [songId]) // eslint-disable-line react-hooks/exhaustive-deps

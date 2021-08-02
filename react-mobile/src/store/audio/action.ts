@@ -25,7 +25,6 @@ export const beforeCanPlayAction = (songIndex: number) => async (dispatch: any, 
 }
 
 export const changeSongAction = (toggleType: string) => (dispatch: any, getState: any) => {
-  debugger
   let index = null
   const state = getState()
   // const { data } = state.detail
