@@ -26,7 +26,8 @@ const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin")
 const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin")
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter")
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 // const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
 // const smp = new SpeedMeasurePlugin()
@@ -52,6 +53,8 @@ const useTypeScript = fs.existsSync(paths.appTsConfig)
 
 // Get the path to the uncompiled service worker (if it exists).
 const swSrc = paths.swSrc
+
+const productionGzipExtensions = ["js", "css"];
 
 // style files regexes
 const cssRegex = /\.css$/
@@ -714,41 +717,14 @@ module.exports = function (webpackEnv) {
           },
         },
       }),
-      // new HtmlWebpackExternalsPlugin({
-      //   externals: [{
-      //     module: 'react',
-      //     entry: 'https://unpkg.com/react@17/umd/react.production.min.js',
-      //     global: 'React'
-      //   }, {
-      //     module: 'react-dom',
-      //     entry: 'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
-      //     global: 'ReactDOM'
-      //   }, 
-      //   {
-      //     module: '@better-scroll/core',
-      //     entry: 'https://unpkg.com/better-scroll@latest/dist/better-scroll.min.js',
-      //     global: 'BScrollCore'
-      //   }, 
-      //   // {
-      //   //   module: '@better-scroll/slide',
-      //   //   entry: 'https://unpkg.com/@better-scroll/core@slide/dist/core.min.js',
-      //   //   global: 'BScrollSlide'
-      //   // }, {
-      //   //   module: '@better-scroll/pull-up',
-      //   //   entry: 'https://unpkg.com/@better-scroll/core@pull-up/dist/core.min.js',
-      //   //   global: 'BScrollPullUp'
-      //   // }, {
-      //   //   module: '@better-scroll/pull-down',
-      //   //   entry: 'https://unpkg.com/@better-scroll/core@pull-down/dist/core.min.js',
-      //   //   global: 'BScrollPullDown'
-      //   // }, 
-      //   // {
-      //   //   module: 'antd-mobile',
-      //   //   entry: 'https://cdnjs.cloudflare.com/ajax/libs/antd-mobile/2.3.4/antd-mobile.min.js',
-      //   //   global: 'AntdMobile'
-      //   // }
-      // ]
-      // })
+      new CompressionPlugin({
+        filename: "[path].gz[query]",
+        algorithm: "gzip",
+        test: new RegExp("\\.(" + productionGzipExtensions.join("|") + ")$"), //匹配文件名
+        threshold: 10240, //对10K以上的数据进行压缩
+        minRatio: 0.8,
+        deleteOriginalAssets: false //是否删除源文件
+      })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.
